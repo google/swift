@@ -14,7 +14,6 @@
 //
 //===----------------------------------------------------------------------===//
 
-
 //===----------------------------------------------------------------------===//
 // Ops and Convenience Methods
 //===----------------------------------------------------------------------===//
@@ -1225,12 +1224,12 @@ public extension TensorProtocol where Scalar : Numeric {
     let zeros = Self(handle: #tfop("Fill", shape, Tensor<Scalar>(0)))
     return self + zeros
   }
-  
+
   @_inlineable @inline(__always)
   func broadcast(to shape: TensorShape) -> Self {
     return broadcast(toShape: Tensor<Int32>(shape.dimensions))
   }
-  
+
   /// Broadcast to the same shape as the specified `Tensor`.
   /// - Precondition: The specified shape must be compatible for broadcasting.
   @_inlineable @inline(__always)

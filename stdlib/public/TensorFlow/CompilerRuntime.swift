@@ -50,7 +50,6 @@ public func enableTPU(serverAddress: String? = nil, infeed: Bool = true) {
   #tfop("tfc.configureTPU", enableInfeed: infeed) as Void
 }
 
-
 @_fixed_layout
 public enum _ExecutionMode : Equatable {
   /// Classical TF interpreter backend, on CPU.
@@ -65,8 +64,8 @@ public enum _ExecutionMode : Equatable {
 
   public var isTPU: Bool {
     switch self {
-      case .tpu: return true
-      default: return false
+    case .tpu: return true
+    default: return false
     }
   }
 }
@@ -133,11 +132,10 @@ public enum _RuntimeConfig {
 }
 
 private func configureRuntimeFromEnvironment() {
-  if let value = getenv("SWIFT_TENSORFLOW_ENABLE_DEBUG_LOGGING") {
-    if String(cString: value).lowercased() == "true" {
+  if let value = getenv("SWIFT_TENSORFLOW_ENABLE_DEBUG_LOGGING"),
+    String(cString: value).lowercased() == "true" {
       _RuntimeConfig.printsDebugLog = true
       debugLog("Turning on debug logging from env.")
-    }
   }
 
   if let value = getenv("SWIFT_TENSORFLOW_VERBOSE_LOG_LEVEL") {
@@ -157,11 +155,10 @@ private func configureRuntimeFromEnvironment() {
       debugLog("Setting TPU execution with infeed from env.")
   }
 
-  if let value = getenv("SWIFT_TENSORFLOW_SYNC_EXECUTION") {
-    if String(cString: value).lowercased() == "true" {
+  if let value = getenv("SWIFT_TENSORFLOW_SYNC_EXECUTION"),
+    String(cString: value).lowercased() == "true" {
       _RuntimeConfig.usesSynchronousExecution = true
       debugLog("Using sync execution from env.")
-    }
   }
 
   if let value = getenv("SWIFT_TENSORFLOW_SERVER_ADDRESS") {
@@ -712,7 +709,7 @@ public final class _TensorComputation {
       if _RuntimeConfig.printsDebugLog {
         let dType: TF_DataType = TFE_TensorHandleDataType(inputTensorHandle)
         debugLog("Input tensor \(i) has TF data type \(dType).")
-        switch(dType) {
+        switch dType {
         case TF_INT8: dumpTensorContent(inputTensorHandle, Int8.self)
         case TF_UINT8: dumpTensorContent(inputTensorHandle, UInt8.self)
         case TF_INT16: dumpTensorContent(inputTensorHandle, Int16.self)

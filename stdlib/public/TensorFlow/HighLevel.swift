@@ -295,7 +295,7 @@ public struct Convolution2DLayer<Scalar> : DifferentiableModule
     public init(differentiationSeed: Scalar) {
       self.filter = Tensor<Scalar>(differentiationSeed)
     }
-    
+
     @_inlineable @inline(__always)
     public func makeAdjoint(_ value: Scalar) -> Parameters {
       return Parameters(filter: Tensor(value).broadcast(to: filter))
@@ -443,7 +443,7 @@ public struct FullyConnectedLayer<Scalar> : DifferentiableModule
       self.weight = Tensor<Scalar>(differentiationSeed)
       self.bias = Tensor<Scalar>(differentiationSeed)
     }
-    
+
     @_inlineable @inline(__always)
     public func makeAdjoint(_ value: Scalar) -> Parameters {
       return Parameters(weight: Tensor(value).broadcast(to: weight),
@@ -610,7 +610,7 @@ public struct BatchNormalizationLayer<Scalar> : DifferentiableModule
       self.offset = Tensor<Scalar>(differentiationSeed)
       self.scale = Tensor<Scalar>(differentiationSeed)
     }
-    
+
     @_inlineable @inline(__always)
     public func makeAdjoint(_ value: Scalar) -> Parameters {
       return Parameters(offset: Tensor(value).broadcast(to: offset),
