@@ -52,10 +52,13 @@ add_swift_library(swiftTensorFlow ${SWIFT_STDLIB_LIBRARY_BUILD_TYPES} IS_STDLIB
   TensorProtocol.swift
   TensorShape.swift
   Utilities.swift
+  # NumPy bridging for `ShapedArray`/`Tensor`.
+  TensorFlow+NumPy.swift
+
   INCORPORATE_OBJECT_LIBRARIES swiftCTensorFlow
   TARGET_SDKS OSX LINUX
   PRIVATE_LINK_LIBRARIES "${TF_LIBRARIES}"
-  SWIFT_MODULE_DEPENDS SwiftOnoneSupport
+  SWIFT_MODULE_DEPENDS SwiftOnoneSupport Python
   SWIFT_MODULE_DEPENDS_IOS Darwin
   SWIFT_MODULE_DEPENDS_OSX Darwin
   SWIFT_MODULE_DEPENDS_TVOS Darwin
