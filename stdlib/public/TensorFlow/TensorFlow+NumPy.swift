@@ -29,21 +29,39 @@ public extension ShapedArray {
 
     // Check if the array's dtype matches the `Scalar` type.
     // (e.g. `np.float32` and `Float`).
-    var scalarTypeMatch = false
+    let scalarTypeMatch: Bool
     switch numpyArray.dtype {
-    case np.float32, np.single:
-      scalarTypeMatch = Scalar.self == Float.self
-    case np.double, np.float, np.float64:
-      scalarTypeMatch = Scalar.self == Double.self
-    // ... handle more cases
-    default: break
+    case np.bool_, Python.bool:
+      scalarTypeMatch = Element.self == Bool.self
+    case np.uint8:
+      scalarTypeMatch = Element.self == UInt8.self
+    case np.int8:
+      scalarTypeMatch = Element.self == Int8.self
+    case np.uint16:
+      scalarTypeMatch = Element.self == UInt16.self
+    case np.int16:
+      scalarTypeMatch = Element.self == Int16.self
+    case np.uint32:
+      scalarTypeMatch = Element.self == UInt32.self
+    case np.int32:
+      scalarTypeMatch = Element.self == Int32.self
+    case np.uint64:
+      scalarTypeMatch = Element.self == UInt64.self
+    case np.int64, Python.long:
+      scalarTypeMatch = Element.self == Int64.self
+    case np.float32:
+      scalarTypeMatch = Element.self == Float.self
+    case np.float64:
+      scalarTypeMatch = Element.self == Double.self
+    default:
+      scalarTypeMatch = false
     }
     guard scalarTypeMatch else {
       return nil
     }
 
     let pyShape = numpyArray.__array_interface__["shape"]
-    guard let shape: [Int] = Array(pyShape) else {
+    guard let shape = Array<Int>(pyShape) else {
       return nil
     }
     guard let ptrVal =

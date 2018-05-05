@@ -26,14 +26,32 @@ public extension Array {
 
     // Check if the array's dtype matches the `Element` type.
     // (e.g. `np.float32` and `Float`).
-    var elementTypeMatch = false
+    let elementTypeMatch: Bool
     switch numpyArray.dtype {
-    case np.float32, np.single:
+    case np.bool_, Python.bool:
+      elementTypeMatch = Element.self == Bool.self
+    case np.uint8:
+      elementTypeMatch = Element.self == UInt8.self
+    case np.int8:
+      elementTypeMatch = Element.self == Int8.self
+    case np.uint16:
+      elementTypeMatch = Element.self == UInt16.self
+    case np.int16:
+      elementTypeMatch = Element.self == Int16.self
+    case np.uint32:
+      elementTypeMatch = Element.self == UInt32.self
+    case np.int32:
+      elementTypeMatch = Element.self == Int32.self
+    case np.uint64:
+      elementTypeMatch = Element.self == UInt64.self
+    case np.int64, Python.long:
+      elementTypeMatch = Element.self == Int64.self
+    case np.float32:
       elementTypeMatch = Element.self == Float.self
-    case np.double, np.float, np.float64:
+    case np.float64:
       elementTypeMatch = Element.self == Double.self
-    // ... handle more cases
-    default: break
+    default:
+      elementTypeMatch = false
     }
     guard elementTypeMatch else {
       return nil
@@ -41,7 +59,7 @@ public extension Array {
 
     // Only 1-D `ndarray` instances can be converted to `Array`.
     let pyShape = numpyArray.__array_interface__["shape"]
-    guard let shape = [Int](pyShape) else {
+    guard let shape = Array<Int>(pyShape) else {
       return nil
     }
     guard shape.count == 1 else {
