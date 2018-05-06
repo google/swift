@@ -228,10 +228,10 @@ extension PythonError : Equatable {
 extension PythonError : CustomStringConvertible {
   public var description: String {
     switch self {
-    case .exception(let p): return "Python Exception: \(p)"
-    case .invalidCall(let p): return "Python Invalid Call: \(p)"
-    case .invalidMember(let m): return "Python Invalid Member: \(m)"
-    case .invalidModule(let m): return "Python Invalid Module: \(m)"
+    case .exception(let p): return "Python exception: \(p)"
+    case .invalidCall(let p): return "Python invalid call: \(p)"
+    case .invalidMember(let m): return "Python invalid member: \(m)"
+    case .invalidModule(let m): return "Python invalid module: \(m)"
     }
   }
 }
