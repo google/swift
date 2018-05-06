@@ -236,9 +236,9 @@ extension PythonError : CustomStringConvertible {
   }
 }
 
-extension PythonError: LocalizedError {
+extension PythonError : LocalizedError {
   public var errorDescription: String? {
-    return self.description
+    return description
   }
 }
 
