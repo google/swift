@@ -53,7 +53,7 @@ add_swift_library(swiftTensorFlow ${SWIFT_STDLIB_LIBRARY_BUILD_TYPES} IS_STDLIB
   TensorShape.swift
   Utilities.swift
   # NumPy bridging for `ShapedArray`/`Tensor`.
-  TensorFlow+NumPy.swift
+  NumpyConversion.swift
 
   INCORPORATE_OBJECT_LIBRARIES swiftCTensorFlow
   TARGET_SDKS OSX LINUX
