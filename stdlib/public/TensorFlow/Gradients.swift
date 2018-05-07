@@ -84,17 +84,7 @@ extension TensorProtocol where Scalar : Numeric {
 }
 
 @_inlineable @_versioned
-func _adjointMin<T : TensorProtocol>(
-  _ x: T, _ y: T, originalValue: T, seed: T
-) -> (T, T) where T.Scalar : Numeric & Comparable {
-  let denom = 1 + T(x.elementsEqual(y))
-  let dfdx = seed * T(y.elementsEqual(originalValue)) / denom
-  let dfdy = seed * T(x.elementsEqual(originalValue)) / denom
-  return (dfdx.unbroadcast(to: x), dfdy.unbroadcast(to: y))
-}
-
-@_inlineable @_versioned
-func _adjointMax<T : TensorProtocol>(
+func _adjointMinMax<T : TensorProtocol>(
   _ x: T, _ y: T, originalValue: T, seed: T
 ) -> (T, T) where T.Scalar : Numeric & Comparable {
   let denom = 1 + T(x.elementsEqual(y))
@@ -142,14 +132,14 @@ func _adjointSin<T : TensorProtocol>(
 func _adjointCos<T : TensorProtocol>(
   _ x: T, originalValue: T, seed: T
 ) -> T where T.Scalar : FloatingPoint {
-  return -seed * cos(x)
+  return -seed * sin(x)
 }
 
 @_inlineable @_versioned
 func _adjointTan<T : TensorProtocol>(
   _ x: T, originalValue: T, seed: T
 ) -> T where T.Scalar : FloatingPoint {
-  return seed / (1 + originalValue.squared())
+  return seed * (1 + originalValue.squared())
 }
 
 @_inlineable @_versioned

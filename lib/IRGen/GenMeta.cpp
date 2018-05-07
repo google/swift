@@ -5914,8 +5914,10 @@ SpecialProtocol irgen::getSpecialProtocolID(ProtocolDecl *P) {
   case KnownProtocolKind::Encodable:
   case KnownProtocolKind::Decodable:
   // SWIFT_ENABLE_TENSORFLOW
-  case KnownProtocolKind::TensorProtocol:
+  case KnownProtocolKind::AccelerableByTensorFlow:
   case KnownProtocolKind::Differentiable:
+  case KnownProtocolKind::TensorProtocol:
+  case KnownProtocolKind::TensorSendableReceivable:
     return SpecialProtocol::None;
   }
 

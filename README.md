@@ -62,12 +62,13 @@ repositories next to the Swift source directory. This means that if one clones
 Swift and has other unrelated repositories, update-checkout may not clone those
 repositories and will update them instead.
 
-**TensorFlow Support:** To build with TensorFlow support, the `update-checkout-config-tensorflow.json` configuration file must be specified when cloning sources. The configuration file pins specific versions of every Swift companion directory and is updated with every upstream merge from the Apple Swift repositories. 
+**TensorFlow Support:** To build with TensorFlow support, the `update-checkout-config-tensorflow.json` configuration file must be specified when cloning sources. The configuration file pins specific versions of every Swift companion directory and is updated with every upstream merge from the Apple Swift repositories.
 
 **Via HTTPS**  For those checking out sources as read-only, HTTPS works best:
 
     git clone https://github.com/google/swift.git -b tensorflow
     ./swift/utils/update-checkout --clone --config swift/utils/update-checkout-config-tensorflow.json
+    cd swift
 
 **Via SSH**  For those who plan on regularly making direct commits,
 cloning over SSH may provide a better experience (which requires
@@ -75,12 +76,16 @@ cloning over SSH may provide a better experience (which requires
 
     git clone git@github.com:google/swift.git -b tensorflow
     ./swift/utils/update-checkout --clone-with-ssh --config swift/utils/update-checkout-config-tensorflow.json
+    cd swift
 
-### Building Swift
+### Building Swift with TensorFlow support
 
 The `build-script` is a high-level build automation script that supports basic
 options such as building a Swift-compatible LLDB, building the Swift Package
 Manager, building for various platforms, running tests after builds, and more.
+TensorFlow support is enabled by the `--enable-tensorflow` flag. TensorFlow will
+be automatically cloned from GitHub and built from source using Bazel when this
+flag is specified.
 
 There are two primary build systems to use: Xcode and Ninja. The Xcode build
 system allows you to work in Xcode, but Ninja is a bit faster and supports
@@ -109,17 +114,18 @@ information, see the inline help:
 
     utils/build-script -h
 
-### TensorFlow Support
+### Customize TensorFlow support
 
-To enable TensorFlow support, specify the `--enable-tensorflow` flag:
-
-    utils/build-script --enable-tensorflow
-
-By default, TensorFlow will be automatically cloned from GitHub and built from source using Bazel. If you want to build with custom TensorFlow headers and shared libraries, please specify the `tensorflow-host-include-dir` and `tensorflow-host-lib-dir` arguments:
+ If you want to build with custom TensorFlow headers and shared libraries, please specify the `--tensorflow-host-include-dir` and `--tensorflow-host-lib-dir` arguments:
 
     utils/build-script --enable-tensorflow --tensorflow-host-include-dir=<path_to_tensorflow_headers> --tensorflow-host-lib-dir=<path_to_tensorflow_libraries>
 
-Below is more information about the arguments:
+You can assign specific values to these arguments after a double-dash `--` in
+your build-script command. For example:
+
+    utils/build-script -- enable-tensorflow=True
+
+Below is more information about TensorFlow-related build arguments.
 
 * `enable-tensorflow`: If true, enables TensorFlow support for Swift.
     * Default value: `False`.
@@ -133,6 +139,8 @@ Below is more information about the arguments:
     * Default value: None.
 * `tensorflow-host-lib-dir`: A directory containing custom TensorFlow shared libraries (`libtensorflow.so` and `libtensorflow_framework.so`).
     * Default value: None.
+
+### Build systems
 
 #### Xcode
 
@@ -200,10 +208,11 @@ described above.
 
 ## Testing Swift
 
-The simplest way to run the Swift test suite is by passing the `--test` and
-`--validation-test` flags to `build-script`:
+The simplest way to run the Swift test suite is using the `tensorflow_test`
+build preset, which runs the entire Swift test suite (including new TensorFlow
+tests):
 
-    utils/build-script --enable-tensorflow --test --validation-test
+    utils/build-script --preset=tensorflow_test
 
 Swift for TensorFlow adds the following new test suites:
 

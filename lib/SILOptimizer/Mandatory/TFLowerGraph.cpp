@@ -62,6 +62,10 @@ struct GraphGlobalConfiguration {
 
 static const char DEVICE_TPU_REPLICATED_CORE[] = "TPU_REPLICATED_CORE";
 static const char DEVICE_TPU_SYSTEM[] = "TPU_SYSTEM";
+// Set a small number to exercise the bounded queue capacity more, increasing
+// test coverage.
+// FIXME: Tune the default value for performance, and/or make it configurable.
+static const int NAMED_TENSOR_QUEUE_CAPACITY = 1;
 
 /// When generating a TF TPU graph, call this function to place an eligible TF
 /// graph node onto TPU device. Some nodes such as Placeholder and
@@ -142,6 +146,12 @@ namespace {
     /// This is a list of all of the operations that make up this function.
     std::vector<const TF_Operation*> operations;
 
+    // When true, lower effectful ops (e.g. Swift->TF send ops), if any, in the
+    // corresponding TF function. Currently in a While op context, these ops
+    // should not be run in the cond function.
+    // TODO(b/78472806): Add a more thorough and proper fix for effectful ops in
+    // the cond function.
+    bool shouldLowerEffectfulOps = true;
   public:
     GraphFunctionBody(GraphGlobalConfiguration configuration)
       : configuration(configuration), graph(TF_NewGraph(), &TF_DeleteGraph) {}
@@ -173,6 +183,21 @@ namespace {
 
       return result;
     }
+
+    // If there is a control dependence value, run it before producing an output
+    // tensor in GraphFunctionBody.
+    TF_Output maybeRunEffectfulOp(TF_Output result, TF_Status *status) {
+      if (!controlDependenceValue) return result;
+
+      std::string nodeName = "RunControlDependency";
+      auto *desc = TF_NewOperation(getGraph(), "Identity", nodeName.c_str());
+      TF_AddControlInput(desc, controlDependenceValue);
+      TF_AddInput(desc, result);
+      TF_Operation *newResult = finishOp(desc, /*hasSideEffects*/ false,
+                                         /*isEligibleForTPU*/ false, status);
+      controlDependenceValue = nullptr;
+      return {newResult, 0};
+    }
   };
 }
 
@@ -193,6 +218,10 @@ struct TFGraphLowering : public SILInstructionVisitor<TFGraphLowering> {
   // this scoped hash table keeps track of which tensorflow graph node result
   // a value corresponds to, along with the scope ID of the value.
   ValueMappingScopedHashTable valueMapping;
+
+  // Track those tensor ids that have been lowered to graph ops for TF->Swift
+  // tensor sends.
+  llvm::SmallSet<int, 4> processedTensorIdsForSend;
 
   /// This flag gets set if lowering code to the graph produces a TensorFlow
   /// error and emits a diagnostic.  This tells us to stop lowering and give up
@@ -458,10 +487,8 @@ private:  // Helpers to create TensorFlow graph nodes.
   void visitStringLiteralInst(StringLiteralInst *inst) {}
 
   void visitBuiltinInst(BuiltinInst *inst);
-  void visitBuiltinTFSendInst(BuiltinInst *inst) {
-    internalError(inst->getLoc(),
-                  "GraphGen cannot lower a 'send' to the host yet");
-  }
+  void visitBuiltinTFSendInst(BuiltinInst *inst);
+
   void visitBuiltinTFReceiveInst(BuiltinInst *inst) {
     internalError(inst->getLoc(),
                   "GraphGen cannot lower a 'receive' from the host yet");
@@ -504,8 +531,22 @@ private:  // Helpers to create TensorFlow graph nodes.
 };
 }
 
+// Escape the specified string to be a valid TensorFlow OpDef name.
+// Op names must match the regex "[A-Za-z0-9.][A-Za-z0-9_./]*".
+static void escapeOpName(std::string &name) {
+  // Currently, invalid characters are simply replaced with underscores.
+  // TODO: Use a more robust escaping transformation. It should handle unicode
+  // characters (using llvm::UTF8 or some other means) and be reversible.
+  for (unsigned i = 0, n = name.size(); i < n; i++) {
+    char c = name[i];
+    if (!std::isalnum(c) && c != '.')
+      if (i == 0 || (i != '_' && i != '/'))
+        name[i] = '_';
+  }
+}
+
 /// Produce a "stack trace" for the specified location, producing it in a form
-/// that we can use as a uniqued op name.
+/// that we can use as a unique op name.
 std::string TFGraphLowering::getUniqueName(SILDebugLocation loc,
                                            const char *baseName) {
   std::string name = baseName;
@@ -517,7 +558,7 @@ std::string TFGraphLowering::getUniqueName(SILDebugLocation loc,
 
   // Form a name for this op based on the user's source location and "stack
   // trace" of where it got inlined in user code.  We use the form
-  // file:line:col.
+  // "file:line:col".
   for (auto ds = loc.getScope(); ds; ds = ds->InlinedCallSite) {
     // If the call site location is invalid, stop scanning.
     if (!ds->Loc.getSourceLoc().isValid())
@@ -530,17 +571,12 @@ std::string TFGraphLowering::getUniqueName(SILDebugLocation loc,
       auto lineCol = SM.getLineAndColumn(ds->Loc.getSourceLoc());
       auto fnName = F->getName();
 
-      // Drop .tf_partition suffix off function names.
+      // Drop ".tf_partition" suffix off function names.
       if (fnName.endswith(".tf_partition"))
         fnName = fnName.drop_back(strlen(".tf_partition"));
 
-      // $ isn't a valid character in a tensorflow op name, and gets added to
-      // the start of some symbols.  If we see it, drop it.
-      if (fnName.startswith("$"))
-        fnName = fnName.drop_front();
-
-      name += "."+fnName.str()+"."+llvm::utostr(lineCol.first);
-      name += "."+llvm::utostr(lineCol.second);
+      name += "." + fnName.str() + "." + llvm::utostr(lineCol.first);
+      name += "." + llvm::utostr(lineCol.second);
     }
   }
 
@@ -551,14 +587,17 @@ std::string TFGraphLowering::getUniqueName(SILDebugLocation loc,
     if (sourceLoc.isValid()) {
       auto lineCol = SM.getLineAndColumn(sourceLoc);
       auto bufferID = SM.getBufferIdentifierForLoc(sourceLoc);
-      name += "."+bufferID.str()+"."+llvm::utostr(lineCol.first);
-      name += "."+llvm::utostr(lineCol.second);
+      name += "." + bufferID.str() + "." + llvm::utostr(lineCol.first);
+      name += "." + llvm::utostr(lineCol.second);
     }
   }
 
+  // Escape op name.
+  escapeOpName(name);
+
   // If we've already used this name, rename it to make it unique.
   while (!usedOpNames.insert(name).second) {
-    name += "_"+llvm::utostr(OpID++);
+    name += "_" + llvm::utostr(OpID++);
   }
 
   return name;
@@ -748,6 +787,99 @@ static void decodeShapeArray(SILInstruction *inst,
   for (unsigned shape = 0; shape != numShapes; ++shape) {
     dimPtrs.push_back(dimPtr);
     dimPtr += numDims[shape];
+  }
+}
+
+void TFGraphLowering::visitBuiltinTFSendInst(BuiltinInst *inst) {
+  auto &graphFn = getCurrentGraphFunction();
+  // TODO(b/78472806): Add a more thorough and proper fix for effectful ops in
+  // the while cond function.
+  if (!graphFn.shouldLowerEffectfulOps) return;
+
+  // Decode the tensor id from the builtin name.
+  // Example: builtin "tensorflowSend_0"<TensorHandle<Float>>(...) : $()
+  int tensorId = -1;
+  {
+    auto name = inst->getName().str();
+    auto tensorIdStr = name.substr(strlen("tensorflowSend_"));
+    bool isInt = llvm::to_integer(tensorIdStr, tensorId, 10);
+    assert(isInt);
+  }
+
+  // Type check and process the parameter.
+  TF_Output inputOp;
+  TF_DataType inputType;
+  {
+    assert(inst->getNumOperands() == 1);
+    auto operand = inst->getOperand(0);
+    inputOp = getOperandValue(operand);
+    if (!inputOp.oper) return;  // Error occurred.
+    inputType = getTensorFlowDataType(operand->getType(), inst->getLoc());
+  }
+
+  // Add enqueue to the local graph function, and the corresponding dequeue to
+  // the top level function, so that caller can dequeue tensors via SessionRun.
+  TF_Operation *queueOp;
+  {
+    auto opName = "fifo_queue_" + llvm::itostr(tensorId);
+    auto *desc =
+        TF_NewOperation(graphFn.getGraph(), "FIFOQueueV2", opName.c_str());
+    TF_SetDevice(desc, "/device:CPU:0");
+    TF_SetAttrInt(desc, "capacity", NAMED_TENSOR_QUEUE_CAPACITY);
+    TF_SetAttrTypeList(desc, "component_types", &inputType, 1);
+    TF_SetAttrString(desc, "shared_name", opName.data(), opName.size());
+    queueOp = graphFn.finishOp(desc, /*hasSideEffects*/ false,
+                               /*isEligibleForTPU*/ false, status);
+    if (checkStatus(getUserSourceLocation(inst->getDebugLocation())))
+      return;
+  }
+
+  {
+    auto opName = "fifo_queue_enqueue_" + llvm::itostr(tensorId);
+    auto *desc =
+        TF_NewOperation(graphFn.getGraph(), "QueueEnqueueV2", opName.c_str());
+    TF_AddInput(desc, {queueOp, 0});
+    TF_AddInputList(desc, &inputOp, 1);
+    TF_SetDevice(desc, "/device:CPU:0");
+    TF_SetAttrTypeList(desc, "Tcomponents", &inputType, 1);
+
+    graphFn.finishOp(desc, /*hasSideEffects*/ true,
+                     /*isEligibleForTPU*/ false, status);
+    if (checkStatus(getUserSourceLocation(inst->getDebugLocation())))
+      return;
+  }
+
+  // Now add dequeue to the top level graph function.
+  // Multiple graph functions can have an enqueue op over the same tensorId.
+  // One example is to enqueue tensors both within the while op's body
+  // function, and also right after the while op is executed.
+  // In that case, we only generate a single dequeue op at the top level.
+  if (!processedTensorIdsForSend.insert(tensorId).second) return;
+
+  // The code here is different enough from the above that it's not worth
+  // extracting common code into functions.
+  TF_Operation *globalQueueOp;
+  {
+    auto opName = "fifo_queue_" + llvm::itostr(tensorId);
+    auto *desc = TF_NewOperation(resultGraph, "FIFOQueueV2", opName.c_str());
+    TF_SetDevice(desc, "/device:CPU:0");
+    TF_SetAttrInt(desc, "capacity", NAMED_TENSOR_QUEUE_CAPACITY);
+    TF_SetAttrTypeList(desc, "component_types", &inputType, 1);
+    // FIXME: Revisit whether to populate "shared_name".
+    TF_SetAttrString(desc, "shared_name", opName.data(), opName.size());
+    globalQueueOp = TF_FinishOperation(desc, status);
+    if (checkStatus(getUserSourceLocation(inst->getDebugLocation())))
+      return;
+  }
+
+  {
+    auto opName = "fifo_queue_dequeue_" + llvm::itostr(tensorId);
+    auto *desc = TF_NewOperation(resultGraph, "QueueDequeueV2", opName.c_str());
+    TF_AddInput(desc, {globalQueueOp, 0});
+    TF_SetDevice(desc, "/device:CPU:0");
+    TF_SetAttrTypeList(desc, "component_types", &inputType, 1);
+    TF_FinishOperation(desc, status);
+    if (checkStatus(getUserSourceLocation(inst->getDebugLocation()))) return;
   }
 }
 
@@ -1190,11 +1322,15 @@ void TFGraphLowering::visitReturnInst(ReturnInst *inst) {
     for (auto &operand : ti->getAllOperands()) {
       auto result = getOperandValue(operand.get());
       if (!result.oper) return; // Error occurred.
+      result = graphFn.maybeRunEffectfulOp(result, status);
+      if (checkStatus(SILFn.getLocation())) return;
       graphFn.outputs.push_back({ /*SILArgument*/nullptr, result });
     }
   } else {
     auto result = getOperandValue(inst->getOperand());
     if (!result.oper) return; // Error occurred.
+    result = graphFn.maybeRunEffectfulOp(result, status);
+    if (checkStatus(SILFn.getLocation())) return;
     graphFn.outputs.push_back({ /*SILArgument*/nullptr, result });
   }
 }
@@ -1214,6 +1350,8 @@ void TFGraphLowering::visitBranchInst(BranchInst *inst) {
   for (unsigned i = 0, e = inst->getNumArgs(); i != e; ++i) {
     auto result = getOperandValue(inst->getArg(i));
     if (!result.oper) return; // Error occurred.
+    result = graphFn.maybeRunEffectfulOp(result, status);
+    if (checkStatus(SILFn.getLocation())) return;
     graphFn.outputs.push_back({ destBB->getArgument(i), result });
   }
 }
@@ -1354,9 +1492,9 @@ void TFGraphLowering::lowerWhileLoopRegion(WhileLoopSESERegion *r) {
     // body, we are required to emit the computation into both functions, and
     // rely on XLA to CSE it where possible (which I suspect it doesn't do).
     //
-    // This will also be problematic when the condition is allowed to have
-    // side effects (e.g. because of send and recv) because they cannot be
-    // reissued in general.
+    // This will also be problematic when the condition is allowed to have side
+    // effects (e.g. because of send and recv) because they cannot be reissued
+    // in general.
     //
     // A better model for while loop is to change the condition to be a function
     // "T -> (U, bool)" and have the loop body be "U -> T".  This structure
@@ -1389,9 +1527,10 @@ void TFGraphLowering::lowerWhileLoopRegion(WhileLoopSESERegion *r) {
 
   for (unsigned i = loopBodyFn.outputs.size(), e = loopBodyFn.inputs.size();
        i != e; ++i) {
-    loopBodyFn.outputs.push_back({
-      /*SILArgument*/nullptr, loopBodyFn.inputs[i].parameter
-    });
+    auto result =
+        loopBodyFn.maybeRunEffectfulOp(loopBodyFn.inputs[i].parameter, status);
+    if (checkStatus(SILFn.getLocation())) return;
+    loopBodyFn.outputs.push_back({/*SILArgument*/ nullptr, result});
   }
 
   // Next, lower the condition function into a 'stop predicate' for the loop.
@@ -1412,6 +1551,7 @@ void TFGraphLowering::lowerWhileLoopRegion(WhileLoopSESERegion *r) {
 
     // Lower any code in the header block, which may be used by the termination
     // condition.  It ends with a conditional branch which we handle manually.
+    graphFn.shouldLowerEffectfulOps = false;
     lowerBasicBlock(r->getHeader(), /*skipTerminator:*/ true);
     if (errorOccurred) return;
 
