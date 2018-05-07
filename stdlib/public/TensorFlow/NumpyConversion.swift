@@ -18,19 +18,21 @@
 #if canImport(Python)
 import Python
 
-extension ShapedArray : NumpyArrayConvertible
+/// The `numpy` Python module.
+/// Note: Global variables are lazy, so the following declaration won't produce
+// a Python import error until it is first used.
+private let np = Python.import("numpy")
+
+extension ShapedArray : ConvertibleFromNumpyArray
   where Scalar : NumpyScalarCompatible {
   public init?(numpyArray: PyValue) {
-    guard let np = try? Python.attemptImport("numpy") else { return nil }
-
     // Check if input is a `numpy.ndarray` instance.
     guard Python.isinstance.call(with: numpyArray, np.ndarray) == true else {
       return nil
     }
-
     // Check if the dtype of the `ndarray` is compatible with the `Scalar`
     // type.
-    guard Scalar.isCompatibleNumpyScalarType(numpyArray.dtype) else {
+    guard Scalar.isCompatible(withNumpyScalarType: numpyArray.dtype) else {
       return nil
     }
 
@@ -43,9 +45,8 @@ extension ShapedArray : NumpyArrayConvertible
       return nil
     }
     guard let ptr = UnsafePointer<Scalar>(bitPattern: ptrVal) else {
-      return nil
+      fatalError("numpy.ndarray data pointer was nil")
     }
-
     // This code avoids calling `init<S : Sequence>(shape: [Int], scalars: S)`,
     // which inefficiently copies scalars one by one. Instead,
     // `init(shape: [Int], scalars: [Scalar])` is called, which efficiently
@@ -55,27 +56,24 @@ extension ShapedArray : NumpyArrayConvertible
     let scalarCount = shape.reduce(1, *)
     var scalars: [Scalar] = Array(repeating: dummyPointer.move(),
                                   count: scalarCount)
-    scalars.withUnsafeMutableBytes { mutPtr in
-      mutPtr.baseAddress!.copyMemory(
-        from: UnsafeRawPointer(ptr),
-        byteCount: scalarCount * MemoryLayout<Scalar>.size)
+    dummyPointer.deallocate()
+    scalars.withUnsafeMutableBufferPointer { buffPtr in
+      buffPtr.baseAddress!.assign(from: ptr, count: scalarCount)
     }
     self.init(shape: shape, scalars: scalars)
   }
 }
 
-extension Tensor : NumpyArrayConvertible where Scalar : NumpyScalarCompatible {
+extension Tensor : ConvertibleFromNumpyArray
+  where Scalar : NumpyScalarCompatible {
   public init?(numpyArray: PyValue) {
-    guard let np = try? Python.attemptImport("numpy") else { return nil }
-
     // Check if input is a `numpy.ndarray` instance.
     guard Python.isinstance.call(with: numpyArray, np.ndarray) == true else {
       return nil
     }
-
     // Check if the dtype of the `ndarray` is compatible with the `Scalar`
     // type.
-    guard Scalar.isCompatibleNumpyScalarType(numpyArray.dtype) else {
+    guard Scalar.isCompatible(withNumpyScalarType: numpyArray.dtype) else {
       return nil
     }
 
@@ -89,7 +87,7 @@ extension Tensor : NumpyArrayConvertible where Scalar : NumpyScalarCompatible {
       return nil
     }
     guard let ptr = UnsafePointer<Scalar>(bitPattern: ptrVal) else {
-      return nil
+      fatalError("numpy.ndarray data pointer was nil")
     }
     let buffPtr = UnsafeBufferPointer(start: ptr,
                                       count: Int(shape.contiguousSize))
