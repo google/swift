@@ -269,3 +269,7 @@ next to the other projects and it will be bootstrapped automatically:
 [Bazel](https://bazel.build) is the build tool used to build TensorFlow. Installing Bazel is necessary for building Swift with TensorFlow support.
 
 The Bazel website has detailed installation instructions for [macOS](https://docs.bazel.build/versions/master/install-os-x.html) and [Ubuntu](https://docs.bazel.build/versions/master/install-ubuntu.html).
+
+# Test tensorflow feature.
+
+Yay!
