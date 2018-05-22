@@ -1,5 +1,3 @@
-Example feature!!
-
 # Swift for TensorFlow
 
 Here is a fake edit.
@@ -283,3 +281,7 @@ Here is my edit.
 Here is another edit that I want to test with.
 
 Yet another feature.
+
+Example feature!!
+
+
