@@ -277,3 +277,5 @@ Yay!
 Here is my edit.
 
 Here is another edit that I want to test with.
+
+Yet another feature.
