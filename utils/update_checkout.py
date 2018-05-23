@@ -235,11 +235,11 @@ def obtain_additional_swift_sources(pool_args):
             src_path = os.path.join(SWIFT_SOURCE_ROOT, repo_name, ".git")
             shell.run(['git', '--git-dir', src_path, '--work-tree',
                        os.path.join(SWIFT_SOURCE_ROOT, repo_name),
-                       'checkout', repo_branch], echo=False)
+                       'checkout', repo_branch], echo=True)
     with shell.pushd(os.path.join(SWIFT_SOURCE_ROOT, repo_name),
                      dry_run=False, echo=False):
         shell.run(["git", "submodule", "update", "--recursive"],
-                  echo=False)
+                  echo=True)
 
 
 def obtain_all_additional_swift_sources(args, config, with_ssh, scheme_name,
