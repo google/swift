@@ -283,4 +283,4 @@ The Bazel website has detailed installation instructions for
 [macOS](https://docs.bazel.build/versions/master/install-os-x.html) and
 [Ubuntu](https://docs.bazel.build/versions/master/install-ubuntu.html).
 
-Look at me, I am testing the CI!!
+Testin' the CI.
