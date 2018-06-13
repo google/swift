@@ -14,24 +14,28 @@ public final class CommentWhitespace: SyntaxFormatRule {
   public override func visit (_ token: TokenSyntax) -> Syntax {
     var pieces = [TriviaPiece]()
     var validToken = token
+    var isInvalid = false
+    
     guard let nextToken = token.nextToken else {
       // In the case there is a line comment at the end of the file, it ensures
       // that the line comment has a single space after the `//`.
-      pieces = checksSpacesAfterLineComment(token: token)
-      return token.withLeadingTrivia(Trivia.init(pieces: pieces.reversed()))
+      pieces = checksSpacesAfterLineComment(isInvalid: &isInvalid, token: token).reversed()
+      return isInvalid ? token.withLeadingTrivia(Trivia.init(pieces: pieces)) : token
     }
     
     // Ensures the line comment has at least 2 spaces before the `//`.
     if hasLineComment(trivia: nextToken.leadingTrivia) {
       let numSpaces = token.trailingTrivia.numberOfSpaces
       if numSpaces < 2 {
+        isInvalid = true
         let addSpaces = 2 - numSpaces
         diagnose(.addSpacesBeforeLineComment(count: addSpaces), on:token)
         validToken = token.withTrailingTrivia(token.trailingTrivia.appending(.spaces(addSpaces)))
       }
     }
-    pieces = checksSpacesAfterLineComment(token: token)
-    return validToken.withLeadingTrivia(Trivia.init(pieces: pieces.reversed()))
+    
+    pieces = checksSpacesAfterLineComment(isInvalid: &isInvalid, token: token).reversed()
+    return isInvalid ? validToken.withLeadingTrivia(Trivia.init(pieces: pieces)) : token
   }
   
   /// Returns a boolean indicating if the given trivia contains a line comment.
@@ -52,11 +56,15 @@ public final class CommentWhitespace: SyntaxFormatRule {
   }
   
   /// Ensures the line comment has exactly one space after `//`.
-  private func checksSpacesAfterLineComment(token: TokenSyntax) -> [TriviaPiece] {
+  private func checksSpacesAfterLineComment(isInvalid: inout Bool, token: TokenSyntax) -> [TriviaPiece] {
     var pieces = [TriviaPiece]()
+    
     for piece in token.leadingTrivia.reversed() {
+      // Checks if the line comment piece follows the right format,
+      // if it doesn't it modifies the comment to the right form.
       if case .lineComment(var text) = piece,
-        invalidLineComment(textLineComment: &text, token: token){
+         invalidLineComment(textLineComment: &text, token: token) {
+        isInvalid = true
         pieces.append(TriviaPiece.lineComment(text))
       }
       else {
