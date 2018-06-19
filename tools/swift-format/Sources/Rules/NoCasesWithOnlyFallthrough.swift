@@ -11,5 +11,97 @@ import SwiftSyntax
 ///
 /// - SeeAlso: https://google.github.io/swift#fallthrough-in-switch-statements
 public final class NoCasesWithOnlyFallthrough: SyntaxFormatRule {
+  
+  public override func visit(_ node: SwitchStmtSyntax) -> StmtSyntax {
+    var newCases: [SwitchCaseSyntax] = []
+    var violations: [SwitchCaseLabelSyntax] = []
+    
+    for switchCase in node.cases {
+      guard let switchCase = switchCase as? SwitchCaseSyntax else { continue }
+      guard let label = switchCase.label as? SwitchCaseLabelSyntax else { newCases.append(switchCase); continue }
+      
+      if switchCase.statements.count == 1,
+        let only = switchCase.statements.first,
+        only.item is FallthroughStmtSyntax {
+        violations.append(label)
+      } else {
+        guard violations.count > 0 else { newCases.append(switchCase); continue }
+        if retrieveNumericCaseValue(caseLabel: label) > 0 {
+          let newCase = collapseIntegerCases(violations: violations, validCaseLabel: label, validCase: switchCase)
+          newCases.append(newCase)
+        } else {
+          let newCase = collapseNonIntegerCases(violations: violations, validCaseLabel: label, validCase: switchCase)
+          newCases.append(newCase)
+        }
+        violations = []
+      }
+    }
+    return node.withCases(SyntaxFactory.makeSwitchCaseList(newCases))
+  }
+  
+  // Puts all given cases on one line with range operator or commas
+  func collapseIntegerCases(violations: [SwitchCaseLabelSyntax], validCaseLabel: SwitchCaseLabelSyntax, validCase: SwitchCaseSyntax) -> SwitchCaseSyntax {
+    var isConsecutive = true
+    var index = 0
+    var caseNums: [Int] = []
+    
+    for item in violations { caseNums.append(retrieveNumericCaseValue(caseLabel: item)) }
+    caseNums.append(retrieveNumericCaseValue(caseLabel: validCaseLabel))
+    
+    while index <= caseNums.count - 2, isConsecutive {
+      isConsecutive = caseNums[index] + 1 == caseNums[index + 1]
+      index += 1
+    }
 
+    var newCaseItems: [CaseItemSyntax] = []
+    let first = caseNums[0]
+    let last = caseNums[caseNums.count - 1]
+    if isConsecutive {
+      // Create a case with a sequence expression based on the new range
+      let start = SyntaxFactory.makeIntegerLiteralExpr(digits: SyntaxFactory.makeIntegerLiteral("\(first)"))
+      let end = SyntaxFactory.makeIntegerLiteralExpr(digits: SyntaxFactory.makeIntegerLiteral("\(last)"))
+      let newExpList = SyntaxFactory.makeExprList([start, SyntaxFactory.makeBinaryOperatorExpr(operatorToken: SyntaxFactory.makeUnspacedBinaryOperator("...")), end])
+      let newExpPat = SyntaxFactory.makeExpressionPattern(expression: SyntaxFactory.makeSequenceExpr(elements: newExpList))
+      newCaseItems.append(SyntaxFactory.makeCaseItem(pattern: newExpPat, whereClause: nil, trailingComma: nil))
+    } else {
+      // Add each case item separated by a comma
+      for num in caseNums {
+        let newExpPat = SyntaxFactory.makeExpressionPattern(expression: SyntaxFactory.makeIntegerLiteralExpr(digits: SyntaxFactory.makeIntegerLiteral("\(num)")))
+        if num != last {
+          let newCaseItem = SyntaxFactory.makeCaseItem(pattern: newExpPat, whereClause: nil, trailingComma: SyntaxFactory.makeCommaToken().withOneTrailingSpace())
+          newCaseItems.append(newCaseItem)
+        } else {
+          let newCaseItem = SyntaxFactory.makeCaseItem(pattern: newExpPat, whereClause: nil, trailingComma: nil)
+          newCaseItems.append(newCaseItem)
+        }
+      }
+    }
+    let caseItemList = SyntaxFactory.makeCaseItemList(newCaseItems)
+    return validCase.withLabel(validCaseLabel.withCaseItems(caseItemList))
+  }
+  
+  // Gets integer value from case label, if possible
+  func retrieveNumericCaseValue(caseLabel: SwitchCaseLabelSyntax) -> Int {
+    if let firstTok = caseLabel.caseItems.firstToken,
+      let num = Int(firstTok.text) {
+        return num
+    }
+    return -1
+  }
+  
+  // Puts all given cases on one line separated by commas
+  func collapseNonIntegerCases(violations: [SwitchCaseLabelSyntax], validCaseLabel: SwitchCaseLabelSyntax, validCase: SwitchCaseSyntax) -> SwitchCaseSyntax {
+    var newCaseItems: [CaseItemSyntax] = []
+    for violation in violations {
+      for item in violation.caseItems {
+        let newCaseItem = item.withTrailingComma(SyntaxFactory.makeCommaToken().withOneTrailingSpace())
+        newCaseItems.append(newCaseItem)
+      }
+    }
+    for item in validCaseLabel.caseItems {
+      newCaseItems.append(item)
+    }
+    let caseItemList = SyntaxFactory.makeCaseItemList(newCaseItems)
+    return validCase.withLabel(validCaseLabel.withCaseItems(caseItemList))
+  }
 }
