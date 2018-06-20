@@ -15,6 +15,95 @@ import SwiftSyntax
 ///         form, it is converted to the `///` form.
 ///
 /// - SeeAlso: https://google.github.io/swift#general-format
-public final class UseTripleSlashForDocumentationComments {
+public final class UseTripleSlashForDocumentationComments: SyntaxLintRule {
 
+    public override func visit(_ node: InitializerDeclSyntax) {
+        diagnoseTripleSlashForDocumentionComments(node)
+        super.visit(node)
+    }
+
+    public override func visit(_ node: DeinitializerDeclSyntax) {
+        diagnoseTripleSlashForDocumentionComments(node)
+        super.visit(node)
+    }
+
+    public override func visit(_ node: ProtocolDeclSyntax) {
+        diagnoseTripleSlashForDocumentionComments(node)
+        super.visit(node)
+    }
+
+    public override func visit(_ node: EnumDeclSyntax) {
+        diagnoseTripleSlashForDocumentionComments(node)
+        super.visit(node)
+    }
+
+    public override func visit(_ node: StructDeclSyntax) {
+        diagnoseTripleSlashForDocumentionComments(node)
+        super.visit(node)
+    }
+
+    public override func visit(_ node: ClassDeclSyntax) {
+        diagnoseTripleSlashForDocumentionComments(node)
+        super.visit(node)
+    }
+
+    public override func visit(_ node: ExtensionDeclSyntax) {
+        diagnoseTripleSlashForDocumentionComments(node)
+        super.visit(node)
+    }
+
+    public override func visit(_ node: VariableDeclSyntax) {
+        diagnoseTripleSlashForDocumentionComments(node)
+        super.visit(node)
+    }
+
+    public override func visit(_ node: FunctionDeclSyntax) {
+        diagnoseTripleSlashForDocumentionComments(node)
+        super.visit(node)
+    }
+
+    public override func visit(_ node: TypealiasDeclSyntax) {
+        diagnoseTripleSlashForDocumentionComments(node)
+        super.visit(node)
+    }
+
+    public override func visit(_ node: AssociatedtypeDeclSyntax) {
+        diagnoseTripleSlashForDocumentionComments(node)
+        super.visit(node)
+    }
+
+    private func diagnoseTripleSlashForDocumentionComments(_ node: DeclSyntax) {
+        guard let trivia = node.firstToken?.leadingTrivia.reversed() else {
+            return
+        }
+
+        for (index, piece) in trivia.enumerated() {
+            switch piece {
+            case .lineComment:
+                guard index < trivia.count - 1 else {
+                    continue
+                }
+
+                var previous = trivia[index + 1]
+
+                if case .newlines = previous, index < trivia.count - 2 {
+                    previous = trivia[index + 2]
+                }
+
+                if case .lineComment = previous {
+                    diagnose(.documentationCommentsMustUseTripleSlashForm(), on: node)
+                }
+            case .docBlockComment:
+                diagnose(.documentationCommentsMustUseTripleSlashForm(), on: node)
+            default:
+                break
+            }
+        }
+    }
+}
+
+extension Diagnostic.Message {
+    static func documentationCommentsMustUseTripleSlashForm() -> Diagnostic.Message {
+        return .init(.error, "Documentation comments must use the `///` form.")
+    }
 }
