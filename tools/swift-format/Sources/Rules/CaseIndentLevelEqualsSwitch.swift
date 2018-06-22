@@ -27,10 +27,10 @@ public final class CaseIndentLevelEqualsSwitch: SyntaxFormatRule {
         spacesDif = switchIndentation - caseTrivia.numberOfSpaces
         diagnose(.adjustIndentationSpaces(count: spacesDif, caseText: caseExp.description), on: node)
         numNewLines = countNewLines(caseTrivia)
-        let a = replaceTrivia(on: caseExp, token: caseExp.firstToken, leadingTrivia:
+        let newCase = replaceTrivia(on: caseExp, token: caseExp.firstToken, leadingTrivia:
                 Trivia.newlines(numNewLines).appending(.spaces(switchIndentation)))
         isInvalid = true
-        cases.append(a)
+        cases.append(newCase)
       }
       else {
         cases.append(caseExp)
