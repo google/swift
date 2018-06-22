@@ -32,7 +32,7 @@ public class CaseIndentLevelEqualsSwitchTests: DiagnosingTestCase {
                 """)
   }
   
-  public func testsInvalidCaseIndent2() {
+  public func testsInvalidNestedCaseIndent() {
     XCTAssertFormatting(
       CaseIndentLevelEqualsSwitch.self,
       input: """
@@ -63,7 +63,8 @@ public class CaseIndentLevelEqualsSwitchTests: DiagnosingTestCase {
   
   #if !os(macOS)
   static let allTests = [
-    CaseIndentLevelEqualsSwitchTests.testSemicolonUse,
+    CaseIndentLevelEqualsSwitchTests.testsInvalidCaseIndent,
+    CaseIndentLevelEqualsSwitchTests.testsInvalidNestedCaseIndent
     ]
   #endif
   
