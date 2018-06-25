@@ -23,6 +23,7 @@ public final class NoCasesWithOnlyFallthrough: SyntaxFormatRule {
       if switchCase.statements.count == 1,
         let only = switchCase.statements.first,
         only.item is FallthroughStmtSyntax {
+        diagnose(.collapseCase(name: "\(label)"), on: switchCase)
         violations.append(label)
       } else {
         guard violations.count > 0 else { newCases.append(switchCase); continue }
@@ -103,5 +104,11 @@ public final class NoCasesWithOnlyFallthrough: SyntaxFormatRule {
     }
     let caseItemList = SyntaxFactory.makeCaseItemList(newCaseItems)
     return validCase.withLabel(validCaseLabel.withCaseItems(caseItemList))
+  }
+}
+
+extension Diagnostic.Message {
+  static func collapseCase(name: String) -> Diagnostic.Message {
+    return .init(.warning, "\(name) only contains 'fallthrough' and can be combined with a following case")
   }
 }
