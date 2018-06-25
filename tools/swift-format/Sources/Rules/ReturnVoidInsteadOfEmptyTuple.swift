@@ -15,6 +15,7 @@ import SwiftSyntax
 public final class ReturnVoidInsteadOfEmptyTuple: SyntaxFormatRule {
   public override func visit(_ node: FunctionTypeSyntax) -> TypeSyntax {
     guard let returnType = node.returnType as? TupleTypeSyntax, returnType.elements.count == 0 else { return node }
+    diagnose(.returnVoid, on: node.returnType)
     var voidKeyword =  SyntaxFactory.makeSimpleTypeIdentifier(name: SyntaxFactory.makeIdentifier("Void"), genericArgumentClause: nil)
     if let next = node.returnType.nextToken,
       next.tokenKind != .rightParen,
@@ -23,4 +24,8 @@ public final class ReturnVoidInsteadOfEmptyTuple: SyntaxFormatRule {
     }
     return node.withReturnType(voidKeyword)
   }
+}
+
+extension Diagnostic.Message {
+  static let returnVoid = Diagnostic.Message(.warning, "Replace '()' with 'Void'")
 }
