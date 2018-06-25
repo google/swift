@@ -25,6 +25,7 @@ public final class UseEarlyExits: SyntaxFormatRule {
       guard let elseBody = elseStmt as? CodeBlockSyntax else { return node }
 
       if elseContainsControlStmt(elseStmt: elseStmt) {
+        diagnose(.useGuardStmt, on: ifStmt)
         guard let moveDeletedIfCode = visit(ifStmt.body.withLeftBrace(nil).withRightBrace(nil)) as? CodeBlockSyntax else { continue }
         let formattedIfCode = reindentBlock(block: moveDeletedIfCode, adjustment: -2)
         guard let moveElseBody = visit(elseBody) as? CodeBlockSyntax else { continue }
@@ -53,4 +54,8 @@ public final class UseEarlyExits: SyntaxFormatRule {
     }
     return false
   }
+}
+
+extension Diagnostic.Message {
+  static let useGuardStmt = Diagnostic.Message(.warning, "Replace with guard statement")
 }
