@@ -21,13 +21,11 @@ public final class NeverForceUnwrap: SyntaxLintRule {
   
   public override func visit(_ node: ForcedValueExprSyntax) {
     guard !context.importsXCTest else { return }
-    print(node.expression.description)
     diagnose(.doNotForceUnwrap(name: node.expression.description), on: node)
   }
   
   public override func visit(_ node: AsExprSyntax) {
     guard !context.importsXCTest else { return }
-    print(node.typeName.description)
     diagnose(.doNotForceCast(name: node.typeName.description), on: node)
   }
 }
