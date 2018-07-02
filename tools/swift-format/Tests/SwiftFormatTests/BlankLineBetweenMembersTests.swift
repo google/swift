@@ -10,17 +10,20 @@ public class BlankLineBetweenMembersTests: DiagnosingTestCase {
       BlankLineBetweenMembers.self,
       input: """
              struct foo1 {
+             
+             
+             
                var test1 = 13
                // Multiline
                // comment for b
                var b = 12
-
-
                /*BlockComment*/
+
+
                var c = 11
+                    
 
-
-
+                      
 
                // Multiline comment
                // for d
@@ -35,12 +38,13 @@ public class BlankLineBetweenMembersTests: DiagnosingTestCase {
              """,
       expected: """
                 struct foo1 {
+                
                   var test1 = 13
                   // Multiline
                   // comment for b
                   var b = 12
-
                   /*BlockComment*/
+                
                   var c = 11
 
                   // Multiline comment

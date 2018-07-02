@@ -19,51 +19,91 @@ import SwiftSyntax
 public final class BlankLineBetweenMembers: SyntaxFormatRule {
   public override func visit(_ node: MemberDeclBlockSyntax) -> Syntax {
     var membersList = [MemberDeclListItemSyntax]()
-    let maxBlankLines = context.configuration.maximumBlankLines
+    var hasValidNumOfBlankLines = true
     
     // Iterates through all the declaration of the member, to ensure that the declarations have
-    // at least on blank line and doesn't exceed the maximum number of blanklines.
+    // at least on blank line and doesn't exceed the maximum number of blank lines.
     for member in node.members {
       let currentMember = checkForNestedMembers(member)
       guard let memberTrivia = currentMember.leadingTrivia else { continue }
-      // A blank line needs two newlines to begin.
-      let numBlanklines = countNumNewLines(memberTrivia, withoutComments: true) - 1
+      let triviaWithoutTrailingSpaces = memberTrivia.ignoreTrailingSpaces()
+      guard let firstPiece = triviaWithoutTrailingSpaces.first else { continue }
       
-      if numBlanklines > maxBlankLines {
-        diagnose(.removeBlankLines(count: numBlanklines - maxBlankLines,
-                                   memberDesc: currentMember.description),on: currentMember)
-        let correctTrivia = getCommentsAndIdentation(memberTrivia, numNewLines: maxBlankLines + 1)
-        let newMember = replaceTrivia(on: currentMember, token: currentMember.firstToken!,
-                                      leadingTrivia: correctTrivia) as! MemberDeclListItemSyntax
-        membersList.append(newMember)
-      }
-      else if !ignoreItem(item: currentMember), numBlanklines == 0 {
-        let numNewLines = member != node.members.first ? 2 : 1
-        diagnose(.addBlankLines(memberDesc: currentMember.description), on: currentMember)
-        let correctTrivia = getCommentsAndIdentation(memberTrivia, numNewLines: numNewLines)
+      if exceedsMaxBlankLines(triviaWithoutTrailingSpaces) {
+        let correctTrivia = removeExtraBlankLines(triviaWithoutTrailingSpaces, currentMember)
         let newMember = replaceTrivia(on: currentMember, token: currentMember.firstToken!,
                                       leadingTrivia: correctTrivia) as! MemberDeclListItemSyntax
         
+        hasValidNumOfBlankLines = false
+        membersList.append(newMember)
+      }
+      else if case .newlines(let numNewLines) = firstPiece,
+              //member != node.members.first,
+              !ignoreItem(item: currentMember),
+              numNewLines - 1 == 0 {
+        let numBlankLines = member != node.members.first ? 1 : 0
+        let correctTrivia = Trivia.newlines(numBlankLines) + memberTrivia
+        let newMember = replaceTrivia(on: currentMember, token: currentMember.firstToken!,
+                                      leadingTrivia: correctTrivia) as! MemberDeclListItemSyntax
+        
+        diagnose(.addBlankLine(), on: currentMember)
+        hasValidNumOfBlankLines = false
         membersList.append(newMember)
       }
       else {
         membersList.append(member)
       }
     }
-    return node.withMembers(SyntaxFactory.makeMemberDeclList(membersList))
+    
+    return hasValidNumOfBlankLines ? node :
+           node.withMembers(SyntaxFactory.makeMemberDeclList(membersList))
   }
   
-  /// Indicates if a declaration has to be ignored by checking if a declaration
-  /// is single line and if the format is configured to ignore single lines.
+  /// Indicates if the given trivia has more than
+  /// the maximum number of blank lines.
+  func exceedsMaxBlankLines(_ trivia: Trivia) -> Bool {
+    let maxBlankLines = context.configuration.maximumBlankLines
+
+    for piece in trivia {
+      if case .newlines(let num) = piece,
+        num - 1 > maxBlankLines {
+        return true
+      }
+    }
+    return false
+  }
+  
+  ///
+  func removeExtraBlankLines(_ trivia: Trivia, _ member: MemberDeclListItemSyntax) -> Trivia {
+    let maxBlankLines = context.configuration.maximumBlankLines
+    var pieces = [TriviaPiece]()
+    
+    for piece in trivia {
+      if case .newlines(let num) = piece,
+         num - 1 > maxBlankLines {
+        pieces.append(.newlines(maxBlankLines + 1))
+        diagnose(.removeBlankLines(count: num - maxBlankLines)
+                 ,on: member)
+      }
+      else {
+        pieces.append(piece)
+      }
+    }
+    return Trivia.init(pieces: pieces)
+  }
+  
+  /// Indicates if a declaration has to be ignored by checking if it's
+  /// a single line and if the format is configured to ignore single lines.
   func ignoreItem(item: MemberDeclListItemSyntax) -> Bool {
     guard let firstToken = item.firstToken else { return false }
     guard let lastToken = item.lastToken else { return false }
-    let numNewLines = countNumNewLines(firstToken.leadingTrivia, withoutComments: false)
     
-    // The position of a token is determined by it's leading trivia,
-    // to calculate the exact position of a token
-    let isSingleLine = firstToken.position.line + numNewLines == lastToken.position.line
-    let ignoreLine = context.configuration.blankLineBetweenMembers.ignoreSingleLineProperties
+    let isSingleLine = firstToken.positionAfterSkippingLeadingTrivia.line ==
+                       lastToken.positionAfterSkippingLeadingTrivia.line
+    
+    let ignoreLine = context.configuration.blankLineBetweenMembers
+                     .ignoreSingleLineProperties
+    
     return isSingleLine && ignoreLine
   }
   
@@ -98,74 +138,62 @@ public final class BlankLineBetweenMembers: SyntaxFormatRule {
   }
 }
 
-/// Returns the given trivia with the correct indentation and number of
-/// newlines preserving comments.
-func getCommentsAndIdentation(_ trivia: Trivia, numNewLines: Int) -> Trivia {
-  var pieces = [TriviaPiece]()
-  pieces.append(.newlines(numNewLines))
-  var hasFoundComment = false
-  
-  for piece in trivia {
-    if case .lineComment(_) = piece {
-      pieces.append(piece)
-      hasFoundComment = true
-    }
-    else if case .docLineComment(_) = piece {
-      pieces.append(piece)
-      hasFoundComment = true
-    }
-    else if case .blockComment(_) = piece {
-      pieces.append(piece)
-      hasFoundComment = true
-    }
-    else if case .docBlockComment(_) = piece {
-      pieces.append(piece)
-      hasFoundComment = true
-    }
-    else if case .spaces(_) = piece {
-      pieces.append(piece)
-    }
-    else if hasFoundComment, case .newlines(_) = piece {
-      pieces.append(piece)
-    }
+/// Indicates if the given trivia piece is any type of comment.
+func isComment(_ triviaPiece: TriviaPiece) -> Bool {
+  switch triviaPiece {
+  case .lineComment(_), .docLineComment(_),
+       .blockComment(_), .docBlockComment(_):
+    return true
+  default:
+    return false
   }
-  return Trivia.init(pieces: pieces)
-}
-
-/// Returns the number of newlines in the given trivia.
-/// If withoutComments is true it returns the number of newlines until
-/// it finds a comment.
-func countNumNewLines(_ trivia: Trivia, withoutComments: Bool) -> Int {
-  var count = 0
-  for piece in trivia {
-    if case .newlines(let num) = piece {
-      count += num
-    }
-    else if withoutComments, case .lineComment(_) = piece {
-      return count
-    }
-    else if withoutComments, case .docLineComment(_) = piece {
-      return count
-    }
-    else if withoutComments, case .blockComment(_) = piece {
-      return count
-    }
-    else if withoutComments, case .docBlockComment(_) = piece {
-      return count
-    }
-  }
-  return count
 }
 
 extension Diagnostic.Message {
-  static func addBlankLines(memberDesc: String) -> Diagnostic.Message {
-    print("add one blank line before \(memberDesc)")
-    return Diagnostic.Message(.warning, "add one blank line before: \(memberDesc)")
+  static func addBlankLine() -> Diagnostic.Message {
+    return Diagnostic.Message(.warning, "add one blank line between declarations")
   }
   
-  static func removeBlankLines(count: Int, memberDesc: String) -> Diagnostic.Message {
+  static func removeBlankLines(count: Int) -> Diagnostic.Message {
     let ending = count > 1 ? "s" : ""
-    print("remove \(count) blank line\(ending) before \(memberDesc)")
-    return Diagnostic.Message(.warning, "remove \(count) blank line\(ending) before: \(memberDesc)")
+    return Diagnostic.Message(.warning, "remove \(count) blank line\(ending)")
+  }
+}
+
+extension Trivia {
+  func ignoreTrailingSpaces() -> Trivia {
+    var pieces = [TriviaPiece]()
+    var indexPieces = 0
+    for index in 0..<self.count {
+      indexPieces = pieces.count - 1
+      if !pieces.isEmpty,
+         case .newlines(_) = self[index],
+         case .spaces = pieces[indexPieces] {
+        pieces[indexPieces] = self[index]
+      }
+      else if !pieces.isEmpty,
+        case .newlines(_) = self[index],
+        case .tabs = pieces[indexPieces] {
+        pieces[indexPieces] = self[index]
+      }
+      else {
+        pieces.append(self[index])
+      }
+    }
+    
+    var joinedNewLinesPieces = [TriviaPiece]()
+    for index in 0..<pieces.count {
+      indexPieces = joinedNewLinesPieces.count - 1
+      if !joinedNewLinesPieces.isEmpty,
+         case .newlines(let numCurrent) = pieces[index],
+         case .newlines(let numPrev) = joinedNewLinesPieces[indexPieces] {
+        joinedNewLinesPieces[indexPieces] = .newlines(numCurrent + numPrev)
+      }
+      else {
+        joinedNewLinesPieces.append(pieces[index])
+      }
+    }
+
+    return Trivia.init(pieces: joinedNewLinesPieces)
   }
 }
