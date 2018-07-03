@@ -26,19 +26,20 @@ public final class BlankLineBetweenMembers: SyntaxFormatRule {
     for member in node.members {
       let currentMember = checkForNestedMembers(member)
       guard let memberTrivia = currentMember.leadingTrivia else { continue }
-      let triviaWithoutTrailingSpaces = memberTrivia.ignoreTrailingSpaces()
+      let triviaWithoutTrailingSpaces = memberTrivia.withoutTrailingSpaces()
       guard let firstPiece = triviaWithoutTrailingSpaces.first else { continue }
       
       if exceedsMaxBlankLines(triviaWithoutTrailingSpaces) {
         let correctTrivia = removeExtraBlankLines(triviaWithoutTrailingSpaces, currentMember)
         let newMember = replaceTrivia(on: currentMember, token: currentMember.firstToken!,
                                       leadingTrivia: correctTrivia) as! MemberDeclListItemSyntax
-        
         hasValidNumOfBlankLines = false
         membersList.append(newMember)
       }
+      // Ensures that there is at least one blank line between each member of a type.
+      // Unless is a single-line declaration and the format is configured to
+      // ignored them.
       else if case .newlines(let numNewLines) = firstPiece,
-              //member != node.members.first,
               !ignoreItem(item: currentMember),
               numNewLines - 1 == 0 {
         let numBlankLines = member != node.members.first ? 1 : 0
@@ -46,7 +47,7 @@ public final class BlankLineBetweenMembers: SyntaxFormatRule {
         let newMember = replaceTrivia(on: currentMember, token: currentMember.firstToken!,
                                       leadingTrivia: correctTrivia) as! MemberDeclListItemSyntax
         
-        diagnose(.addBlankLine(), on: currentMember)
+        diagnose(.addBlankLine, on: currentMember)
         hasValidNumOfBlankLines = false
         membersList.append(newMember)
       }
@@ -73,11 +74,15 @@ public final class BlankLineBetweenMembers: SyntaxFormatRule {
     return false
   }
   
-  ///
+  /// Returns the given trivia without any set of consecutive blank lines
+  /// that exceeds the maximumBlankLines.
   func removeExtraBlankLines(_ trivia: Trivia, _ member: MemberDeclListItemSyntax) -> Trivia {
     let maxBlankLines = context.configuration.maximumBlankLines
     var pieces = [TriviaPiece]()
     
+    // Iterates through the trivia, verifying that the number of blank
+    // lines in the file do not exceed the maximumBlankLines. If it does
+    // a lint error is raised.
     for piece in trivia {
       if case .newlines(let num) = piece,
          num - 1 > maxBlankLines {
@@ -150,50 +155,10 @@ func isComment(_ triviaPiece: TriviaPiece) -> Bool {
 }
 
 extension Diagnostic.Message {
-  static func addBlankLine() -> Diagnostic.Message {
-    return Diagnostic.Message(.warning, "add one blank line between declarations")
-  }
+  static let addBlankLine = Diagnostic.Message(.warning, "add one blank line between declarations")
   
   static func removeBlankLines(count: Int) -> Diagnostic.Message {
     let ending = count > 1 ? "s" : ""
     return Diagnostic.Message(.warning, "remove \(count) blank line\(ending)")
-  }
-}
-
-extension Trivia {
-  func ignoreTrailingSpaces() -> Trivia {
-    var pieces = [TriviaPiece]()
-    var indexPieces = 0
-    for index in 0..<self.count {
-      indexPieces = pieces.count - 1
-      if !pieces.isEmpty,
-         case .newlines(_) = self[index],
-         case .spaces = pieces[indexPieces] {
-        pieces[indexPieces] = self[index]
-      }
-      else if !pieces.isEmpty,
-        case .newlines(_) = self[index],
-        case .tabs = pieces[indexPieces] {
-        pieces[indexPieces] = self[index]
-      }
-      else {
-        pieces.append(self[index])
-      }
-    }
-    
-    var joinedNewLinesPieces = [TriviaPiece]()
-    for index in 0..<pieces.count {
-      indexPieces = joinedNewLinesPieces.count - 1
-      if !joinedNewLinesPieces.isEmpty,
-         case .newlines(let numCurrent) = pieces[index],
-         case .newlines(let numPrev) = joinedNewLinesPieces[indexPieces] {
-        joinedNewLinesPieces[indexPieces] = .newlines(numCurrent + numPrev)
-      }
-      else {
-        joinedNewLinesPieces.append(pieces[index])
-      }
-    }
-
-    return Trivia.init(pieces: joinedNewLinesPieces)
   }
 }

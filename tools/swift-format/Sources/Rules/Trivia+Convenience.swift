@@ -21,6 +21,24 @@ extension Trivia {
     })
   }
 
+  /// Returns this set of trivia without any trailing whitespace characters.
+  func withoutTrailingSpaces() -> Trivia {
+    var pieces = [TriviaPiece]()
+    guard var prev = first else { return self }
+    for piece in dropFirst() {
+      switch (prev, piece) {
+      case (.spaces(_), .newlines(_)),
+           (.tabs(_), .newlines(_)):
+        prev = piece
+      default:
+        pieces.append(prev)
+        prev = piece
+      }
+    }
+    pieces.append(prev)
+    return Trivia.init(pieces: pieces).condensed()
+  }
+
   /// Returns this set of trivia, without any newlines.
   func withoutNewlines() -> Trivia {
     return Trivia(pieces: filter {
