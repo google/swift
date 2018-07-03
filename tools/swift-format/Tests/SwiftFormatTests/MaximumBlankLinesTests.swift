@@ -16,11 +16,11 @@ public class MaximumBlankLinesTests: DiagnosingTestCase {
              import Foundation
              let a = 1
              let b = 2
-
-
-
+                   
+                    
+                  
              // Multiline
-
+                   
 
              // comment for b
 

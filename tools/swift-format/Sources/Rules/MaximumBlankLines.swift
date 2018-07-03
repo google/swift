@@ -20,11 +20,11 @@ public final class MaximumBlankLines: SyntaxFormatRule {
     guard let parentToken = token.parent else {
       return token.withLeadingTrivia(removeExtraBlankLines(token).0)
     }
-    
+
     guard let grandparentTok = parentToken.parent else {
       return token.withLeadingTrivia(removeExtraBlankLines(token).0)
     }
-    
+
     // Tokens who appeared in a member type are handle by
     // BlankLineBetweenMembers rule.
     if grandparentTok is MemberDeclListItemSyntax {
@@ -35,7 +35,7 @@ public final class MaximumBlankLines: SyntaxFormatRule {
       return correctTrivia.1 ? token : token.withLeadingTrivia(removeExtraBlankLines(token).0)
     }
   }
-  
+
   /// Indicates if the given trivia contains an invalid amount of
   /// consecutively blank lines. If it does it returns a clean trivia
   /// with the correct amount of blank lines.
@@ -46,29 +46,30 @@ public final class MaximumBlankLines: SyntaxFormatRule {
     let tokenTrivia = token.leadingTrivia
     var startsIn = 0
     var hasValidAmountOfBlankLines = true
-    
+    let triviaWithoutTrailingSpaces = tokenTrivia.withoutTrailingSpaces()
+
     // Ensures the beginning of file doesn't have an invalid amount of blank line.
     // The first triviapiece of a file is a special case, where each newline is
     // a blank line.
-    if isTheFirstOne, let firstPiece = tokenTrivia.first,
+    if isTheFirstOne, let firstPiece = triviaWithoutTrailingSpaces.first,
        case TriviaPiece.newlines(let num) = firstPiece, num > maxBlankLines {
       pieces.append(.newlines(maxBlankLines))
       diagnose(.removeMaxBlankLines(count: num - maxBlankLines), on: token)
       startsIn = 1
       hasValidAmountOfBlankLines = false
     }
-    
+
     // Iterates through the token trivia, verifying that the number on blank
     // lines in the file do not exceed the maximumBlankLines.
-    for index in startsIn..<tokenTrivia.count {
-      if case .newlines(let num) = tokenTrivia[index],
+    for index in startsIn..<triviaWithoutTrailingSpaces.count {
+      if case .newlines(let num) = triviaWithoutTrailingSpaces[index],
          num - 1 > maxBlankLines {
         pieces.append(TriviaPiece.newlines(maxBlankLines + 1))
         diagnose(.removeMaxBlankLines(count: num - maxBlankLines), on: token)
         hasValidAmountOfBlankLines = false
       }
       else {
-        pieces.append(tokenTrivia[index])
+        pieces.append(triviaWithoutTrailingSpaces[index])
       }
     }
     return (Trivia.init(pieces: pieces), hasValidAmountOfBlankLines)
