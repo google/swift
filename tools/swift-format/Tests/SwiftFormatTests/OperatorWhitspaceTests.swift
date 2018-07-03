@@ -9,7 +9,7 @@ public class OperatorWhitespaceTests: DiagnosingTestCase {
       OperatorWhitespace.self,
       input: """
              for number in 1...5 {}
-             var a = -10+3
+             var a = -10  +    3
              a*=2
              let b: UInt8 = 4
              b       << 1
