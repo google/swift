@@ -27,17 +27,16 @@ public final class NoLeadingUnderscores: SyntaxLintRule {
   }
   
   public override func visit(_ node: EnumCaseDeclSyntax) {
-    var iterator = node.elements.makeIterator()
-    while let item = iterator.next() {
-      diagnoseUnderscoreViolation(name: item.identifier)
+    for element in node.elements {
+      diagnoseUnderscoreViolation(name: element.identifier)
     }
   }
   
   public override func visit(_ node: FunctionDeclSyntax) {
     diagnoseUnderscoreViolation(name: node.identifier)
     // Check parameter names of function
-    var paramIterator = node.signature.input.parameterList.makeIterator()
-    while let parameter = paramIterator.next() {
+    let parameters = node.signature.input.parameterList
+    for parameter in parameters {
       if let typeIdentifier = parameter.firstName {
         diagnoseUnderscoreViolation(name: typeIdentifier)
       }
@@ -46,9 +45,10 @@ public final class NoLeadingUnderscores: SyntaxLintRule {
       }
     }
     // Check generic parameter names
-    var genParamIterator = node.genericParameterClause?.genericParameterList.makeIterator()
-    while let genParamter = genParamIterator?.next() {
-      diagnoseUnderscoreViolation(name: genParamter.name)
+    if let genParameters = node.genericParameterClause?.genericParameterList {
+      for genParameter in genParameters {
+        diagnoseUnderscoreViolation(name: genParameter.name)
+      }
     }
     super.visit(node)
   }
@@ -65,9 +65,10 @@ public final class NoLeadingUnderscores: SyntaxLintRule {
   public override func visit(_ node: StructDeclSyntax) {
     diagnoseUnderscoreViolation(name: node.identifier)
     // Check generic parameter names
-    var iterator = node.genericParameterClause?.genericParameterList.makeIterator()
-    while let genParam = iterator?.next() {
-        diagnoseUnderscoreViolation(name: genParam.name)
+    if let genParameters = node.genericParameterClause?.genericParameterList {
+      for genParameter in genParameters {
+        diagnoseUnderscoreViolation(name: genParameter.name)
+      }
     }
     super.visit(node)
   }
@@ -78,8 +79,8 @@ public final class NoLeadingUnderscores: SyntaxLintRule {
   
   public override func visit(_ node: InitializerDeclSyntax) {
     // Check parameter names of initializer
-    var iterator = node.parameters.parameterList.makeIterator()
-    while let parameter = iterator.next() {
+    let parameters = node.parameters.parameterList
+    for parameter in parameters {
       if let typeIdentifier = parameter.firstName {
         diagnoseUnderscoreViolation(name: typeIdentifier)
       }
