@@ -14,58 +14,60 @@ public final class CommentWhitespace: SyntaxFormatRule {
   public override func visit (_ token: TokenSyntax) -> Syntax {
     var pieces = [TriviaPiece]()
     var validToken = token
-    var isInvalid = false
-    
+    var needsWhitespaceFix = false
+
     guard let nextToken = token.nextToken else {
       // In the case there is a line comment at the end of the file, it ensures
       // that the line comment has a single space after the `//`.
-      pieces = checksSpacesAfterLineComment(isInvalid: &isInvalid, token: token).reversed()
-      return isInvalid ? token.withLeadingTrivia(Trivia.init(pieces: pieces)) : token
+      pieces = checksSpacesAfterLineComment(isInvalid: &needsWhitespaceFix, token: token)
+      return needsWhitespaceFix ? token.withLeadingTrivia(Trivia.init(pieces: pieces)) : token
     }
-    
+
     // Ensures the line comment has at least 2 spaces before the `//`.
-    if hasLineComment(trivia: nextToken.leadingTrivia) {
+    if hasInlineLineComment(trivia: nextToken.leadingTrivia) {
       let numSpaces = token.trailingTrivia.numberOfSpaces
       if numSpaces < 2 {
-        isInvalid = true
+        needsWhitespaceFix = true
         let addSpaces = 2 - numSpaces
         diagnose(.addSpacesBeforeLineComment(count: addSpaces), on:token)
         validToken = token.withTrailingTrivia(token.trailingTrivia.appending(.spaces(addSpaces)))
       }
     }
-    
-    pieces = checksSpacesAfterLineComment(isInvalid: &isInvalid, token: token).reversed()
-    return isInvalid ? validToken.withLeadingTrivia(Trivia.init(pieces: pieces)) : token
+
+    pieces = checksSpacesAfterLineComment(isInvalid: &needsWhitespaceFix, token: token)
+    return needsWhitespaceFix ? validToken.withLeadingTrivia(Trivia.init(pieces: pieces)) : token
   }
-  
-  /// Returns a boolean indicating if the given trivia contains a line comment.
-  private func hasLineComment (trivia: Trivia) -> Bool {
-    // When the comment isn't inline with code, it doesn't need to
-    // to check that there are two spaces before the line comment.
+
+  /// Returns a boolean indicating if the given trivia contains
+  /// a line comment inline with code.
+  private func hasInlineLineComment (trivia: Trivia) -> Bool {
+    // Comments are inline unless the trivia begins with a
+    // with a newline.
     if let firstPiece = trivia.reversed().last {
       if case .newlines(_) = firstPiece {
         return false
       }
     }
-    for piece in trivia.reversed() {
+    for piece in trivia {
       if case .lineComment(_) = piece {
         return true
       }
     }
     return false
   }
-  
-  /// Ensures the line comment has exactly one space after `//`.
+
+  /// Ensures the line comment has exactly one space after the `//`.
   private func checksSpacesAfterLineComment(isInvalid: inout Bool, token: TokenSyntax) -> [TriviaPiece] {
     var pieces = [TriviaPiece]()
-    
-    for piece in token.leadingTrivia.reversed() {
-      // Checks if the line comment piece follows the right format,
-      // if it doesn't it modifies the comment to the right form.
-      if case .lineComment(var text) = piece,
-         invalidLineComment(textLineComment: &text, token: token) {
+
+    for piece in token.leadingTrivia {
+      // Checks if the line comment has exactly one space after the `//`,
+      // if it doesn't it removes or add an space, depending on what the
+      // comment needs in order to follow the right format.
+      if case .lineComment(let text) = piece,
+         let formatText = formatLineComment(textLineComment: text, token: token) {
         isInvalid = true
-        pieces.append(TriviaPiece.lineComment(text))
+        pieces.append(TriviaPiece.lineComment(formatText))
       }
       else {
         pieces.append(piece)
@@ -73,22 +75,21 @@ public final class CommentWhitespace: SyntaxFormatRule {
     }
     return pieces
   }
-  
-  /// Returns a boolean indicating if the comment had an invalid format,
-  /// if it does, the text of the comment is modified to the correct format.
-  private func invalidLineComment (textLineComment: inout String, token: TokenSyntax) -> Bool {
+
+  /// Given a string with the text of a line comment, it ensures there
+  /// is exactly one space after the `//`. If the string doesn't follow
+  /// this rule a new string is returned with the right format.
+  private func formatLineComment (textLineComment: String, token: TokenSyntax) -> String? {
     let text = textLineComment.dropFirst(2)
     if text.first != " " {
       diagnose(.addSpaceAfterLineComment, on: token)
-      textLineComment = "// " + text.trimmingCharacters(in: .whitespaces)
-      return true
+      return "// " + text.trimmingCharacters(in: .whitespaces)
     }
     else if text.dropFirst(1).first == " " {
       diagnose(.removeSpacesAfterLineComment, on: token)
-      textLineComment = "// " + text.trimmingCharacters(in: .whitespaces)
-      return true
+      return "// " + text.trimmingCharacters(in: .whitespaces)
     }
-    return false
+    return nil
   }
 }
 
@@ -97,7 +98,7 @@ extension Diagnostic.Message {
     let ending = count == 1 ? "" : "s"
     return Diagnostic.Message(.warning, "add \(count) space\(ending) before the //")
   }
-  
+
   static let addSpaceAfterLineComment =
     Diagnostic.Message(.warning, "add one space after `//`")
   static let removeSpacesAfterLineComment =
