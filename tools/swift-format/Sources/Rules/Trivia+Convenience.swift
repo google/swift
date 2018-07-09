@@ -36,7 +36,7 @@ extension Trivia {
       }
     }
     pieces.append(prev)
-    return Trivia.init(pieces: pieces).condensed()
+    return Trivia(pieces: pieces).condensed()
   }
 
   /// Returns this set of trivia, without any newlines.

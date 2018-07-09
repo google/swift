@@ -20,7 +20,7 @@ public final class BlankLineBetweenMembers: SyntaxFormatRule {
   public override func visit(_ node: MemberDeclBlockSyntax) -> Syntax {
     var membersList = [MemberDeclListItemSyntax]()
     var hasValidNumOfBlankLines = true
-    
+
     // Iterates through all the declaration of the member, to ensure that the declarations have
     // at least on blank line and doesn't exceed the maximum number of blank lines.
     for member in node.members {
@@ -28,11 +28,15 @@ public final class BlankLineBetweenMembers: SyntaxFormatRule {
       guard let memberTrivia = currentMember.leadingTrivia else { continue }
       let triviaWithoutTrailingSpaces = memberTrivia.withoutTrailingSpaces()
       guard let firstPiece = triviaWithoutTrailingSpaces.first else { continue }
-      
+
       if exceedsMaxBlankLines(triviaWithoutTrailingSpaces) {
         let correctTrivia = removeExtraBlankLines(triviaWithoutTrailingSpaces, currentMember)
-        let newMember = replaceTrivia(on: currentMember, token: currentMember.firstToken!,
-                                      leadingTrivia: correctTrivia) as! MemberDeclListItemSyntax
+        let newMember = replaceTrivia(
+          on: currentMember,
+          token: currentMember.firstToken!,
+          leadingTrivia: correctTrivia
+        ) as! MemberDeclListItemSyntax
+        
         hasValidNumOfBlankLines = false
         membersList.append(newMember)
       }
@@ -41,11 +45,13 @@ public final class BlankLineBetweenMembers: SyntaxFormatRule {
       // ignored them.
       else if case .newlines(let numNewLines) = firstPiece,
               !ignoreItem(item: currentMember),
-              numNewLines - 1 == 0 {
+              numNewLines == 1 {
         let numBlankLines = member != node.members.first ? 1 : 0
         let correctTrivia = Trivia.newlines(numBlankLines) + memberTrivia
-        let newMember = replaceTrivia(on: currentMember, token: currentMember.firstToken!,
-                                      leadingTrivia: correctTrivia) as! MemberDeclListItemSyntax
+        let newMember = replaceTrivia(
+          on: currentMember, token: currentMember.firstToken!,
+          leadingTrivia: correctTrivia
+        ) as! MemberDeclListItemSyntax
         
         diagnose(.addBlankLine, on: currentMember)
         hasValidNumOfBlankLines = false
@@ -57,7 +63,7 @@ public final class BlankLineBetweenMembers: SyntaxFormatRule {
     }
     
     return hasValidNumOfBlankLines ? node :
-           node.withMembers(SyntaxFactory.makeMemberDeclList(membersList))
+      node.withMembers(SyntaxFactory.makeMemberDeclList(membersList))
   }
   
   /// Indicates if the given trivia has more than
@@ -87,16 +93,15 @@ public final class BlankLineBetweenMembers: SyntaxFormatRule {
       if case .newlines(let num) = piece,
          num - 1 > maxBlankLines {
         pieces.append(.newlines(maxBlankLines + 1))
-        diagnose(.removeBlankLines(count: num - maxBlankLines)
-                 ,on: member)
+        diagnose(.removeBlankLines(count: num - maxBlankLines), on: member)
       }
       else {
         pieces.append(piece)
       }
     }
-    return Trivia.init(pieces: pieces)
+    return Trivia(pieces: pieces)
   }
-  
+
   /// Indicates if a declaration has to be ignored by checking if it's
   /// a single line and if the format is configured to ignore single lines.
   func ignoreItem(item: MemberDeclListItemSyntax) -> Bool {
@@ -104,42 +109,36 @@ public final class BlankLineBetweenMembers: SyntaxFormatRule {
     guard let lastToken = item.lastToken else { return false }
     
     let isSingleLine = firstToken.positionAfterSkippingLeadingTrivia.line ==
-                       lastToken.positionAfterSkippingLeadingTrivia.line
-    
+      lastToken.positionAfterSkippingLeadingTrivia.line
+
     let ignoreLine = context.configuration.blankLineBetweenMembers
-                     .ignoreSingleLineProperties
-    
+      .ignoreSingleLineProperties
+
     return isSingleLine && ignoreLine
   }
-  
+
   /// Recursively ensures all nested member types follows the BlankLineBetweenMembers rule.
   func checkForNestedMembers(_ member: MemberDeclListItemSyntax) -> MemberDeclListItemSyntax {
-    if let nestedEnum = member.decl as? EnumDeclSyntax {
+    switch member.decl {
+    case let nestedEnum as EnumDeclSyntax:
       let nestedMembers = visit(nestedEnum.members)
       let newDecl = nestedEnum.withMembers(nestedMembers as? MemberDeclBlockSyntax)
-
       return member.withDecl(newDecl)
-    }
-    else if let nestedStruct = member.decl as? StructDeclSyntax {
+    case let nestedStruct as StructDeclSyntax:
       let nestedMembers = visit(nestedStruct.members)
       let newDecl = nestedStruct.withMembers(nestedMembers as? MemberDeclBlockSyntax)
-
       return member.withDecl(newDecl)
-    }
-    else if let nestedClass = member.decl as? ClassDeclSyntax {
+    case let nestedClass as ClassDeclSyntax:
       let nestedMembers = visit(nestedClass.members)
       let newDecl = nestedClass.withMembers(nestedMembers as? MemberDeclBlockSyntax)
-      
       return member.withDecl(newDecl)
-    }
-    else if let nestedExtension = member.decl as? ExtensionDeclSyntax {
+    case let nestedExtension as ExtensionDeclSyntax:
       let nestedMembers = visit(nestedExtension.members)
       let newDecl = nestedExtension.withMembers(nestedMembers as? MemberDeclBlockSyntax)
-      
       return member.withDecl(newDecl)
+    default:
+      return member
     }
-    
-    return member
   }
 }
 
