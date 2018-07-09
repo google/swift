@@ -16,23 +16,22 @@ import SwiftSyntax
 public final class CommaWhitespace: SyntaxFormatRule {
   public override func visit(_ token: TokenSyntax) -> Syntax {
     guard let next = token.nextToken else { return token }
-    
-    /// Commas own their trailing spaces, so ensure it only has 1 if there's
-    /// another token on the same line.
-    if token.tokenKind == .comma,
-       !next.leadingTrivia.containsNewlines {
+
+    // Commas own their trailing spaces, so ensure it only has 1 if there's
+    // another token on the same line.
+    if token.tokenKind == .comma && !next.leadingTrivia.containsNewlines {
       let numSpaces = token.trailingTrivia.numberOfSpaces
       if numSpaces > 1 {
         diagnose(.removeSpacesAfterComma(count: numSpaces - 1), on: token)
       }
-      if numSpaces == 0 {
+      else if numSpaces == 0 {
         diagnose(.addSpaceAfterComma, on: token)
       }
       return token.withOneTrailingSpace()
     }
-    
-    /// Otherwise, comma-adjacent tokens should have 0 spaces after.
-    if next.tokenKind == .comma, token.trailingTrivia.containsSpaces {
+
+    // Otherwise, comma-adjacent tokens should have 0 spaces after.
+    if next.tokenKind == .comma && token.trailingTrivia.containsSpaces {
       diagnose(.noSpacesBeforeComma, on: next)
       return token.withTrailingTrivia(token.trailingTrivia.withoutSpaces())
     }
@@ -45,9 +44,9 @@ extension Diagnostic.Message {
     let ending = count == 1 ? "" : "s"
     return Diagnostic.Message(.warning, "remove \(count) space\(ending) after ','")
   }
-  
+
   static let addSpaceAfterComma =
     Diagnostic.Message(.warning, "add one space after ','")
   static let noSpacesBeforeComma =
-    Diagnostic.Message(.warning, "remove spaces after ','")
+    Diagnostic.Message(.warning, "remove spaces before ','")
 }
