@@ -31,7 +31,7 @@ public final class NoBlockComments: SyntaxFormatRule {
     // unless the comment is between tokens on the same line.
     for piece in token.leadingTrivia {
       if case .blockComment(let text) = piece,
-        !commentIsBetweenCode(token){
+        !commentIsBetweenCode(token) {
         diagnose(.avoidBlockComment, on: token)
         hasBlockComment = true
         let lineCommentText = convertBlockCommentsToLineComments(text)
@@ -42,13 +42,13 @@ public final class NoBlockComments: SyntaxFormatRule {
         pieces.append(piece)
       }
     }
-    validToken =  validToken.withLeadingTrivia(Trivia.init(pieces: pieces))
+    validToken =  validToken.withLeadingTrivia(Trivia(pieces: pieces))
     return hasBlockComment ? validToken : token
   }
   
   /// Returns a Boolean value indicating if the given trivia has a piece trivia
   /// of block comment inline with code.
-  private func containsBlockCommentInline (trivia: Trivia) -> Bool {
+  private func containsBlockCommentInline(trivia: Trivia) -> Bool {
     // When the comment isn't inline with code, it doesn't need to
     // to check that there are two spaces before the line comment.
     if let firstPiece = trivia.first {
@@ -103,8 +103,8 @@ public final class NoBlockComments: SyntaxFormatRule {
 }
 
 extension Diagnostic.Message {
-  static let avoidBlockComment = Diagnostic.Message(.warning, "Block comments should be avoided in favor of line comments.")
-  static let avoidBlockCommentBetweenCode = Diagnostic.Message(.warning, "Avoid comments when they are at the same line between code")
+  static let avoidBlockComment = Diagnostic.Message(.warning, "Replace block comment with line comments.")
+  static let avoidBlockCommentBetweenCode = Diagnostic.Message(.warning, "Remove block comment inline with code")
 }
 
 extension Trivia {
