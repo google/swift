@@ -11,5 +11,21 @@ import SwiftSyntax
 ///
 /// - SeeAlso: https://google.github.io/swift#enum-cases
 public final class NoEmptyAssociatedValues: SyntaxFormatRule {
+  public override func visit(_ node: EnumCaseDeclSyntax) -> DeclSyntax {
+    for element in node.elements {
+      guard let associatedValue = element.associatedValue else { continue }
+      if associatedValue.parameterList.count == 0 {
+        diagnose(.removeEmptyParentheses(name: element.identifier.text), on: element)
+        let newDecl = node.withElements(node.elements.replacing(childAt: element.indexInParent, with: element.withAssociatedValue(nil)))
+        return newDecl
+      }
+    }
+    return node
+  }
+}
 
+extension Diagnostic.Message {
+  static func removeEmptyParentheses(name: String) -> Diagnostic.Message {
+    return .init(.warning, "Remove '()' after \(name)")
+  }
 }
