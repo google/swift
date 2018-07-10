@@ -18,11 +18,11 @@ import SwiftSyntax
 public final class MaximumBlankLines: SyntaxFormatRule {
   public override func visit(_ token: TokenSyntax) -> Syntax {
     guard let parentToken = token.parent else {
-      return token.withLeadingTrivia(removeExtraBlankLines(token).0)
+      return token.withLeadingTrivia(removeExtraBlankLines(token).newTrivia)
     }
 
     guard let grandparentTok = parentToken.parent else {
-      return token.withLeadingTrivia(removeExtraBlankLines(token).0)
+      return token.withLeadingTrivia(removeExtraBlankLines(token).newTrivia)
     }
 
     // Tokens who appeared in a member type are handle by
@@ -31,15 +31,18 @@ public final class MaximumBlankLines: SyntaxFormatRule {
       return token
     }
     else {
-      let correctTrivia = removeExtraBlankLines(token)
-      return correctTrivia.1 ? token : token.withLeadingTrivia(removeExtraBlankLines(token).0)
+      let (correctTrivia, hasValidAmountOfBlankLines) = removeExtraBlankLines(token)
+      return hasValidAmountOfBlankLines ? token : token.withLeadingTrivia(correctTrivia)
     }
   }
 
   /// Indicates if the given trivia contains an invalid amount of
   /// consecutively blank lines. If it does it returns a clean trivia
   /// with the correct amount of blank lines.
-  func removeExtraBlankLines(_ token: TokenSyntax) -> (Trivia, Bool) {
+  func removeExtraBlankLines(_ token: TokenSyntax) -> (
+    newTrivia: Trivia,
+    hasValidAmountOfBlankLines: Bool
+  ) {
     let maxBlankLines = context.configuration.maximumBlankLines
     var pieces = [TriviaPiece]()
     let isTheFirstOne = token == token.root.firstToken
@@ -52,7 +55,7 @@ public final class MaximumBlankLines: SyntaxFormatRule {
     // The first triviapiece of a file is a special case, where each newline is
     // a blank line.
     if isTheFirstOne, let firstPiece = triviaWithoutTrailingSpaces.first,
-       case TriviaPiece.newlines(let num) = firstPiece, num > maxBlankLines {
+       case .newlines(let num) = firstPiece, num > maxBlankLines {
       pieces.append(.newlines(maxBlankLines))
       diagnose(.removeMaxBlankLines(count: num - maxBlankLines), on: token)
       startsIn = 1
@@ -64,7 +67,7 @@ public final class MaximumBlankLines: SyntaxFormatRule {
     for index in startsIn..<triviaWithoutTrailingSpaces.count {
       if case .newlines(let num) = triviaWithoutTrailingSpaces[index],
          num - 1 > maxBlankLines {
-        pieces.append(TriviaPiece.newlines(maxBlankLines + 1))
+        pieces.append(.newlines(maxBlankLines + 1))
         diagnose(.removeMaxBlankLines(count: num - maxBlankLines), on: token)
         hasValidAmountOfBlankLines = false
       }
@@ -72,7 +75,7 @@ public final class MaximumBlankLines: SyntaxFormatRule {
         pieces.append(triviaWithoutTrailingSpaces[index])
       }
     }
-    return (Trivia.init(pieces: pieces), hasValidAmountOfBlankLines)
+    return (Trivia(pieces: pieces), hasValidAmountOfBlankLines)
   }
 }
 
