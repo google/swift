@@ -5,7 +5,7 @@ import SwiftSyntax
 @testable import Rules
 
 public class UseEarlyExitsTests: DiagnosingTestCase {
-  public func testSwitchStmts() {
+  public func testIfToGuardStmtSwitch() {
     XCTAssertFormatting(
       UseEarlyExits.self,
       input: """
