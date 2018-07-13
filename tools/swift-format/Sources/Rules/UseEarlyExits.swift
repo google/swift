@@ -28,7 +28,6 @@ public final class UseEarlyExits: SyntaxFormatRule {
         diagnose(.useGuardStmt, on: ifStmt)
         guard let moveDeletedIfCode = visit(
           ifStmt.body.withLeftBrace(nil).withRightBrace(nil)) as? CodeBlockSyntax else { continue }
-        // let formattedIfCode = reindentBlock(block: moveDeletedIfCode, adjustment: -2)
         guard let moveElseBody = visit(elseBody) as? CodeBlockSyntax else { continue }
         
         let ifConditions = ifStmt.conditions
