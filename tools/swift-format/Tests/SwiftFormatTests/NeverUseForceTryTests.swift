@@ -18,4 +18,15 @@ public class NeverUseForceTryTests: DiagnosingTestCase {
     XCTAssertDiagnosed(.doNotForceTry)
     XCTAssertNotDiagnosed(.doNotForceTry)
   }
+
+  public func testAllowForceTryInTestCode() {
+    let input =
+      """
+      import XCTest
+
+      let document = try! Document(path: "important.data")
+      """
+    performLint(NeverUseForceTry.self, input: input)
+    XCTAssertNotDiagnosed(.doNotForceTry)
+  }
 }
