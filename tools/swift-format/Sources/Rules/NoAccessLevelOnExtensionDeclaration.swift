@@ -68,29 +68,14 @@ public final class NoAccessLevelOnExtensionDeclaration: SyntaxFormatRule {
       guard let firstTokInDecl = member.firstToken else { continue }
       let formattedKeyword = replaceTrivia(on: keyword,
                                            token: keyword.name,
-                                           leadingTrivia: firstTokInDecl.leadingTrivia) as! DeclModifierSyntax
+                                           leadingTrivia: firstTokInDecl.leadingTrivia)
+                                           as! DeclModifierSyntax
 
-      guard let newDecl = addModifier(declaration: member, modifierKeyword: formattedKeyword) as? DeclSyntax else { continue }
-      //let newDecl = addModifier(declaration: member, modifierKeyword: formattedKeyword)
-      
-      let newMember = member.withDecl(newDecl)
+      guard let newMember = addModifier(declaration: member, modifierKeyword: formattedKeyword)
+        as? MemberDeclListItemSyntax else { continue }
       newMembers.append(newMember)
     }
     return SyntaxFactory.makeMemberDeclList(newMembers)
-  }
-  
-  // Determines if declaration already contains an access keyword
-  func hasAccessorKeyword(modifiers: ModifierListSyntax) -> Bool {
-    for modifier in modifiers {
-      let keywordKind = modifier.name.tokenKind
-      switch keywordKind {
-      case .publicKeyword, .privateKeyword, .fileprivateKeyword, .internalKeyword:
-        return true
-      default:
-        continue
-      }
-    }
-    return false
   }
 }
 
