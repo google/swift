@@ -30,13 +30,13 @@ public class GroupNumericLiteralsTests: DiagnosingTestCase {
                 let h = 0o21743
                 let i = -53_096_828_347
                 """)
-    XCTAssertDiagnosed(.groupNumericLiteral(by: 3))
-    XCTAssertDiagnosed(.groupNumericLiteral(by: 3))
-    XCTAssertNotDiagnosed(.groupNumericLiteral(by: 3))
-    XCTAssertDiagnosed(.groupNumericLiteral(by: 4))
-    XCTAssertNotDiagnosed(.groupNumericLiteral(by: 4))
-    XCTAssertDiagnosed(.groupNumericLiteral(by: 8))
-    XCTAssertNotDiagnosed(.groupNumericLiteral(by: 8))
+    XCTAssertDiagnosed(.groupNumericLiteral(byStride: 3))
+    XCTAssertDiagnosed(.groupNumericLiteral(byStride: 3))
+    XCTAssertNotDiagnosed(.groupNumericLiteral(byStride: 3))
+    XCTAssertDiagnosed(.groupNumericLiteral(byStride: 4))
+    XCTAssertNotDiagnosed(.groupNumericLiteral(byStride: 4))
+    XCTAssertDiagnosed(.groupNumericLiteral(byStride: 8))
+    XCTAssertNotDiagnosed(.groupNumericLiteral(byStride: 8))
   }
   
   #if !os(macOS)
