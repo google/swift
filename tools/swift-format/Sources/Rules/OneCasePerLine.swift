@@ -20,50 +20,70 @@ public final class OneCasePerLine: SyntaxFormatRule {
     for member in enumMembers {
       var numNewMembers = 0
       if let caseMember = member.decl as? EnumCaseDeclSyntax {
-        var otherDecl: EnumCaseDeclSyntax = caseMember
+        var otherDecl: EnumCaseDeclSyntax? = caseMember
         // Add and skip single element case declarations
-        guard caseMember.elements.count > 1
-          else {
-            newMembers.append(SyntaxFactory.makeMemberDeclListItem(decl: caseMember, semicolon: nil))
+        guard caseMember.elements.count > 1 else {
+            let newMember = SyntaxFactory.makeMemberDeclListItem(decl: caseMember, semicolon: nil)
+            newMembers.append(newMember)
             newIndx += 1
-            continue }
-        // Move all cases with associated values to new declarations
+            continue
+        }
+        // Move all cases with associated/raw values to new declarations
         for element in caseMember.elements {
           if element.associatedValue != nil || element.rawValue != nil {
             diagnose(.moveAssociatedOrRawValueCase(name: element.identifier.text), on: element)
-            let newRemovedDecl = createAssociateOrRawCaseDecl(fullDecl: caseMember, removedElement: element)
+            let newRemovedDecl = createAssociateOrRawCaseDecl(fullDecl: caseMember,
+                                                              removedElement: element)
             otherDecl = removeAssociateOrRawCaseDecl(fullDecl: otherDecl)
-            let newMember = SyntaxFactory.makeMemberDeclListItem(decl: newRemovedDecl, semicolon: nil)
+            let newMember = SyntaxFactory.makeMemberDeclListItem(decl: newRemovedDecl,
+                                                                 semicolon: nil)
             newMembers.append(newMember)
             numNewMembers += 1
           }
         }
-        // Add case declaration without associated values
-        let newMember = SyntaxFactory.makeMemberDeclListItem(decl: otherDecl, semicolon: nil)
-        newMembers.insert(newMember, at: newIndx)
+        // Add case declaration of remaining elements without associated/raw values, if any
+        if let otherDecl = otherDecl {
+          let newMember = SyntaxFactory.makeMemberDeclListItem(decl: otherDecl, semicolon: nil)
+          newMembers.insert(newMember, at: newIndx)
+          newIndx += 1
+        }
       // Add any member that isn't an enum case declaration
-      } else { newMembers.append(member)}
-      newIndx += numNewMembers + 1
+      } else {
+        newMembers.append(member)
+        newIndx += 1
+      }
+      newIndx += numNewMembers
     }
-    
-    return node.withMembers(SyntaxFactory.makeMemberDeclBlock(leftBrace: SyntaxFactory.makeLeftBraceToken(),
-                                                              members: SyntaxFactory.makeMemberDeclList(newMembers),
-                                                              rightBrace: SyntaxFactory.makeRightBraceToken().withOneLeadingNewline()))
+
+    let newDeclList = SyntaxFactory.makeMemberDeclList(newMembers)
+    let newMemberBlock = SyntaxFactory.makeMemberDeclBlock(leftBrace: node.members.leftBrace,
+                                                           members: newDeclList,
+                                                           rightBrace: node.members.rightBrace)
+    return node.withMembers(newMemberBlock)
   }
   
-  func createAssociateOrRawCaseDecl(fullDecl: EnumCaseDeclSyntax, removedElement: EnumCaseElementSyntax) -> EnumCaseDeclSyntax {
+  func createAssociateOrRawCaseDecl(fullDecl: EnumCaseDeclSyntax,
+                                    removedElement: EnumCaseElementSyntax) -> EnumCaseDeclSyntax {
     let formattedElement = removedElement.withTrailingComma(nil)
-    let newDecl = SyntaxFactory.makeEnumCaseDecl(attributes: fullDecl.attributes, modifiers: fullDecl.modifiers, caseKeyword: fullDecl.caseKeyword, elements: SyntaxFactory.makeEnumCaseElementList([formattedElement]))
+    let newElementList = SyntaxFactory.makeEnumCaseElementList([formattedElement])
+    let newDecl = SyntaxFactory.makeEnumCaseDecl(attributes: fullDecl.attributes,
+                                                 modifiers: fullDecl.modifiers,
+                                                 caseKeyword: fullDecl.caseKeyword,
+                                                 elements: newElementList)
     return newDecl
   }
-  
-  // Returns formatted declaration of cases without associated values
-  func removeAssociateOrRawCaseDecl(fullDecl: EnumCaseDeclSyntax) -> EnumCaseDeclSyntax {
+
+  // Returns formatted declaration of cases without associated/raw values, or nil if all cases had
+  // a raw or associate value
+  func removeAssociateOrRawCaseDecl(fullDecl: EnumCaseDeclSyntax?) -> EnumCaseDeclSyntax? {
+    guard let fullDecl = fullDecl else { return nil }
     var newList: [EnumCaseElementSyntax] = []
+
     for element in fullDecl.elements {
       if element.associatedValue == nil && element.rawValue == nil { newList.append(element) }
     }
-    
+
+    guard newList.count > 0 else { return nil }
     let (last, indx) = (newList[newList.count - 1], newList.count - 1)
     if last.trailingComma != nil {
       newList[indx] = last.withTrailingComma(nil)
@@ -74,6 +94,6 @@ public final class OneCasePerLine: SyntaxFormatRule {
 
 extension Diagnostic.Message {
   static func moveAssociatedOrRawValueCase(name: String) -> Diagnostic.Message {
-    return .init(.warning, "Move \(name) case to a new line")
+    return .init(.warning, "move \(name) case to a new line")
   }
 }
