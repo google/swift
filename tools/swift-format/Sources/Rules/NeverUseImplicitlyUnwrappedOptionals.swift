@@ -17,29 +17,23 @@ import SwiftSyntax
 public final class NeverUseImplicitlyUnwrappedOptionals: SyntaxLintRule {
   
   // Checks if "XCTest" is an import statement
-  public override func visit(_ node: ImportDeclSyntax) {
-    var iterator = node.path.makeIterator()
-    while let component = iterator.next() {
-      if component.name.text == "XCTest" {
-        context.importsXCTest = true
-      }
-    }
+  public override func visit(_ node: SourceFileSyntax) {
+    setImportsXCTest(context: context, sourceFile: node)
+    super.visit(node)
   }
 
   public override func visit(_ node: VariableDeclSyntax) {
-    if !context.importsXCTest {
-      // Ignores IBOutlet variables
-      if let attributes = node.attributes {
-        var iterator = attributes.makeIterator()
-        while let item = iterator.next() {
-          if item.attributeName.text == "IBOutlet" { return }
-        }
+    guard !context.importsXCTest else { return }
+    // Ignores IBOutlet variables
+    if let attributes = node.attributes {
+      for attribute in attributes {
+        if attribute.attributeName.text == "IBOutlet" { return }
       }
-      // Finds type annotation for variable(s)
-      for binding in node.bindings {
-        guard let nodeTypeAnnotation = binding.typeAnnotation else { continue }
-        diagnoseImplicitWrapViolation(nodeTypeAnnotation.type)
-      }
+    }
+    // Finds type annotation for variable(s)
+    for binding in node.bindings {
+      guard let nodeTypeAnnotation = binding.typeAnnotation else { continue }
+      diagnoseImplicitWrapViolation(nodeTypeAnnotation.type)
     }
   }
 
@@ -51,6 +45,6 @@ public final class NeverUseImplicitlyUnwrappedOptionals: SyntaxLintRule {
 
 extension Diagnostic.Message {
   static func doNotUseImplicitUnwrapping(identifier: String) -> Diagnostic.Message {
-    return .init(.warning, "Use \(identifier) or \(identifier)? instead of \(identifier)!")
+    return .init(.warning, "use \(identifier) or \(identifier)? instead of \(identifier)!")
   }
 }
