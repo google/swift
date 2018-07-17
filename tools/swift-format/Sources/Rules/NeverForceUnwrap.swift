@@ -10,13 +10,9 @@ import SwiftSyntax
 public final class NeverForceUnwrap: SyntaxLintRule {
   
   // Checks if "XCTest" is an import statement
-  public override func visit(_ node: ImportDeclSyntax) {
-    var iterator = node.path.makeIterator()
-    while let component = iterator.next() {
-      if component.name.text == "XCTest" {
-        context.importsXCTest = true
-      }
-    }
+  public override func visit(_ node: SourceFileSyntax) {
+    setImportsXCTest(context: context, sourceFile: node)
+    super.visit(node)
   }
   
   public override func visit(_ node: ForcedValueExprSyntax) {
@@ -32,9 +28,9 @@ public final class NeverForceUnwrap: SyntaxLintRule {
 
 extension Diagnostic.Message {
   static func doNotForceUnwrap(name: String) -> Diagnostic.Message {
-    return .init(.warning, "Do not force unwrap '\(name)'")
+    return .init(.warning, "do not force unwrap '\(name)'")
   }
   static func doNotForceCast(name: String) -> Diagnostic.Message {
-    return .init(.warning, "Do not force cast to '\(name)'")
+    return .init(.warning, "do not force cast to '\(name)'")
   }
 }
