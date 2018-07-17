@@ -9,8 +9,10 @@ public class FullyIndirectEnumTests: DiagnosingTestCase {
     XCTAssertFormatting(
       FullyIndirectEnum.self,
       input: """
+             // Comment 1
              public enum DependencyGraphNode {
                internal indirect case userDefined(dependencies: [DependencyGraphNode])
+               // Comment 2
                indirect case synthesized(dependencies: [DependencyGraphNode])
                indirect case other(dependencies: [DependencyGraphNode])
                var x: Int
@@ -23,8 +25,10 @@ public class FullyIndirectEnumTests: DiagnosingTestCase {
              }
              """,
       expected: """
+                // Comment 1
                 public indirect enum DependencyGraphNode {
                   internal case userDefined(dependencies: [DependencyGraphNode])
+                  // Comment 2
                   case synthesized(dependencies: [DependencyGraphNode])
                   case other(dependencies: [DependencyGraphNode])
                   var x: Int
