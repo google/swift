@@ -16,6 +16,9 @@ public class DiagnosingTestCase: XCTestCase {
     var registeredDiagnostics = [String]()
     func handle(_ diagnostic: Diagnostic) {
       registeredDiagnostics.append(diagnostic.message.text)
+      for note in diagnostic.notes {
+        registeredDiagnostics.append(note.message.text)
+      }
     }
     func finalize() {}
   }
