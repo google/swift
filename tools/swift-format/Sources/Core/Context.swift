@@ -15,11 +15,19 @@ public class Context {
 
   /// The URL of the file being linted or formatted.
   public let fileURL: URL
+  
+  /// Indicates whether the file imports XCTest, and is test code
+  public var importsXCTest: Bool
+  
+  /// Indicates whether the visitor has already determined a value for importsXCTest
+  public var didSetImportsXCTest: Bool
 
   /// Creates a new Context with the provided configuration, diagnostic engine, and file URL.
   public init(configuration: Configuration, diagnosticEngine: DiagnosticEngine?, fileURL: URL) {
     self.configuration = configuration
     self.diagnosticEngine = diagnosticEngine
     self.fileURL = fileURL
+    self.importsXCTest = false
+    self.didSetImportsXCTest = false
   }
 }
