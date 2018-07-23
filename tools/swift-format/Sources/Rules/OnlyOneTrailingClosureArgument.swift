@@ -11,16 +11,9 @@ import SwiftSyntax
 public final class OnlyOneTrailingClosureArgument: SyntaxLintRule {
 
   public override func visit(_ node: FunctionCallExprSyntax) {
-    guard containsClosureArgument(argList: node.argumentList) else { return }
+    guard (node.argumentList.contains { $0.expression is ClosureExprSyntax }) else { return }
     guard node.trailingClosure != nil else { return }
     diagnose(.removeTrailingClosure, on: node)
-  }
-
-  func containsClosureArgument(argList: FunctionCallArgumentListSyntax) -> Bool {
-    for argument in argList {
-      if argument.expression is ClosureExprSyntax { return true }
-    }
-    return false
   }
 }
 
