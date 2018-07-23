@@ -10,4 +10,15 @@ import SwiftSyntax
 /// - SeeAlso: https://google.github.io/swift#trailing-closures
 public final class OnlyOneTrailingClosureArgument: SyntaxLintRule {
 
+  public override func visit(_ node: FunctionCallExprSyntax) {
+    guard (node.argumentList.contains { $0.expression is ClosureExprSyntax }) else { return }
+    guard node.trailingClosure != nil else { return }
+    diagnose(.removeTrailingClosure, on: node)
+  }
+}
+
+extension Diagnostic.Message {
+  static let removeTrailingClosure =
+    Diagnostic.Message(.warning,
+                      "function call shouldn't have both closure arguments and a trailing closure")
 }

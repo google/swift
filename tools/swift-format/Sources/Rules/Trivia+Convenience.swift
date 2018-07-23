@@ -12,6 +12,17 @@ extension Trivia {
     return count
   }
 
+  /// Returns the number of newlines after this node.
+  var numberOfNewlines: Int {
+    var count = 0
+    for piece in self {
+      if case .newlines(let n) = piece {
+        count += n
+      }
+    }
+    return count
+  }
+
   /// Returns this set of trivia, without any whitespace characters.
   func withoutSpaces() -> Trivia {
     return Trivia(pieces: filter {
