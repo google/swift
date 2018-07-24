@@ -9,27 +9,29 @@ public class UseTripleSlashForDocumentationCommentsTests: DiagnosingTestCase {
       UseTripleSlashForDocumentationComments.self,
       input: """
              /**
-              * Returns the numeric value of the given digit represented as a Unicode scalar.
+              * This comment should not be converted.
+              */
+             
+             /**
+              * Returns a docLineComment.
               *
               * - Parameters:
-              *   - digit: The Unicode scalar whose numeric value should be returned.
-              *   - radix: The radix, between 2 and 36, used to compute the numeric value.
-              * - Returns: The numeric value of the scalar.
+              *   - withOutStar: Indicates if the comment start with a star.
+              * - Returns: docLineComment.
               */
-             func /**DocBlock*/ numericValue(of digit: UnicodeScalar, radix: Int = 10) -> Int {}
-
-             /**End of a file*/
+             func foo(withOutStar: Bool) {}
              """,
       expected: """
-                /// Returns the numeric value of the given digit represented as a Unicode scalar.
+                /**
+                 * This comment should not be converted.
+                 */
+                
+                /// Returns a docLineComment.
                 ///
                 /// - Parameters:
-                ///   - digit: The Unicode scalar whose numeric value should be returned.
-                ///   - radix: The radix, between 2 and 36, used to compute the numeric value.
-                /// - Returns: The numeric value of the scalar.
-                func /**DocBlock*/ numericValue(of digit: UnicodeScalar, radix: Int = 10) -> Int {}
-
-                /// End of a file
+                ///   - withOutStar: Indicates if the comment start with a star.
+                /// - Returns: docLineComment.
+                func foo(withOutStar: Bool) {}
                 """)
   }
   
@@ -38,23 +40,21 @@ public class UseTripleSlashForDocumentationCommentsTests: DiagnosingTestCase {
       UseTripleSlashForDocumentationComments.self,
       input: """
              /**
-             Returns the numeric value of the given digit represented as a Unicode scalar.
-
-             - Parameters:
-                - digit: The Unicode scalar whose numeric value should be returned.
-                - radix: The radix, between 2 and 36, used to compute the numeric value.
-             - Returns: The numeric value of the scalar.
-             */
-             func numericValue(of digit: UnicodeScalar, radix: Int = 10) -> Int {}
+              Returns a docLineComment.
+             
+              - Parameters:
+                - withStar: Indicates if the comment start with a star.
+              - Returns: docLineComment.
+              */
+             public var test = 1
              """,
       expected: """
-                /// Returns the numeric value of the given digit represented as a Unicode scalar.
+                /// Returns a docLineComment.
                 ///
                 /// - Parameters:
-                ///   - digit: The Unicode scalar whose numeric value should be returned.
-                ///   - radix: The radix, between 2 and 36, used to compute the numeric value.
-                /// - Returns: The numeric value of the scalar.
-                func numericValue(of digit: UnicodeScalar, radix: Int = 10) -> Int {}
+                ///   - withStar: Indicates if the comment start with a star.
+                /// - Returns: docLineComment.
+                public var test = 1
                 """)
   }
   

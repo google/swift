@@ -14,62 +14,105 @@ import SwiftSyntax
 ///
 /// - SeeAlso: https://google.github.io/swift#general-format
 public final class UseTripleSlashForDocumentationComments: SyntaxFormatRule {
-  public override func visit (_ token: TokenSyntax) -> Syntax {
+  public override func visit(_ node: FunctionDeclSyntax) -> DeclSyntax {
+    return convertDocBlockCommentToDocLineComment(node)
+  }
+
+  public override func visit(_ node: EnumDeclSyntax) -> DeclSyntax {
+    return convertDocBlockCommentToDocLineComment(node)
+  }
+
+  public override func visit(_ node: InitializerDeclSyntax) -> DeclSyntax {
+    return convertDocBlockCommentToDocLineComment(node)
+  }
+
+  public override func visit(_ node: DeinitializerDeclSyntax) -> DeclSyntax {
+    return convertDocBlockCommentToDocLineComment(node)
+  }
+
+  public override func visit(_ node: SubscriptDeclSyntax) -> DeclSyntax {
+    return convertDocBlockCommentToDocLineComment(node)
+  }
+
+  public override func visit(_ node: ClassDeclSyntax) -> DeclSyntax {
+    return convertDocBlockCommentToDocLineComment(node)
+  }
+
+  public override func visit(_ node: VariableDeclSyntax) -> DeclSyntax {
+    return convertDocBlockCommentToDocLineComment(node)
+  }
+
+  public override func visit(_ node: StructDeclSyntax) -> DeclSyntax {
+    return convertDocBlockCommentToDocLineComment(node)
+  }
+
+  public override func visit(_ node: ProtocolDeclSyntax) -> DeclSyntax {
+    return convertDocBlockCommentToDocLineComment(node)
+  }
+
+  public override func visit(_ node: TypealiasDeclSyntax) -> DeclSyntax {
+    return convertDocBlockCommentToDocLineComment(node)
+  }
+
+  public override func visit(_ node: ExtensionDeclSyntax) -> DeclSyntax {
+    return convertDocBlockCommentToDocLineComment(node)
+  }
+
+  /// In the case the given declaration has a docBlockComment as it's documentation
+  /// comment. Returns the declaration with the docBlockComment converted to
+  /// a docLineComment.
+  func convertDocBlockCommentToDocLineComment(_ decl: DeclSyntax) -> DeclSyntax {
+    guard let commentText = decl.docComment else { return decl }
+    guard let declLeadinTrivia = decl.leadingTrivia else { return decl }
+    let docComments = commentText.components(separatedBy: "\n")
     var pieces = [TriviaPiece]()
-    var isInvalid = false
-    
-    // Ensures that all doc block comments are replaced with doc line comment,
-    // unless the comment is between tokens on the same line.
-    for piece in token.leadingTrivia {
-      if case .docBlockComment(let text) = piece,
-         !commentIsBetweenCode(token) {
-        isInvalid = true
-        diagnose(.avoidDocBlockComment, on: token)
-        let docLineCommentText = convertsDocBlockCommentToDocLineComment(text)
-        let docLineComment = TriviaPiece.docLineComment(docLineCommentText)
-        pieces.append(docLineComment)
+
+    // Ensures the documentation comment is a docLineComment.
+    var hasFoundDocComment = false
+    for piece in declLeadinTrivia.reversed() {
+      if case .docBlockComment(_) = piece, !hasFoundDocComment {
+        hasFoundDocComment = true
+        diagnose(.avoidDocBlockComment, on: decl)
+        pieces.append(contentsOf: separateDocBlockIntoPieces(docComments).reversed())
       }
       else {
         pieces.append(piece)
       }
     }
-    return isInvalid ? token.withLeadingTrivia(Trivia.init(pieces: pieces)) : token
+
+    return !hasFoundDocComment ? decl  :
+      replaceTrivia(
+      on: decl,
+      token: decl.firstToken,
+      leadingTrivia: Trivia(pieces: pieces.reversed())
+      ) as! DeclSyntax
   }
-  
-  /// Indicates if a doc block comment is between tokens on the same line.
-  /// If it does, it should only raise a lint error.
-  func commentIsBetweenCode(_ token: TokenSyntax) -> Bool {
-    let hasCommentBetweenCode = token.leadingTrivia.isBetweenTokens
-    if hasCommentBetweenCode {
-      diagnose(.avoidDocBlockComment, on: token)
+
+  /// Breaks down the docBlock comment into the correct trivia pieces
+  /// for a docLineComment.
+  func separateDocBlockIntoPieces(_ docComments: [String]) -> [TriviaPiece]
+  {
+    var pieces = [TriviaPiece]()
+    for lineText in docComments.dropLast() {
+      // Adds an space as indentation for the lines that needed it.
+      let docLineMark = lineText.first == " " ||
+        lineText.trimmingCharacters(in: .whitespaces) == "" ? "///" : "/// "
+      pieces.append(.docLineComment(docLineMark + lineText))
+      pieces.append(.newlines(1))
     }
-    return hasCommentBetweenCode
-  }
-  
-  /// Converts the text of doc block comment into a format for a doc line comment.
-  func convertsDocBlockCommentToDocLineComment(_ text: String) -> String {
-    // Removes the '/**', '*/', the extra spaces and newlines from the comment.
-    let docText = text.dropFirst(3).dropLast(2).trimmingCharacters(in: .whitespacesAndNewlines)
-    let splitComment = docText.split(separator: "\n", omittingEmptySubsequences: false)
-    var newLine: String
-    var docBlockText = [String]()
-    
-    // Process each line of the doc block comment and removes the '*' if needed.
-    for line in splitComment {
-      newLine = line.trimmingCharacters(in: .whitespaces)
-      if let range = newLine.range(of: "*") {
-        docBlockText.append(newLine.replacingOccurrences(of: "*", with: "///" , range: range))
-      }
-      else {
-        let startsComment = line.starts(with: " ") || line.count == 0 ? "///" : "/// "
-        docBlockText.append(startsComment + line)
-      }
+
+    // The last piece doesn't need a newline after it.
+    if docComments.last!.trimmingCharacters(in: .whitespaces) != "" {
+      let docLineMark = docComments.last!.first == " " ||
+        docComments.last!.trimmingCharacters(in: .whitespaces) == "" ? "///" : "/// "
+      pieces.append(.docLineComment(docLineMark + docComments.last!))
     }
-    return docBlockText.joined(separator: "\n")
+    return pieces
   }
 }
 
 extension Diagnostic.Message {
-  static let avoidDocBlockComment = Diagnostic.Message(.warning, "Doc block comments should be avoided in favor of  doc line comments.")
-  static let avoidDocBlockCommentBetweenCode = Diagnostic.Message(.warning, "Avoid comments when they are at the same line between code")
+  static let avoidDocBlockComment =
+    Diagnostic.Message(.warning, "Documentation block comments are not allowed")
 }
+
