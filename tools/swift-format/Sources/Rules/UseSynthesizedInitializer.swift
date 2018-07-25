@@ -65,8 +65,7 @@ public final class UseSynthesizedInitializer: SyntaxLintRule {
         }
       }
 
-      if propertyId.identifier.text.trimmingCharacters(in: .whitespaces) !=
-          paramId.text.trimmingCharacters(in: .whitespacesAndNewlines) ||
+      if propertyId.identifier.text != paramId.text ||
          propertyType.description.trimmingCharacters(in: .whitespaces) !=
           paramType.description.trimmingCharacters(in: .whitespacesAndNewlines) { return false }
     }
@@ -92,11 +91,11 @@ public final class UseSynthesizedInitializer: SyntaxLintRule {
           guard base.description.trimmingCharacters(in: .whitespacesAndNewlines) == "self" else {
             return false
           }
-          leftName = element.name.text.trimmingCharacters(in: .whitespaces)
+          leftName = element.name.text
         case let element as AssignmentExprSyntax:
           guard element.assignToken.tokenKind == .equal else { return false }
         case let element as IdentifierExprSyntax:
-          rightName = element.identifier.text.trimmingCharacters(in: .whitespaces)
+          rightName = element.identifier.text
         default:
           return false
         }
@@ -106,7 +105,7 @@ public final class UseSynthesizedInitializer: SyntaxLintRule {
     }
 
     for variable in variables {
-      let id = variable.identifier.identifier.text.trimmingCharacters(in: .whitespaces)
+      let id = variable.identifier.identifier.text
       guard statements.contains(id) else { return false }
       guard let idx = statements.firstIndex(of: id) else { return false }
       statements.remove(at: idx)
