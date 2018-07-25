@@ -48,21 +48,21 @@ public final class BeginDocumentationCommentWithOneLineSummary:  SyntaxLintRule 
     diagnoseDocComments(node)
   }
 
-  /// Diagnose documentation comments that doesn't starts
+  /// Diagnose documentation comments that don't start
   /// with one sentence summary.
   func diagnoseDocComments(_ decl: DeclSyntax) {
     guard let commentText = decl.docComment else { return }
     let docComments = commentText.components(separatedBy: "\n")
-    guard let firstPart = getFirstPartOfTheComment(docComments) else { return }
+    guard let firstPart = firstParagraph(docComments) else { return }
 
-    let sentences = getSentences(firstPart)
-    if sentences.count > 1 {
-      diagnose(.declRequiresBlankComment(sentences.first!), on: decl)
+    let commentSentences = sentences(in: firstPart)
+    if commentSentences.count > 1 {
+      diagnose(.docCommentRequiresOneSentenceSummary(commentSentences.first!), on: decl)
     }
   }
 
   /// Returns the text of the first part of the comment,
-  func getFirstPartOfTheComment(_ comments: [String]) -> String? {
+  func firstParagraph(_ comments: [String]) -> String? {
     var text = [String]()
     var index = 0
     while index < comments.count  &&
@@ -75,7 +75,7 @@ public final class BeginDocumentationCommentWithOneLineSummary:  SyntaxLintRule 
   }
 
   /// Returns all the sentences in the given text.
-  func getSentences(_ text: String) -> [String] {
+  func sentences(in text: String) -> [String] {
     var sentences = [String]()
     if #available(OSX 10.13, *) { /// add linux condition
       let tagger = NSLinguisticTagger(tagSchemes: [.tokenType], options: 0)
@@ -83,10 +83,10 @@ public final class BeginDocumentationCommentWithOneLineSummary:  SyntaxLintRule 
       let range = NSRange(location: 0, length: text.utf16.count)
       let options: NSLinguisticTagger.Options = [.omitWhitespace, .omitOther]
       tagger.enumerateTags(
-      in: range,
-      unit: .sentence,
-      scheme: .tokenType,
-      options: options
+        in: range,
+        unit: .sentence,
+        scheme: .tokenType,
+        options: options
       ) {_, tokenRange, _ in
         let sentence = (text as NSString).substring(with: tokenRange)
         sentences.append(sentence)
@@ -99,11 +99,11 @@ public final class BeginDocumentationCommentWithOneLineSummary:  SyntaxLintRule 
 }
 
 extension Diagnostic.Message {
-  static func declRequiresBlankComment(_ firstSentence: String) -> Diagnostic.Message {
+  static func docCommentRequiresOneSentenceSummary(_ firstSentence: String) -> Diagnostic.Message {
     let sentenceWithoutExtraSpaces = firstSentence.trimmingCharacters(in: .whitespacesAndNewlines)
     return .init(
       .warning,
-      "add a blank comment after this sentence: \"\(sentenceWithoutExtraSpaces)\""
+      "add a blank comment line after this sentence: \"\(sentenceWithoutExtraSpaces)\""
     )
   }
 }

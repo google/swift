@@ -34,15 +34,15 @@ public class BeginDocumentationCommentWithOneLineSummaryTests: DiagnosingTestCas
       public enum Token { case comma, semicolon, identifier }
       """
     performLint(BeginDocumentationCommentWithOneLineSummary.self, input: input)
-    XCTAssertDiagnosed(.declRequiresBlankComment("This docline should not succeed."))
-    XCTAssertDiagnosed(.declRequiresBlankComment("This docline should not succeed."))
+    XCTAssertDiagnosed(.docCommentRequiresOneSentenceSummary("This docline should not succeed."))
+    XCTAssertDiagnosed(.docCommentRequiresOneSentenceSummary("This docline should not succeed."))
     
-    XCTAssertNotDiagnosed(.declRequiresBlankComment(
+    XCTAssertNotDiagnosed(.docCommentRequiresOneSentenceSummary(
       "Returns a bottle of Dr. Pepper from the vending machine."))
-    XCTAssertNotDiagnosed(.declRequiresBlankComment(
+    XCTAssertNotDiagnosed(.docCommentRequiresOneSentenceSummary(
       "Contains a comment as description that needs a sentece of two lines of code."))
-    XCTAssertNotDiagnosed(.declRequiresBlankComment("The background color of the view."))
-    XCTAssertNotDiagnosed(.declRequiresBlankComment("Returns the sum of the numbers."))
+    XCTAssertNotDiagnosed(.docCommentRequiresOneSentenceSummary("The background color of the view."))
+    XCTAssertNotDiagnosed(.docCommentRequiresOneSentenceSummary("Returns the sum of the numbers."))
   }
 
   public func testBlockLineCommentsWithoutOneSentenceSummary() {
@@ -78,12 +78,12 @@ public class BeginDocumentationCommentWithOneLineSummaryTests: DiagnosingTestCas
       public enum testEnum {}
       """
     performLint(BeginDocumentationCommentWithOneLineSummary.self, input: input)
-    XCTAssertDiagnosed(.declRequiresBlankComment("This block comment should not succeed, struct."))
-    XCTAssertDiagnosed(.declRequiresBlankComment("This block comment should not succeed, class."))
-    XCTAssertDiagnosed(.declRequiresBlankComment("This block comment should not succeed, enum."))
+    XCTAssertDiagnosed(.docCommentRequiresOneSentenceSummary("This block comment should not succeed, struct."))
+    XCTAssertDiagnosed(.docCommentRequiresOneSentenceSummary("This block comment should not succeed, class."))
+    XCTAssertDiagnosed(.docCommentRequiresOneSentenceSummary("This block comment should not succeed, enum."))
     
-    XCTAssertNotDiagnosed(.declRequiresBlankComment("Returns the numeric value."))
-    XCTAssertNotDiagnosed(.declRequiresBlankComment(
+    XCTAssertNotDiagnosed(.docCommentRequiresOneSentenceSummary("Returns the numeric value."))
+    XCTAssertNotDiagnosed(.docCommentRequiresOneSentenceSummary(
       "This block comment contains a sentence summary of two lines of code."))
   }
 
