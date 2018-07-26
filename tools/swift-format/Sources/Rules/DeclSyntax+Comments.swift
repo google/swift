@@ -25,25 +25,24 @@ extension DeclSyntax {
         let blockCommentWithoutMarks = blockComment.map { (line: String) -> String in
           // Only the first line of the block comment start with '/**'
           let markToRemove = isTheFirstLine ? "/**" : "* "
-          let lineTrim = line.trimmingCharacters(in: .whitespaces)
-          if lineTrim.starts(with: markToRemove) {
+          let trimmedLine = line.trimmingCharacters(in: .whitespaces)
+          if trimmedLine.starts(with: markToRemove) {
             let numCharsToRemove = isTheFirstLine ? markToRemove.count : markToRemove.count - 1
             isTheFirstLine = false
-            return lineTrim.hasSuffix("*/") ?
-              String(lineTrim.dropFirst(numCharsToRemove).dropLast(3)) :
-              String(lineTrim.dropFirst(numCharsToRemove))
+            return trimmedLine.hasSuffix("*/") ?
+              String(trimmedLine.dropFirst(numCharsToRemove).dropLast(3)) :
+              String(trimmedLine.dropFirst(numCharsToRemove))
           }
-          else if lineTrim == "*" {
+          else if trimmedLine == "*" {
             return ""
-            
           }
-          else if lineTrim.hasSuffix("*/") {
+          else if trimmedLine.hasSuffix("*/") {
             return String(line.dropLast(3))
           }
           isTheFirstLine = false
           return line
         }
-        
+
         return blockCommentWithoutMarks.joined(separator: "\n").trimmingCharacters(in: .newlines)
       case .docLineComment(let text):
         // Mark that we've started grabbing sequential line comments and append it to the
@@ -63,7 +62,7 @@ extension DeclSyntax {
         }
       }
     }
-    
+
     /// Removes the "///" from every line of comment
     let docLineComments = comment.reversed().map { $0.dropFirst(3) }
     return comment.isEmpty ? nil : docLineComments.joined(separator: "\n")
