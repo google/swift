@@ -13,12 +13,12 @@ extension VariableDeclSyntax {
   }
 
   /// Returns the first identifier.
-  var identifier: IdentifierPatternSyntax {
+  var firstIdentifier: IdentifierPatternSyntax {
     return identifiers[0]
   }
 
-  /// Returns the type of the variable, if explicitly stated in the declaration.
-  var type: TypeSyntax? {
+  /// Returns the first type explicitly stated in the declaration, if present.
+  var firstType: TypeSyntax? {
     for binding in bindings {
       guard let typeAnnotation = binding.typeAnnotation else { continue }
       return typeAnnotation.type
@@ -26,8 +26,8 @@ extension VariableDeclSyntax {
     return nil
   }
 
-  /// Returns the initializer clause, if present.
-  var initializer: InitializerClauseSyntax? {
+  /// Returns the first initializer clause, if present.
+  var firstInitializer: InitializerClauseSyntax? {
     for binding in bindings {
       guard let initializer = binding.initializer else { continue }
       return initializer
