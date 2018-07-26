@@ -5,11 +5,11 @@ extension DeclSyntax {
   public var docComment: String? {
     guard let tok = firstToken else { return nil }
     var comment = [String]()
-
+    
     // We need to skip trivia until we see the first comment. This trivia will include all the
     // spaces and newlines before the doc comment.
     var hasSeenFirstLineComment = false
-
+    
     // Look through for discontiguous doc comments, separated by more than 1 newline.
     gatherComments: for piece in tok.leadingTrivia.reversed() {
       switch piece {
@@ -19,7 +19,32 @@ extension DeclSyntax {
         if hasSeenFirstLineComment {
           break gatherComments
         }
-        return text
+        let blockComment = text.components(separatedBy: "\n")
+        // Removes the marks of the block comment.
+        var isTheFirstLine = true
+        let blockCommentWithoutMarks = blockComment.map { (line: String) -> String in
+          // Only the first line of the block comment start with '/**'
+          let markToRemove = isTheFirstLine ? "/**" : "* "
+          let lineTrim = line.trimmingCharacters(in: .whitespaces)
+          if lineTrim.starts(with: markToRemove) {
+            let numCharsToRemove = isTheFirstLine ? markToRemove.count : markToRemove.count - 1
+            isTheFirstLine = false
+            return lineTrim.hasSuffix("*/") ?
+              String(lineTrim.dropFirst(numCharsToRemove).dropLast(3)) :
+              String(lineTrim.dropFirst(numCharsToRemove))
+          }
+          else if lineTrim == "*" {
+            return ""
+            
+          }
+          else if lineTrim.hasSuffix("*/") {
+            return String(line.dropLast(3))
+          }
+          isTheFirstLine = false
+          return line
+        }
+        
+        return blockCommentWithoutMarks.joined(separator: "\n").trimmingCharacters(in: .newlines)
       case .docLineComment(let text):
         // Mark that we've started grabbing sequential line comments and append it to the
         // comment buffer.
@@ -38,6 +63,9 @@ extension DeclSyntax {
         }
       }
     }
-    return comment.isEmpty ? nil : comment.joined(separator: "\n")
+    
+    /// Removes the "///" from every line of comment
+    let docLineComments = comment.reversed().map { $0.dropFirst(3) }
+    return comment.isEmpty ? nil : docLineComments.joined(separator: "\n")
   }
 }
