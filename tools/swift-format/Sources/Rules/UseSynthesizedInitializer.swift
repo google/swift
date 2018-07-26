@@ -54,12 +54,12 @@ public final class UseSynthesizedInitializer: SyntaxLintRule {
       guard let paramType = parameter.type else { return false }
 
       let property = properties[idx]
-      let propertyId = property.identifier
-      guard let propertyType = property.type else { return false }
+      let propertyId = property.firstIdentifier
+      guard let propertyType = property.firstType else { return false }
 
       // Sythesized initializer only keeps default argument if the declaration uses 'var'
       if property.letOrVarKeyword.tokenKind == .varKeyword {
-        if let initializer = property.initializer {
+        if let initializer = property.firstInitializer {
           guard let defaultArg = parameter.defaultArgument else { return false }
           guard initializer.value.description == defaultArg.value.description else { return false }
         }
@@ -105,7 +105,7 @@ public final class UseSynthesizedInitializer: SyntaxLintRule {
     }
 
     for variable in variables {
-      let id = variable.identifier.identifier.text
+      let id = variable.firstIdentifier.identifier.text
       guard statements.contains(id) else { return false }
       guard let idx = statements.firstIndex(of: id) else { return false }
       statements.remove(at: idx)
