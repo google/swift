@@ -87,11 +87,43 @@ public class DiagnosingTestCase: XCTestCase {
       let syntax = try SourceFileSyntax.parse(input)
       let formatter = formatType.init(context: context!)
       let result = formatter.visit(syntax)
-
-      XCTAssertEqual(result.description, expected,
-                     file: file, line: line)
+      XCTAssertDiff(result: result.description, expected: expected, file: file, line: line)
     } catch {
       XCTFail("\(error)", file: file, line: line)
+    }
+  }
+
+  /// Asserts that the two expressions have the same value, and provides a detailed
+  /// message in the case there is a difference between both expression.
+  ///
+  /// - Parameters:
+  ///   - result: The result of formatting the input code.
+  ///   - expected: The expected result of formatting the input code.
+  ///   - file: The file the test resides in (defaults to the current caller's file)
+  ///   - line:  The line the test resides in (defaults to the current caller's line)
+  func XCTAssertDiff(result: String, expected: String, file: StaticString, line: UInt) {
+    let resultLines = result.components(separatedBy: .newlines)
+    let expectedLines = expected.components(separatedBy: .newlines)
+    let minCount = min(resultLines.count, expectedLines.count)
+    let maxCount = max(resultLines.count, expectedLines.count)
+
+    var index = 0
+    // Iterates through both expressions while there are no differences.
+    while index < minCount && resultLines[index] == expectedLines[index] { index += 1 }
+
+    // If the index is not the same as the number of lines, it's because a
+    // difference was found.
+    if maxCount != index {
+      let message = """
+                    Actual and expected have a difference on line of code \(index + 1)
+                    Actual line of code: "\(resultLines[index])"
+                    Expected line of code: "\(expectedLines[index])"
+                    ACTUAL:
+                    ("\(result)")
+                    EXPECTED:
+                    ("\(expected)")
+                    """
+      XCTAssert(false, message, file: file, line: line)
     }
   }
 
