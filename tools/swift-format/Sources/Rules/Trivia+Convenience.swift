@@ -12,6 +12,17 @@ extension Trivia {
     return count
   }
 
+  /// Returns the number of newlines after this node.
+  var numberOfNewlines: Int {
+    var count = 0
+    for piece in self {
+      if case .newlines(let n) = piece {
+        count += n
+      }
+    }
+    return count
+  }
+
   /// Returns this set of trivia, without any whitespace characters.
   func withoutSpaces() -> Trivia {
     return Trivia(pieces: filter {
@@ -19,6 +30,24 @@ extension Trivia {
       if case .tabs = $0 { return false }
       return true
     })
+  }
+
+  /// Returns this set of trivia without any trailing whitespace characters.
+  func withoutTrailingSpaces() -> Trivia {
+    var pieces = [TriviaPiece]()
+    guard var prev = first else { return self }
+    for piece in dropFirst() {
+      switch (prev, piece) {
+      case (.spaces(_), .newlines(_)),
+           (.tabs(_), .newlines(_)):
+        prev = piece
+      default:
+        pieces.append(prev)
+        prev = piece
+      }
+    }
+    pieces.append(prev)
+    return Trivia(pieces: pieces).condensed()
   }
 
   /// Returns this set of trivia, without any newlines.

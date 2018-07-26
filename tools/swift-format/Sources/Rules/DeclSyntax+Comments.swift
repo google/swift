@@ -5,11 +5,11 @@ extension DeclSyntax {
   public var docComment: String? {
     guard let tok = firstToken else { return nil }
     var comment = [String]()
-
+    
     // We need to skip trivia until we see the first comment. This trivia will include all the
     // spaces and newlines before the doc comment.
     var hasSeenFirstLineComment = false
-
+    
     // Look through for discontiguous doc comments, separated by more than 1 newline.
     gatherComments: for piece in tok.leadingTrivia.reversed() {
       switch piece {
@@ -42,6 +42,7 @@ extension DeclSyntax {
           isTheFirstLine = false
           return line
         }
+
         return blockCommentWithoutMarks.joined(separator: "\n").trimmingCharacters(in: .newlines)
       case .docLineComment(let text):
         // Mark that we've started grabbing sequential line comments and append it to the
