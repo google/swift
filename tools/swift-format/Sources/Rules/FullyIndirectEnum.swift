@@ -13,8 +13,8 @@ import SwiftSyntax
 ///
 /// - SeeAlso: https://google.github.io/swift#enum-cases
 public final class FullyIndirectEnum: SyntaxFormatRule {
-  public override func visit(_ node: EnumDeclSyntax) -> DeclSyntax {
 
+  public override func visit(_ node: EnumDeclSyntax) -> DeclSyntax {
     let enumMembers = node.members.members
     guard allAreIndirectCases(members: enumMembers) else { return node }
     diagnose(.reassignIndirectKeyword(name: node.identifier.text), on: node.identifier)
@@ -25,7 +25,7 @@ public final class FullyIndirectEnum: SyntaxFormatRule {
       if let caseMember = member.decl as? EnumCaseDeclSyntax {
         guard let caseModifiers = caseMember.modifiers else { continue }
         guard let firstModifier = caseModifiers.first else { continue }
-        let newCase = caseMember.withModifiers(removeIndirectModifier(curModifiers: caseModifiers))
+        let newCase = caseMember.withModifiers(caseModifiers.remove(name: "indirect"))
         let formattedCase = formatCase(unformattedCase: newCase,
                                        leadingTrivia: firstModifier.leadingTrivia)
         let newMember = SyntaxFactory.makeMemberDeclListItem(decl: formattedCase, semicolon: nil)
@@ -65,26 +65,11 @@ public final class FullyIndirectEnum: SyntaxFormatRule {
     for member in members {
       if let caseMember = member.decl as? EnumCaseDeclSyntax {
         guard let caseModifiers = caseMember.modifiers else { return false }
-        if isIndirectCase(modifiers: caseModifiers) { continue }
+        if caseModifiers.has(modifier: "indirect") { continue }
         else { return false }
       }
     }
     return true
-  }
-
-  func isIndirectCase(modifiers: ModifierListSyntax) -> Bool {
-    for modifier in modifiers {
-      if modifier.name.tokenKind == .identifier("indirect") { return true }
-    }
-    return false
-  }
-
-  func removeIndirectModifier(curModifiers: ModifierListSyntax) -> ModifierListSyntax {
-    var newMods: [DeclModifierSyntax] = []
-      for modifier in curModifiers {
-        if modifier.name.tokenKind != .identifier("indirect") { newMods.append(modifier) }
-      }
-    return SyntaxFactory.makeModifierList(newMods)
   }
 
   // Transfers given leading trivia to the first token in the case declaration
