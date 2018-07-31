@@ -19,19 +19,11 @@ extension VariableDeclSyntax {
 
   /// Returns the first type explicitly stated in the declaration, if present.
   var firstType: TypeSyntax? {
-    for binding in bindings {
-      guard let typeAnnotation = binding.typeAnnotation else { continue }
-      return typeAnnotation.type
-    }
-    return nil
+    return bindings.first?.typeAnnotation?.type
   }
 
   /// Returns the first initializer clause, if present.
   var firstInitializer: InitializerClauseSyntax? {
-    for binding in bindings {
-      guard let initializer = binding.initializer else { continue }
-      return initializer
-    }
-    return nil
+    return bindings.first?.initializer
   }
 }
