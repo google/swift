@@ -18,10 +18,10 @@ private final class AddModifierRewriter: SyntaxRewriter {
       return newDecl.addModifier(modifierKeyword)
     }
     // If variable already has an accessor keyword, skip (do not overwrite)
-    guard !hasAccessorKeyword(modifiers: modifiers) else { return node }
+    guard modifiers.accessLevelModifier == nil else { return node }
 
     // Put accessor keyword before the first modifier keyword in the declaration
-    let newModifiers = insertAccessorKeyword(curModifiers: modifiers)
+    let newModifiers = modifiers.prepend(modifier: modifierKeyword)
     return node.withModifiers(newModifiers)
   }
 
@@ -31,8 +31,8 @@ private final class AddModifierRewriter: SyntaxRewriter {
         as? FunctionDeclSyntax else { return node }
       return newDecl.addModifier(modifierKeyword)
     }
-    guard !hasAccessorKeyword(modifiers: modifiers) else { return node }
-    let newModifiers = insertAccessorKeyword(curModifiers: modifiers)
+    guard modifiers.accessLevelModifier == nil else { return node }
+    let newModifiers = modifiers.prepend(modifier: modifierKeyword)
     return node.withModifiers(newModifiers)
   }
 
@@ -42,8 +42,8 @@ private final class AddModifierRewriter: SyntaxRewriter {
         as? AssociatedtypeDeclSyntax else { return node }
       return newDecl.addModifier(modifierKeyword)
     }
-    guard !hasAccessorKeyword(modifiers: modifiers) else { return node }
-    let newModifiers = insertAccessorKeyword(curModifiers: modifiers)
+    guard modifiers.accessLevelModifier == nil else { return node }
+    let newModifiers = modifiers.prepend(modifier: modifierKeyword)
     return node.withModifiers(newModifiers)
   }
 
@@ -53,8 +53,8 @@ private final class AddModifierRewriter: SyntaxRewriter {
         as? ClassDeclSyntax else { return node }
       return newDecl.addModifier(modifierKeyword)
     }
-    guard !hasAccessorKeyword(modifiers: modifiers) else { return node }
-    let newModifiers = insertAccessorKeyword(curModifiers: modifiers)
+    guard modifiers.accessLevelModifier == nil else { return node }
+    let newModifiers = modifiers.prepend(modifier: modifierKeyword)
     return node.withModifiers(newModifiers)
   }
 
@@ -64,8 +64,8 @@ private final class AddModifierRewriter: SyntaxRewriter {
         as? EnumDeclSyntax else { return node }
       return newDecl.addModifier(modifierKeyword)
     }
-    guard !hasAccessorKeyword(modifiers: modifiers) else { return node }
-    let newModifiers = insertAccessorKeyword(curModifiers: modifiers)
+    guard modifiers.accessLevelModifier == nil else { return node }
+    let newModifiers = modifiers.prepend(modifier: modifierKeyword)
     return node.withModifiers(newModifiers)
   }
 
@@ -75,8 +75,8 @@ private final class AddModifierRewriter: SyntaxRewriter {
         as? ProtocolDeclSyntax else { return node }
       return newDecl.addModifier(modifierKeyword)
     }
-    guard !hasAccessorKeyword(modifiers: modifiers) else { return node }
-    let newModifiers = insertAccessorKeyword(curModifiers: modifiers)
+    guard modifiers.accessLevelModifier == nil else { return node }
+    let newModifiers = modifiers.prepend(modifier: modifierKeyword)
     return node.withModifiers(newModifiers)
   }
   
@@ -86,8 +86,8 @@ private final class AddModifierRewriter: SyntaxRewriter {
         as? StructDeclSyntax else { return node }
       return newDecl.addModifier(modifierKeyword)
     }
-    guard !hasAccessorKeyword(modifiers: modifiers) else { return node }
-    let newModifiers = insertAccessorKeyword(curModifiers: modifiers)
+    guard modifiers.accessLevelModifier == nil else { return node }
+    let newModifiers = modifiers.prepend(modifier: modifierKeyword)
     return node.withModifiers(newModifiers)
   }
   
@@ -97,8 +97,8 @@ private final class AddModifierRewriter: SyntaxRewriter {
         as? TypealiasDeclSyntax else { return node }
       return newDecl.addModifier(modifierKeyword)
     }
-    guard !hasAccessorKeyword(modifiers: modifiers) else { return node }
-    let newModifiers = insertAccessorKeyword(curModifiers: modifiers)
+    guard modifiers.accessLevelModifier == nil else { return node }
+    let newModifiers = modifiers.prepend(modifier: modifierKeyword)
     return node.withModifiers(newModifiers)
   }
 
@@ -108,34 +108,11 @@ private final class AddModifierRewriter: SyntaxRewriter {
         as? InitializerDeclSyntax else { return node }
       return newDecl.addModifier(modifierKeyword)
     }
-    guard !hasAccessorKeyword(modifiers: modifiers) else { return node }
-    let newModifiers = insertAccessorKeyword(curModifiers: modifiers)
+    guard modifiers.accessLevelModifier == nil else { return node }
+    let newModifiers = modifiers.prepend(modifier: modifierKeyword)
     return node.withModifiers(newModifiers)
   }
 
-
-  // Determines if declaration already has an access keyword in modifiers
-  func hasAccessorKeyword(modifiers: ModifierListSyntax) -> Bool {
-    for modifier in modifiers {
-      let keywordKind = modifier.name.tokenKind
-      switch keywordKind {
-      case .publicKeyword, .privateKeyword, .fileprivateKeyword, .internalKeyword:
-        return true
-      default:
-        continue
-      }
-    }
-    return false
-  }
-
-  // Puts the access keyword at the beginning of the given modifier list
-  func insertAccessorKeyword(curModifiers: ModifierListSyntax) -> ModifierListSyntax {
-    var newModifiers: [DeclModifierSyntax] = []
-    newModifiers.append(contentsOf: curModifiers)
-    newModifiers[0] = newModifiers[0].withName(newModifiers[0].name.withoutLeadingTrivia())
-    newModifiers.insert(modifierKeyword, at: 0)
-    return SyntaxFactory.makeModifierList(newModifiers)
-  }
 
   func removeFirstTokLeadingTrivia(node: DeclSyntax) -> DeclSyntax {
     let withoutLeadTrivia = replaceTrivia(on: node,
