@@ -1,3 +1,4 @@
+import Foundation
 import SwiftSyntax
 
 /// A rule that lints a given file.

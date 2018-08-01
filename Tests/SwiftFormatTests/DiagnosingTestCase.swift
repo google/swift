@@ -58,7 +58,7 @@ public class DiagnosingTestCase: XCTestCase {
     file: StaticString = #file,
     line: UInt = #line) {
     do {
-      let syntax = try SourceFileSyntax.parse(input)
+      let syntax = try SyntaxTreeParser.parse(input)
       let linter = type.init(context: context!)
       linter.visit(syntax)
     } catch {
@@ -84,7 +84,7 @@ public class DiagnosingTestCase: XCTestCase {
     line: UInt = #line
   ) {
     do {
-      let syntax = try SourceFileSyntax.parse(input)
+      let syntax = try SyntaxTreeParser.parse(input)
       let formatter = formatType.init(context: context!)
       let result = formatter.visit(syntax)
       XCTAssertDiff(result: result.description, expected: expected, file: file, line: line)

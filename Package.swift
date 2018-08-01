@@ -5,7 +5,8 @@ import PackageDescription
 let package = Package(
   name: "swiftformat",
   dependencies: [
-    .package(url: "https://github.com/apple/swift-package-manager.git", from: "0.1.0")
+    .package(url: "https://github.com/apple/swift-package-manager.git", from: "0.1.0"),
+    .package(url: "https://github.com/allevato/swift-syntax", .branch("swift-4.2-generated")),
   ],
   targets: [
     .target(
@@ -13,7 +14,7 @@ let package = Package(
       dependencies: ["Rules", "Core", "Configuration", "PrettyPrint", "SwiftSyntax", "Utility"]),
     .target(
       name: "generate-pipeline",
-      dependencies: []),
+      dependencies: ["SwiftSyntax"]),
     .target(
       name: "Rules",
       dependencies: ["Core", "Configuration"]),

@@ -14,17 +14,16 @@ public final class OneCasePerLine: SyntaxFormatRule {
   
   public override func visit(_ node: EnumDeclSyntax) -> DeclSyntax {
     let enumMembers = node.members.members
-    var newMembers: [MemberDeclListItemSyntax] = []
+    var newMembers: [DeclSyntax] = []
     var newIndx = 0
     
     for member in enumMembers {
       var numNewMembers = 0
-      if let caseMember = member.decl as? EnumCaseDeclSyntax {
+      if let caseMember = member as? EnumCaseDeclSyntax {
         var otherDecl: EnumCaseDeclSyntax? = caseMember
         // Add and skip single element case declarations
         guard caseMember.elements.count > 1 else {
-            let newMember = SyntaxFactory.makeMemberDeclListItem(decl: caseMember, semicolon: nil)
-            newMembers.append(newMember)
+            newMembers.append(caseMember)
             newIndx += 1
             continue
         }
@@ -35,16 +34,13 @@ public final class OneCasePerLine: SyntaxFormatRule {
             let newRemovedDecl = createAssociateOrRawCaseDecl(fullDecl: caseMember,
                                                               removedElement: element)
             otherDecl = removeAssociateOrRawCaseDecl(fullDecl: otherDecl)
-            let newMember = SyntaxFactory.makeMemberDeclListItem(decl: newRemovedDecl,
-                                                                 semicolon: nil)
-            newMembers.append(newMember)
+            newMembers.append(newRemovedDecl)
             numNewMembers += 1
           }
         }
         // Add case declaration of remaining elements without associated/raw values, if any
         if let otherDecl = otherDecl {
-          let newMember = SyntaxFactory.makeMemberDeclListItem(decl: otherDecl, semicolon: nil)
-          newMembers.insert(newMember, at: newIndx)
+          newMembers.insert(otherDecl, at: newIndx)
           newIndx += 1
         }
       // Add any member that isn't an enum case declaration
@@ -55,10 +51,10 @@ public final class OneCasePerLine: SyntaxFormatRule {
       newIndx += numNewMembers
     }
 
-    let newDeclList = SyntaxFactory.makeMemberDeclList(newMembers)
-    let newMemberBlock = SyntaxFactory.makeMemberDeclBlock(leftBrace: node.members.leftBrace,
-                                                           members: newDeclList,
-                                                           rightBrace: node.members.rightBrace)
+    let newMemberBlock = SyntaxFactory.makeMemberDeclBlock(
+      leftBrace: node.members.leftBrace,
+      members: SyntaxFactory.makeDeclList(newMembers),
+      rightBrace: node.members.rightBrace)
     return node.withMembers(newMemberBlock)
   }
   

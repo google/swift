@@ -6,8 +6,17 @@
         "repositoryURL": "https://github.com/apple/swift-package-manager.git",
         "state": {
           "branch": null,
-          "revision": "63a01220e93271dc3bf204b9e13dd1aeb2beefee",
-          "version": "0.2.0"
+          "revision": "6983434787dec4e543e9d398a0a9acf63ccd4da1",
+          "version": "0.2.1"
+        }
+      },
+      {
+        "package": "SwiftSyntax",
+        "repositoryURL": "https://github.com/allevato/swift-syntax",
+        "state": {
+          "branch": "swift-4.2-generated",
+          "revision": "97402e9aeb5829c176135ad09b65bbac1ef4973b",
+          "version": null
         }
       }
     ]

@@ -4,7 +4,7 @@ import XCTest
 
 let tmpDir = URL(fileURLWithPath: NSTemporaryDirectory())
 
-extension SourceFileSyntax {
+extension SyntaxTreeParser {
   /// Copies the text into a temporary file, parses that, and then deletes the temporary file.
   static func parse(_ text: String) throws -> SourceFileSyntax {
     let tmpFile = tmpDir

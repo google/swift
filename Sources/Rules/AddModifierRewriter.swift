@@ -122,7 +122,7 @@ private final class AddModifierRewriter: SyntaxRewriter {
   }
 }
 
-func addModifier(declaration: MemberDeclListItemSyntax,
+func addModifier(declaration: DeclSyntax,
                  modifierKeyword: DeclModifierSyntax) -> Syntax {
   return AddModifierRewriter(modifierKeyword: modifierKeyword).visit(declaration)
 }

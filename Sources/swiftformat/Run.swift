@@ -26,7 +26,7 @@ public func lintMain(path: String) -> Int {
   populate(pipeline)
 
   do {
-    let file = try SourceFileSyntax.parse(url)
+    let file = try SyntaxTreeParser.parse(url)
 
     // Important! We need to cast this to Syntax to avoid going directly into the specialized
     // version of visit(_: SourceFileSyntax), which will not run the pipeline properly.
@@ -56,7 +56,7 @@ public func formatMain(path: String, isDebugMode: Bool) -> Int {
   let pipeline = FormatPipeline(context: context)
   populate(pipeline)
   do {
-    let file = try SourceFileSyntax.parse(url)
+    let file = try SyntaxTreeParser.parse(url)
 
     // Important! We need to cast this to Syntax to avoid going directly into the specialized
     // version of visit(_: SourceFileSyntax), which will not run the pipeline properly.

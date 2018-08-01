@@ -17,7 +17,7 @@ public class PrettyPrintTestCase: XCTestCase {
     )
 
     do {
-      let syntax = try SourceFileSyntax.parse(input)
+      let syntax = try SyntaxTreeParser.parse(input)
 
       let printer = PrettyPrinter(
         configuration: context.configuration,

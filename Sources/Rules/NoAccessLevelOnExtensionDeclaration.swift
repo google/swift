@@ -47,9 +47,9 @@ public final class NoAccessLevelOnExtensionDeclaration: SyntaxFormatRule {
 
   // Adds given keyword to all members in declaration block
   func addMemberAccessKeywords(memDeclBlock: MemberDeclBlockSyntax,
-                               keyword: DeclModifierSyntax) -> MemberDeclListSyntax {
-    var newMembers: [MemberDeclListItemSyntax] = []
-
+                               keyword: DeclModifierSyntax) -> DeclListSyntax {
+    var newMembers: [DeclSyntax] = []
+    
     for member in memDeclBlock.members {
       guard let firstTokInDecl = member.firstToken else { continue }
       let formattedKeyword = replaceTrivia(on: keyword,
@@ -58,10 +58,10 @@ public final class NoAccessLevelOnExtensionDeclaration: SyntaxFormatRule {
                                            as! DeclModifierSyntax
 
       guard let newMember = addModifier(declaration: member, modifierKeyword: formattedKeyword)
-        as? MemberDeclListItemSyntax else { continue }
+        as? DeclSyntax else { continue }
       newMembers.append(newMember)
     }
-    return SyntaxFactory.makeMemberDeclList(newMembers)
+    return SyntaxFactory.makeDeclList(newMembers)
   }
 }
 

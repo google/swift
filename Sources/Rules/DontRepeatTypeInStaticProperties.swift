@@ -34,9 +34,9 @@ public final class DontRepeatTypeInStaticProperties: SyntaxLintRule {
                                     nodeId: node.extendedType.description)
   }
   
-  func determinePropertyNameViolations(members: MemberDeclListSyntax, nodeId: String) {
+  func determinePropertyNameViolations(members: DeclListSyntax, nodeId: String) {
     for member in members {
-      guard let decl = member.decl as? VariableDeclSyntax else { continue }
+      guard let decl = member as? VariableDeclSyntax else { continue }
       guard let modifiers = decl.modifiers else { continue }
       guard modifiers.has(modifier: "static") || modifiers.has(modifier: "class") else { continue }
 

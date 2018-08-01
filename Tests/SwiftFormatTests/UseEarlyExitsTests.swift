@@ -6,6 +6,8 @@ import SwiftSyntax
 
 public class UseEarlyExitsTests: DiagnosingTestCase {
   public func testIfToGuardStmtSwitch() {
+    // The indentation in the expected output is explicitly incorrect because this formatting rule
+    // does not fix it up with the assumption that the pretty-printer will handle it.
     XCTAssertFormatting(
       UseEarlyExits.self,
       input: """
@@ -43,19 +45,19 @@ public class UseEarlyExitsTests: DiagnosingTestCase {
                     print("The array was empty")
                     throw DiscombobulationError.arrayWasEmpty
                   }
-                  // Comment 3
+                    // Comment 3
 
-                  /// Doc comment
-                  guard first >= 0 else {
-                    print("Can't have negative energy")
-                    throw DiscombobulationError.negativeEnergy
-                  }
-                  // Comment 4
-                  var result = 0
-                  for value in values {
-                    result += invertedCombobulatoryFactor(of: value)
-                  }
-                  return result
+                    /// Doc comment
+                    guard first >= 0 else {
+                      print("Can't have negative energy")
+                      throw DiscombobulationError.negativeEnergy
+                    }
+                      // Comment 4
+                      var result = 0
+                      for value in values {
+                        result += invertedCombobulatoryFactor(of: value)
+                      }
+                      return result
                 }
                 """)
     

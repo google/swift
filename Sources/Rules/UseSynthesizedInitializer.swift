@@ -18,7 +18,7 @@ public final class UseSynthesizedInitializer: SyntaxLintRule {
 
     for member in node.members.members {
       // Collect all stored variables into a list
-      if let varDecl = member.decl as? VariableDeclSyntax {
+      if let varDecl = member as? VariableDeclSyntax {
         guard let modifiers = varDecl.modifiers else {
           storedProperties.append(varDecl)
           continue
@@ -26,7 +26,7 @@ public final class UseSynthesizedInitializer: SyntaxLintRule {
         guard !modifiers.has(modifier: "static") else { continue }
         storedProperties.append(varDecl)
       // Collect any possible redundant initializers into a list
-      } else if let initDecl = member.decl as? InitializerDeclSyntax {
+      } else if let initDecl = member as? InitializerDeclSyntax {
         guard initDecl.modifiers == nil ||
               initDecl.modifiers!.has(modifier: "internal") else { continue }
         guard initDecl.optionalMark == nil else { continue }
@@ -87,7 +87,7 @@ public final class UseSynthesizedInitializer: SyntaxLintRule {
       for element in exp.elements {
         switch element {
         case let element as MemberAccessExprSyntax:
-          guard let base = element.base else { return false }
+          let base = element.base
           guard base.description.trimmingCharacters(in: .whitespacesAndNewlines) == "self" else {
             return false
           }

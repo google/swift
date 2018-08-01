@@ -39,7 +39,7 @@ var registry = PassRegistry()
 for baseName in fm.enumerator(atPath: rulesDir.path)! {
   guard let baseName = baseName as? String, baseName.hasSuffix(".swift") else { continue }
   let fileURL = rulesDir.appendingPathComponent(baseName)
-  let sourceFile = try SourceFileSyntax.parse(fileURL)
+  let sourceFile = try SyntaxTreeParser.parse(fileURL)
 
   for stmt in sourceFile.statements {
     guard let classDecl = stmt.item as? ClassDeclSyntax else { continue }
@@ -62,7 +62,7 @@ for baseName in fm.enumerator(atPath: rulesDir.path)! {
       continue
     }
     for member in classDecl.members.members {
-      guard let function = member.decl as? FunctionDeclSyntax,
+      guard let function = member as? FunctionDeclSyntax,
             let modifiers = function.modifiers else {
         continue
       }

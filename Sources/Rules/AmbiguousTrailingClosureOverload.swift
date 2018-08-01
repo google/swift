@@ -55,7 +55,7 @@ public final class AmbiguousTrailingClosureOverload: SyntaxLintRule {
   }
 
   public override func visit(_ decls: MemberDeclBlockSyntax) {
-    let functions = decls.members.compactMap { $0.decl as? FunctionDeclSyntax }
+    let functions = decls.members.compactMap { $0 as? FunctionDeclSyntax }
     discoverAndDiagnoseOverloads(functions)
     super.visit(decls)
   }

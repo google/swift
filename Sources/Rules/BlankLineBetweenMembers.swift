@@ -18,7 +18,7 @@ import SwiftSyntax
 /// - SeeAlso: https://google.github.io/swift#vertical-whitespace
 public final class BlankLineBetweenMembers: SyntaxFormatRule {
   public override func visit(_ node: MemberDeclBlockSyntax) -> Syntax {
-    var membersList = [MemberDeclListItemSyntax]()
+    var membersList = [DeclSyntax]()
     var hasValidNumOfBlankLines = true
 
     // Iterates through all the declaration of the member, to ensure that the declarations have
@@ -35,7 +35,7 @@ public final class BlankLineBetweenMembers: SyntaxFormatRule {
           on: currentMember,
           token: currentMember.firstToken!,
           leadingTrivia: correctTrivia
-        ) as! MemberDeclListItemSyntax
+        ) as! DeclSyntax
         
         hasValidNumOfBlankLines = false
         membersList.append(newMember)
@@ -46,12 +46,12 @@ public final class BlankLineBetweenMembers: SyntaxFormatRule {
       else if case .newlines(let numNewLines) = firstPiece,
               !ignoreItem(item: currentMember),
               numNewLines == 1 {
-        let numBlankLines = member != node.members.first ? 1 : 0
+        let numBlankLines = member.indexInParent == 0 ? 0 : 1
         let correctTrivia = Trivia.newlines(numBlankLines) + memberTrivia
         let newMember = replaceTrivia(
           on: currentMember, token: currentMember.firstToken!,
           leadingTrivia: correctTrivia
-        ) as! MemberDeclListItemSyntax
+        ) as! DeclSyntax
         
         diagnose(.addBlankLine, on: currentMember)
         hasValidNumOfBlankLines = false
@@ -63,7 +63,7 @@ public final class BlankLineBetweenMembers: SyntaxFormatRule {
     }
     
     return hasValidNumOfBlankLines ? node :
-      node.withMembers(SyntaxFactory.makeMemberDeclList(membersList))
+      node.withMembers(SyntaxFactory.makeDeclList(membersList))
   }
   
   /// Indicates if the given trivia has more than
@@ -82,7 +82,7 @@ public final class BlankLineBetweenMembers: SyntaxFormatRule {
   
   /// Returns the given trivia without any set of consecutive blank lines
   /// that exceeds the maximumBlankLines.
-  func removeExtraBlankLines(_ trivia: Trivia, _ member: MemberDeclListItemSyntax) -> Trivia {
+  func removeExtraBlankLines(_ trivia: Trivia, _ member: DeclSyntax) -> Trivia {
     let maxBlankLines = context.configuration.maximumBlankLines
     var pieces = [TriviaPiece]()
     
@@ -104,7 +104,7 @@ public final class BlankLineBetweenMembers: SyntaxFormatRule {
 
   /// Indicates if a declaration has to be ignored by checking if it's
   /// a single line and if the format is configured to ignore single lines.
-  func ignoreItem(item: MemberDeclListItemSyntax) -> Bool {
+  func ignoreItem(item: DeclSyntax) -> Bool {
     guard let firstToken = item.firstToken else { return false }
     guard let lastToken = item.lastToken else { return false }
     
@@ -118,24 +118,24 @@ public final class BlankLineBetweenMembers: SyntaxFormatRule {
   }
 
   /// Recursively ensures all nested member types follows the BlankLineBetweenMembers rule.
-  func checkForNestedMembers(_ member: MemberDeclListItemSyntax) -> MemberDeclListItemSyntax {
-    switch member.decl {
+  func checkForNestedMembers(_ member: DeclSyntax) -> DeclSyntax {
+    switch member {
     case let nestedEnum as EnumDeclSyntax:
       let nestedMembers = visit(nestedEnum.members)
       let newDecl = nestedEnum.withMembers(nestedMembers as? MemberDeclBlockSyntax)
-      return member.withDecl(newDecl)
+      return newDecl
     case let nestedStruct as StructDeclSyntax:
       let nestedMembers = visit(nestedStruct.members)
       let newDecl = nestedStruct.withMembers(nestedMembers as? MemberDeclBlockSyntax)
-      return member.withDecl(newDecl)
+      return newDecl
     case let nestedClass as ClassDeclSyntax:
       let nestedMembers = visit(nestedClass.members)
       let newDecl = nestedClass.withMembers(nestedMembers as? MemberDeclBlockSyntax)
-      return member.withDecl(newDecl)
+      return newDecl
     case let nestedExtension as ExtensionDeclSyntax:
       let nestedMembers = visit(nestedExtension.members)
       let newDecl = nestedExtension.withMembers(nestedMembers as? MemberDeclBlockSyntax)
-      return member.withDecl(newDecl)
+      return newDecl
     default:
       return member
     }

@@ -67,14 +67,14 @@ public final class OneVariableDeclarationPerLine: SyntaxFormatRule {
 
   public override func visit(_ node: CodeBlockSyntax) -> Syntax {
     guard let newStmts = splitVariableDecls(node.statements) else {
-      return node
+      return super.visit(node)
     }
     return node.withStatements(newStmts)
   }
 
   public override func visit(_ node: ClosureExprSyntax) -> ExprSyntax {
     guard let newStmts = splitVariableDecls(node.statements) else {
-      return node
+      return super.visit(node)
     }
     return node.withStatements(newStmts)
   }
@@ -82,14 +82,14 @@ public final class OneVariableDeclarationPerLine: SyntaxFormatRule {
   public override func visit(_ node: AccessorBlockSyntax) -> Syntax {
     guard let stmts = node.accessorListOrStmtList as? CodeBlockItemListSyntax,
           let newStmts = splitVariableDecls(stmts) else {
-      return node
+      return super.visit(node)
     }
     return node.withAccessorListOrStmtList(newStmts)
   }
 
   public override func visit(_ node: SourceFileSyntax) -> Syntax {
     guard let newStmts = splitVariableDecls(node.statements) else {
-      return node
+      return super.visit(node)
     }
     return node.withStatements(newStmts)
   }

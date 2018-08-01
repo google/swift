@@ -41,13 +41,11 @@ public final class UseEarlyExits: SyntaxFormatRule {
           body: moveElseBody)
         newItems.append(
           SyntaxFactory.makeCodeBlockItem(item: newGuardStmt,
-                                          semicolon: nil,
-                                          errorTokens: nil)
+                                          semicolon: nil)
         )
         newItems.append(
           SyntaxFactory.makeCodeBlockItem(item: moveDeletedIfCode,
-                                          semicolon: nil,
-                                          errorTokens: nil)
+                                          semicolon: nil)
         )
       }
     }

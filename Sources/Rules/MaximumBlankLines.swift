@@ -27,7 +27,7 @@ public final class MaximumBlankLines: SyntaxFormatRule {
 
     // Tokens who appeared in a member type are handle by
     // BlankLineBetweenMembers rule.
-    if grandparentTok is MemberDeclListItemSyntax {
+    if grandparentTok is DeclListSyntax {
       return token
     }
     else {

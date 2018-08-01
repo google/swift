@@ -67,11 +67,11 @@ public final class UseEnumForNamespacing: SyntaxFormatRule {
   /// Determines if the set of declarations is consistent with a class or struct being used
   /// solely as a namespace for static functions. If there is a non-static private initializer
   /// with no arguments, that does not count against possibly being a namespace.
-  func declsIfUsedAsNamespace(_ members: MemberDeclListSyntax) -> MemberDeclListSyntax? {
+  func declsIfUsedAsNamespace(_ members: DeclListSyntax) -> DeclListSyntax? {
     if members.count == 0 { return nil }
-    var declList = [MemberDeclListItemSyntax]()
+    var declList = [DeclSyntax]()
     for member in members {
-      switch member.decl {
+      switch member {
       case let decl as FunctionDeclSyntax:
         guard let modifiers = decl.modifiers,
               modifiers.has(modifier: "static") else {
@@ -95,7 +95,7 @@ public final class UseEnumForNamespacing: SyntaxFormatRule {
         declList.append(member)
       }
     }
-    return SyntaxFactory.makeMemberDeclList(declList)
+    return SyntaxFactory.makeDeclList(declList)
   }
 }
 
