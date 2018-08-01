@@ -26,8 +26,10 @@ public final class OrderedImports: SyntaxFormatRule {
     var fileComment = Trivia()
     var impComment = Trivia()
     var (allImports, allCode) = getAllImports(node.statements)
-
-    if allImports.first?.statement == node.statements.first {
+    
+    if let firstImport = allImports.first,
+      let firstStatement = node.statements.first,
+      firstImport.statement == firstStatement {
       // Extracts the comments of the imports and separates them into file comments
       // and specific comments for the first import statement.
       (fileComment, impComment) = getComments(node.statements.first!)
@@ -35,7 +37,7 @@ public final class OrderedImports: SyntaxFormatRule {
         on: node.statements.first!,
         token: node.statements.first?.firstToken,
         leadingTrivia: .newlines(1) + impComment
-      ) as! CodeBlockItemSyntax
+        ) as! CodeBlockItemSyntax
     }
 
     let importGroups = groupImports(allImports)
