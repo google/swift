@@ -17,53 +17,39 @@ public final class NoAccessLevelOnExtensionDeclaration: SyntaxFormatRule {
 
   public override func visit(_ node: ExtensionDeclSyntax) -> DeclSyntax {
     guard let modifiers = node.modifiers, modifiers.count != 0 else { return node }
+    guard let accessKeyword = modifiers.accessLevelModifier else { return node }
 
-    for accessKeyword in modifiers {
-
-      let keywordKind = accessKeyword.name.tokenKind
-      switch keywordKind {
-      // Public, private, or fileprivate keywords need to be moved to members
-      case .publicKeyword, .privateKeyword, .fileprivateKeyword:
-        diagnose(.moveAccessKeyword(keyword: accessKeyword.name.text), on: accessKeyword)
-        let newMembers = SyntaxFactory.makeMemberDeclBlock(
-          leftBrace: node.members.leftBrace,
-          members: addMemberAccessKeywords(memDeclBlock: node.members, keyword: accessKeyword),
-          rightBrace: node.members.rightBrace)
-        return node.withMembers(newMembers)
-                .withModifiers(removeModifier(curModifiers: modifiers, removal: accessKeyword))
-      // Internal keyword redundant, delete
-      case .internalKeyword:
-        diagnose(.removeRedundantAccessKeyword(name: node.extendedType.description),
-                 on: accessKeyword)
-        let newKeyword = replaceTrivia(on: node.extensionKeyword,
-                                       token: node.extensionKeyword,
-                                       leadingTrivia: accessKeyword.leadingTrivia) as! TokenSyntax
-        return node.withModifiers(removeModifier(curModifiers: modifiers, removal: accessKeyword))
-                .withExtensionKeyword(newKeyword)
-      default:
-        return node
-      }
+    let keywordKind = accessKeyword.name.tokenKind
+    switch keywordKind {
+    // Public, private, or fileprivate keywords need to be moved to members
+    case .publicKeyword, .privateKeyword, .fileprivateKeyword:
+      diagnose(.moveAccessKeyword(keyword: accessKeyword.name.text), on: accessKeyword)
+      let newMembers = SyntaxFactory.makeMemberDeclBlock(
+        leftBrace: node.members.leftBrace,
+        members: addMemberAccessKeywords(memDeclBlock: node.members, keyword: accessKeyword),
+        rightBrace: node.members.rightBrace)
+      return node.withMembers(newMembers)
+              .withModifiers(modifiers.remove(name: accessKeyword.name.text))
+    // Internal keyword redundant, delete
+    case .internalKeyword:
+      diagnose(.removeRedundantAccessKeyword(name: node.extendedType.description),
+               on: accessKeyword)
+      let newKeyword = replaceTrivia(on: node.extensionKeyword,
+                                     token: node.extensionKeyword,
+                                     leadingTrivia: accessKeyword.leadingTrivia) as! TokenSyntax
+      return node.withModifiers(modifiers.remove(name: accessKeyword.name.text))
+              .withExtensionKeyword(newKeyword)
+    default:
+      break
     }
     return node
-  }
-
-  // Returns modifier list without the access modifier
-  func removeModifier(curModifiers: ModifierListSyntax,
-                      removal: DeclModifierSyntax) -> ModifierListSyntax {
-    var newMods: [DeclModifierSyntax] = []
-    for modifier in curModifiers {
-      if modifier.name != removal.name {
-        newMods.append(modifier)
-      }
-    }
-    return SyntaxFactory.makeModifierList(newMods)
   }
 
   // Adds given keyword to all members in declaration block
   func addMemberAccessKeywords(memDeclBlock: MemberDeclBlockSyntax,
                                keyword: DeclModifierSyntax) -> MemberDeclListSyntax {
     var newMembers: [MemberDeclListItemSyntax] = []
-    
+
     for member in memDeclBlock.members {
       guard let firstTokInDecl = member.firstToken else { continue }
       let formattedKeyword = replaceTrivia(on: keyword,
