@@ -123,7 +123,7 @@ public class DiagnosingTestCase: XCTestCase {
                     EXPECTED:
                     ("\(expected)")
                     """
-      XCTAssert(false, message, file: file, line: line)
+      XCTFail(message, file: file, line: line)
     }
   }
 
