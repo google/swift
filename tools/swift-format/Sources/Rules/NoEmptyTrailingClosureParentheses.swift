@@ -15,7 +15,13 @@ public final class NoEmptyTrailingClosureParentheses: SyntaxFormatRule {
   public override func visit(_ node: FunctionCallExprSyntax) -> ExprSyntax {
     guard node.argumentList.count == 0 else { return node }
 
-    guard let name = node.calledExpression.firstToken?.withoutTrivia() else { return node }
+    guard node.trailingClosure != nil && node.argumentList.isEmpty && node.leftParen != nil else {
+        return node
+    }
+    guard let name = node.calledExpression.lastToken?.withoutTrivia() else {
+        return node
+    }
+
     diagnose(.removeEmptyTrailingParentheses(name: "\(name)"), on: node)
 
     let formattedExp = replaceTrivia(on: node.calledExpression,
