@@ -103,20 +103,20 @@ extension Diagnostic.Message {
   static func parametersDontMatch(funcName: String) -> Diagnostic.Message {
     return Diagnostic.Message(
       .warning,
-      "The parameters of \(funcName) don't match the parameters in its documentation."
+      "the parameters of \(funcName) don't match the parameters in its documentation"
     )
   }
 
   static let useSingularParameter =
     Diagnostic.Message(
       .warning,
-      "Replace the plural form of 'Parameters' with a singular inline form of the 'Parameter' tag."
+      "replace the plural form of 'Parameters' with a singular inline form of the 'Parameter' tag"
     )
 
   static let usePluralParameters =
     Diagnostic.Message(
       .warning,
-      "Replace the singular inline form of 'Parameter' tag with a plural 'Parameters' tag " +
+      "replace the singular inline form of 'Parameter' tag with a plural 'Parameters' tag " +
         "and group each parameter as a nested list"
      )
 }
