@@ -68,14 +68,14 @@ extension DeclSyntax {
     return comment.isEmpty ? nil : docLineComments.joined(separator: "\n")
   }
 
-  var docCommentInfo: parseComment? {
+  var docCommentInfo: ParseComment? {
     guard let docComment = self.docComment else { return nil }
     let comments = docComment.components(separatedBy: .newlines)
-    var params = [parameter]()
+    var params = [ParseComment.Parameter]()
     var commentParagraphs = [String]()
     var hasFoundParameterList = false
     var hasFoundReturn = false
-    var returnsDesc: String?
+    var returnsDescription: String?
     // Takes the first sentence of the comment, and counts the number of lines it uses.
     let oneSenteceSummary = docComment.components(separatedBy: ".").first
     let numOfOneSentenceLines = oneSenteceSummary!.components(separatedBy: .newlines).count
@@ -84,7 +84,7 @@ extension DeclSyntax {
     // return tags and get their description.
     for line in comments.dropFirst(numOfOneSentenceLines) {
       let trimmedLine = line.trimmingCharacters(in: .whitespaces)
-      
+
       if trimmedLine.starts(with: "- Parameters") {
         hasFoundParameterList = true
       }
@@ -94,47 +94,47 @@ extension DeclSyntax {
         guard let index = trimmedLine.firstIndex(of: ":") else { continue }
         let name = trimmedLine.dropFirst("- Parameter".count)[..<index]
           .trimmingCharacters(in: .init(charactersIn: " -:"))
-        let desc = trimmedLine[index...].trimmingCharacters(in: .init(charactersIn: " -:"))
-        params.append(parameter(paramName: name, paramDesc: desc))
+        let summary = trimmedLine[index...].trimmingCharacters(in: .init(charactersIn: " -:"))
+        params.append(ParseComment.Parameter(name: name, summary: summary))
       }
       else if trimmedLine.starts(with: "- Returns:") {
         hasFoundParameterList = false
         hasFoundReturn = true
-        returnsDesc = String(trimmedLine.dropFirst("- Returns:".count))
+        returnsDescription = String(trimmedLine.dropFirst("- Returns:".count))
       }
       else if hasFoundParameterList {
         // After the paramters tag is found the following lines should be the parameters
         // description.
         guard let index = trimmedLine.firstIndex(of: ":") else { continue }
         let name = trimmedLine[..<index].trimmingCharacters(in: .init(charactersIn: " -:"))
-        let desc = trimmedLine[index...].trimmingCharacters(in: .init(charactersIn: " -:"))
-        params.append(parameter(paramName: name, paramDesc: desc))
+        let summary = trimmedLine[index...].trimmingCharacters(in: .init(charactersIn: " -:"))
+        params.append(ParseComment.Parameter(name: name, summary: summary))
       }
       else if hasFoundReturn {
         // Appends the return description that is not inline with the return tag.
-        returnsDesc!.append(trimmedLine)
+        returnsDescription!.append(trimmedLine)
       }
       else if trimmedLine != ""{
         commentParagraphs.append(" " + trimmedLine)
       }
     }
-    return parseComment(
+    return ParseComment(
       oneSentenceSummary: oneSenteceSummary,
       commentParagraphs: commentParagraphs,
       parameters: params,
-      returnsDesc: returnsDesc
+      returnsDescription: returnsDescription
     )
   }
 }
 
-struct parameter {
-  var paramName: String
-  var paramDesc: String
-}
+struct ParseComment {
+  struct Parameter {
+    var name: String
+    var summary: String
+  }
 
-struct parseComment {
   var oneSentenceSummary: String?
   var commentParagraphs: [String]?
-  var parameters: [parameter]?
-  var returnsDesc: String?
+  var parameters: [Parameter]?
+  var returnsDescription: String?
 }

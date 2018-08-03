@@ -21,7 +21,7 @@ public final class ValidateDocumentationComments: SyntaxLintRule {
     if commentInfo.oneSentenceSummary != nil &&
       commentInfo.commentParagraphs!.isEmpty &&
       params.isEmpty &&
-      commentInfo.returnsDesc == nil {
+      commentInfo.returnsDescription == nil {
       return
     }
 
@@ -30,7 +30,7 @@ public final class ValidateDocumentationComments: SyntaxLintRule {
     let hasPluralDesc = declComment.components(separatedBy: .newlines)
       .contains { $0.trimmingCharacters(in: .whitespaces).starts(with: "- Parameters") }
 
-    validateReturn(node, returnDesc: commentInfo.returnsDesc)
+    validateReturn(node, returnDesc: commentInfo.returnsDescription)
     let funcParameters = funcParametersIdentifiers(in: node.signature.input.parameterList)
 
     // If the documentation of the parameters is wrong 'docCommentInfo' won't
@@ -79,9 +79,9 @@ func funcParametersIdentifiers(in paramList: FunctionParameterListSyntax) -> [St
 
 /// Indicates if the parameters name from the documentation and the parameters
 /// from the declaration are the same.
-func parametersAreEqual(params: [parameter], funcParam: [String]) -> Bool {
+func parametersAreEqual(params: [ParseComment.Parameter], funcParam: [String]) -> Bool {
   for index in 0..<params.count {
-    if params[index].paramName != funcParam[index] {
+    if params[index].name != funcParam[index] {
       return false
     }
   }
@@ -90,27 +90,27 @@ func parametersAreEqual(params: [parameter], funcParam: [String]) -> Bool {
 
 extension Diagnostic.Message {
   static func documentReturnValue(funcName: String) -> Diagnostic.Message {
-    return Diagnostic.Message(.warning, "Document the return value of \(funcName) .")
+    return Diagnostic.Message(.warning, "document the return value of \(funcName)")
   }
 
   static func removeReturnComment(funcName: String) -> Diagnostic.Message {
     return Diagnostic.Message(
       .warning,
-      "Remove the return comment of \(funcName), it doesn't return a value."
+      "remove the return comment of \(funcName), it doesn't return a value"
     )
   }
 
   static func parametersDontMatch(funcName: String) -> Diagnostic.Message {
     return Diagnostic.Message(
       .warning,
-      "The parameters of \(funcName) don't match with the parameters in it's documentation."
+      "The parameters of \(funcName) don't match the parameters in its documentation."
     )
   }
 
   static let useSingularParameter =
     Diagnostic.Message(
       .warning,
-      "Replace the plural form of'Parameters' with a singular inline form of the 'Parameter' tag."
+      "Replace the plural form of 'Parameters' with a singular inline form of the 'Parameter' tag."
     )
 
   static let usePluralParameters =
