@@ -50,6 +50,22 @@ extension Trivia {
     return Trivia(pieces: pieces).condensed()
   }
 
+  /// Returns this set of trivia, without any trailing whitespace characters.
+  func withoutLeadingNewLines() -> Trivia {
+    let triviaCondensed = self.condensed()
+    guard let firstPieceOfTrivia = triviaCondensed.first else { return self }
+    if case .newlines(_) = firstPieceOfTrivia {
+      var pieces = [TriviaPiece]()
+      for piece in triviaCondensed.dropFirst() {
+        pieces.append(piece)
+      }
+      return Trivia(pieces: pieces)
+    }
+    else {
+      return self
+    }
+  }
+
   /// Returns this set of trivia, without any newlines.
   func withoutNewlines() -> Trivia {
     return Trivia(pieces: filter {

@@ -11,7 +11,9 @@ public class NoAccessLevelOnExtensionDeclarationTests: DiagnosingTestCase {
       input: """
              public extension Foo {
                var x: Bool
+               // Comment 1
                internal var y: Bool
+               // Comment 2
                static var z: Bool
                static func someFunc() {}
                init() {}
@@ -28,7 +30,9 @@ public class NoAccessLevelOnExtensionDeclarationTests: DiagnosingTestCase {
       expected: """
                 extension Foo {
                   public var x: Bool
+                  // Comment 1
                   internal var y: Bool
+                  // Comment 2
                   public static var z: Bool
                   public static func someFunc() {}
                   public init() {}
