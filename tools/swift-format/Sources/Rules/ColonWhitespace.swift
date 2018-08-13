@@ -17,6 +17,14 @@ public final class ColonWhitespace: SyntaxFormatRule {
   public override func visit(_ token: TokenSyntax) -> Syntax {
     guard let next = token.nextToken else { return token }
 
+    if token.tokenKind == .colon,
+       token.containingExprStmtOrDecl is DictionaryExprSyntax,
+       next.tokenKind == .rightSquareBracket,
+       token.trailingTrivia.numberOfSpaces > 0 {
+      diagnose(.noSpacesAfterColon, on: token)
+      return token.withoutTrailingTrivia()
+    }
+
     /// Colons own their trailing spaces, so ensure it only has 1 if there's
     /// another token on the same line.
     if token.tokenKind == .colon,
@@ -51,4 +59,6 @@ extension Diagnostic.Message {
     Diagnostic.Message(.warning, "add one space after ':'")
   static let noSpacesBeforeColon =
     Diagnostic.Message(.warning, "remove spaces before ':'")
+  static let noSpacesAfterColon =
+    Diagnostic.Message(.warning, "remove spaces after ':'")
 }
