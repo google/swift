@@ -5,96 +5,180 @@ import XCTest
 @testable import Rules
 
 public class NoLeadingUnderscoresTests: DiagnosingTestCase {
-  public func testInvalidIdentifierNames() {
-    let input =
-    """
+
+  public func testVars() {
+    let input = """
       let _foo = foo
       var good_name = 20
       var _badName, okayName, _wor_sEName = 20
-      struct _baz {
-        var x: Int {
-          get {
-            var a = 10
-            var _b = 20
-          }
-          set {
-            var _c = 10
-            var d = 20
-          }
-        }
-
-        init(foox z: Int, bar _y: Int) {}
-        func _bazFunc(arg1: String, _arg2: Int) {}
-        func quuxFunc(fooo _x: Int) {}
-      }
-
-      protocol _SomeProtocol {
-        func _food()
-      }
-
-      struct Bag<_Element> {}
-      func generic<_Arg>(x: _Arg) {}
-
-      enum Numbers {
-        case one
-        case _two
-        case three
-      }
-
-      func f() {
-        var _x: Int = 10
-        var y: Int = 20
-      }
-    """
+      """
     performLint(NoLeadingUnderscores.self, input: input)
-    XCTAssertDiagnosed(.doNotLeadWithUnderscore(identifier: "_foo"))
-    XCTAssertNotDiagnosed(.doNotLeadWithUnderscore(identifier: "good_name"))
-    XCTAssertDiagnosed(.doNotLeadWithUnderscore(identifier: "_badName"))
-    XCTAssertNotDiagnosed(.doNotLeadWithUnderscore(identifier: "okayName"))
-    XCTAssertDiagnosed(.doNotLeadWithUnderscore(identifier: "_wor_sEName"))
-    
-    XCTAssertDiagnosed(.doNotLeadWithUnderscore(identifier: "_baz"))
-    XCTAssertNotDiagnosed(.doNotLeadWithUnderscore(identifier: "x"))
-    XCTAssertNotDiagnosed(.doNotLeadWithUnderscore(identifier: "a"))
-    XCTAssertDiagnosed(.doNotLeadWithUnderscore(identifier: "_b"))
-    XCTAssertDiagnosed(.doNotLeadWithUnderscore(identifier: "_c"))
-    XCTAssertNotDiagnosed(.doNotLeadWithUnderscore(identifier: "d"))
-    
-    XCTAssertNotDiagnosed(.doNotLeadWithUnderscore(identifier: "init"))
-    XCTAssertNotDiagnosed(.doNotLeadWithUnderscore(identifier: "foox"))
-    XCTAssertNotDiagnosed(.doNotLeadWithUnderscore(identifier: "z"))
-    XCTAssertNotDiagnosed(.doNotLeadWithUnderscore(identifier: "bar"))
-    XCTAssertDiagnosed(.doNotLeadWithUnderscore(identifier: "_y"))
-    
-    XCTAssertDiagnosed(.doNotLeadWithUnderscore(identifier: "_bazFunc"))
-    XCTAssertNotDiagnosed(.doNotLeadWithUnderscore(identifier: "arg1"))
-    XCTAssertDiagnosed(.doNotLeadWithUnderscore(identifier: "_arg2"))
-    
-    XCTAssertNotDiagnosed(.doNotLeadWithUnderscore(identifier: "quuxFunc"))
-    XCTAssertNotDiagnosed(.doNotLeadWithUnderscore(identifier: "fooo"))
-    XCTAssertDiagnosed(.doNotLeadWithUnderscore(identifier: "_x"))
-    
-    XCTAssertDiagnosed(.doNotLeadWithUnderscore(identifier: "_SomeProtocol"))
-    XCTAssertDiagnosed(.doNotLeadWithUnderscore(identifier: "_food"))
-    
-    XCTAssertDiagnosed(.doNotLeadWithUnderscore(identifier: "_Element"))
-    XCTAssertNotDiagnosed(.doNotLeadWithUnderscore(identifier: "generic"))
-    XCTAssertDiagnosed(.doNotLeadWithUnderscore(identifier: "_Arg"))
-    XCTAssertNotDiagnosed(.doNotLeadWithUnderscore(identifier: "x"))
-    
-    XCTAssertNotDiagnosed(.doNotLeadWithUnderscore(identifier: "Numbers"))
-    XCTAssertNotDiagnosed(.doNotLeadWithUnderscore(identifier: "one"))
-    XCTAssertDiagnosed(.doNotLeadWithUnderscore(identifier: "_two"))
-    XCTAssertNotDiagnosed(.doNotLeadWithUnderscore(identifier: "three"))
-    
-    XCTAssertNotDiagnosed(.doNotLeadWithUnderscore(identifier: "f"))
-    XCTAssertDiagnosed(.doNotLeadWithUnderscore(identifier: "_x"))
-    XCTAssertNotDiagnosed(.doNotLeadWithUnderscore(identifier: "y"))
+
+    XCTAssertDiagnosed(.doNotStartWithUnderscore(identifier: "_foo"))
+    XCTAssertNotDiagnosed(.doNotStartWithUnderscore(identifier: "good_name"))
+    XCTAssertDiagnosed(.doNotStartWithUnderscore(identifier: "_badName"))
+    XCTAssertNotDiagnosed(.doNotStartWithUnderscore(identifier: "okayName"))
+    XCTAssertDiagnosed(.doNotStartWithUnderscore(identifier: "_wor_sEName"))
   }
-    
+
+  public func testClasses() {
+    let input = """
+      class Foo { let _foo = foo }
+      class _Bar {}
+      """
+    performLint(NoLeadingUnderscores.self, input: input)
+
+    XCTAssertNotDiagnosed(.doNotStartWithUnderscore(identifier: "Foo"))
+    XCTAssertDiagnosed(.doNotStartWithUnderscore(identifier: "_foo"))
+    XCTAssertDiagnosed(.doNotStartWithUnderscore(identifier: "_Bar"))
+  }
+
+  public func testEnums() {
+    let input = """
+      enum Foo {
+        case _case1
+        case case2, _case3
+        case caseWithAssociatedValues(_value: Int, otherValue: String)
+        let _foo = foo
+      }
+      enum _Bar {}
+      """
+    performLint(NoLeadingUnderscores.self, input: input)
+
+    XCTAssertNotDiagnosed(.doNotStartWithUnderscore(identifier: "Foo"))
+    XCTAssertDiagnosed(.doNotStartWithUnderscore(identifier: "_case1"))
+    XCTAssertNotDiagnosed(.doNotStartWithUnderscore(identifier: "case2"))
+    XCTAssertDiagnosed(.doNotStartWithUnderscore(identifier: "_case3"))
+    XCTAssertNotDiagnosed(.doNotStartWithUnderscore(identifier: "caseWithAssociatedValues"))
+    XCTAssertDiagnosed(.doNotStartWithUnderscore(identifier: "_value"))
+    XCTAssertNotDiagnosed(.doNotStartWithUnderscore(identifier: "otherValue"))
+    XCTAssertDiagnosed(.doNotStartWithUnderscore(identifier: "_foo"))
+    XCTAssertDiagnosed(.doNotStartWithUnderscore(identifier: "_Bar"))
+  }
+
+  public func testProtocols() {
+    let input = """
+      protocol Foo {
+        associatedtype _Quux
+        associatedtype Florb
+        var _foo: Int { get set }
+      }
+      protocol _Bar {}
+      """
+    performLint(NoLeadingUnderscores.self, input: input)
+
+    XCTAssertNotDiagnosed(.doNotStartWithUnderscore(identifier: "Foo"))
+    XCTAssertDiagnosed(.doNotStartWithUnderscore(identifier: "_foo"))
+    XCTAssertDiagnosed(.doNotStartWithUnderscore(identifier: "_Bar"))
+    XCTAssertDiagnosed(.doNotStartWithUnderscore(identifier: "_Quux"))
+    XCTAssertNotDiagnosed(.doNotStartWithUnderscore(identifier: "Florb"))
+  }
+
+  public func testStructs() {
+    let input = """
+      struct Foo { let _foo = foo }
+      struct _Bar {}
+      """
+    performLint(NoLeadingUnderscores.self, input: input)
+
+    XCTAssertNotDiagnosed(.doNotStartWithUnderscore(identifier: "Foo"))
+    XCTAssertDiagnosed(.doNotStartWithUnderscore(identifier: "_foo"))
+    XCTAssertDiagnosed(.doNotStartWithUnderscore(identifier: "_Bar"))
+  }
+
+  public func testFunctions() {
+    let input = """
+      func _foo<T1, _T2: Equatable>(_ ok: Int, _notOK: Int, _ok _butNotThisOne: Int) {}
+      func bar() {}
+      """
+    performLint(NoLeadingUnderscores.self, input: input)
+
+    XCTAssertDiagnosed(.doNotStartWithUnderscore(identifier: "_foo"))
+    XCTAssertNotDiagnosed(.doNotStartWithUnderscore(identifier: "T1"))
+    XCTAssertDiagnosed(.doNotStartWithUnderscore(identifier: "_T2"))
+    XCTAssertNotDiagnosed(.doNotStartWithUnderscore(identifier: "_"))
+    XCTAssertNotDiagnosed(.doNotStartWithUnderscore(identifier: "ok"))
+    XCTAssertDiagnosed(.doNotStartWithUnderscore(identifier: "_notOK"))
+    XCTAssertNotDiagnosed(.doNotStartWithUnderscore(identifier: "_ok"))
+    XCTAssertDiagnosed(.doNotStartWithUnderscore(identifier: "_butNotThisOne"))
+    XCTAssertNotDiagnosed(.doNotStartWithUnderscore(identifier: "bar"))
+  }
+
+  public func testInitializerArguments() {
+    let input = """
+      struct X {
+        init<T1, _T2: Equatable>(_ ok: Int, _notOK: Int, _ok _butNotThisOne: Int) {}
+      }
+      """
+    performLint(NoLeadingUnderscores.self, input: input)
+
+    XCTAssertNotDiagnosed(.doNotStartWithUnderscore(identifier: "T1"))
+    XCTAssertDiagnosed(.doNotStartWithUnderscore(identifier: "_T2"))
+    XCTAssertNotDiagnosed(.doNotStartWithUnderscore(identifier: "_"))
+    XCTAssertNotDiagnosed(.doNotStartWithUnderscore(identifier: "ok"))
+    XCTAssertDiagnosed(.doNotStartWithUnderscore(identifier: "_notOK"))
+    XCTAssertNotDiagnosed(.doNotStartWithUnderscore(identifier: "_ok"))
+    XCTAssertDiagnosed(.doNotStartWithUnderscore(identifier: "_butNotThisOne"))
+  }
+
+  public func testPrecedenceGroups() {
+    let input = """
+      precedencegroup FooPrecedence {
+        associativity: left
+        higherThan: BarPrecedence
+      }
+      precedencegroup _FooPrecedence {
+        associativity: left
+        higherThan: BarPrecedence
+      }
+      infix operator <> : _BazPrecedence
+      """
+    performLint(NoLeadingUnderscores.self, input: input)
+
+    XCTAssertNotDiagnosed(.doNotStartWithUnderscore(identifier: "FooPrecedence"))
+    XCTAssertNotDiagnosed(.doNotStartWithUnderscore(identifier: "BarPrecedence"))
+    XCTAssertDiagnosed(.doNotStartWithUnderscore(identifier: "_FooPrecedence"))
+    XCTAssertNotDiagnosed(.doNotStartWithUnderscore(identifier: "_BazPrecedence"))
+  }
+
+  public func testTypealiases() {
+    let input = """
+      typealias Foo = _Foo
+      typealias _Bar = Bar
+      """
+    performLint(NoLeadingUnderscores.self, input: input)
+
+    XCTAssertNotDiagnosed(.doNotStartWithUnderscore(identifier: "Foo"))
+    XCTAssertNotDiagnosed(.doNotStartWithUnderscore(identifier: "_Foo"))
+    XCTAssertDiagnosed(.doNotStartWithUnderscore(identifier: "_Bar"))
+    XCTAssertNotDiagnosed(.doNotStartWithUnderscore(identifier: "Bar"))
+  }
+
+  public func testIdentifiersAreIgnoredAtUsage() {
+    let input = """
+      let x = _y + _z
+      _foo(_bar)
+      """
+    performLint(NoLeadingUnderscores.self, input: input)
+
+    XCTAssertNotDiagnosed(.doNotStartWithUnderscore(identifier: "_y"))
+    XCTAssertNotDiagnosed(.doNotStartWithUnderscore(identifier: "_z"))
+    XCTAssertNotDiagnosed(.doNotStartWithUnderscore(identifier: "_foo"))
+    XCTAssertNotDiagnosed(.doNotStartWithUnderscore(identifier: "_bar"))
+  }
+
 #if !os(macOS)
   static let allTests = [
-    NoLeadingUnderscores.testInvalidIdentifierNames,
+    NoLeadingUnderscores.testVars,
+    NoLeadingUnderscores.testClasses,
+    NoLeadingUnderscores.testEnums,
+    NoLeadingUnderscores.testProtocols,
+    NoLeadingUnderscores.testStructs,
+    NoLeadingUnderscores.testFunctions,
+    NoLeadingUnderscores.testInitializerArguments,
+    NoLeadingUnderscores.testPrecedenceGroups,
+    NoLeadingUnderscores.testTypealiases,
+    NoLeadingUnderscores.testIdentifiersAreIgnoredAtUsage,
   ]
 #endif
 }

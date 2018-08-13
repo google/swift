@@ -2,10 +2,14 @@ import Core
 import Foundation
 import SwiftSyntax
 
-/// Identifiers should not have leading underscores.
+/// Identifiers in declarations and patterns should not have leading underscores.
 ///
 /// This is intended to avoid certain antipatterns; `self.member = member` should be preferred to
 /// `member = _member` and the leading underscore should not be used to signal access level.
+///
+/// This rule intentionally checks only the parameter variable names of a function declaration, not
+/// the parameter labels. It also only checks identifiers at the declaration site, not at usage
+/// sites.
 ///
 /// Lint: Declaring an identifier with a leading underscore yields a lint error.
 ///
@@ -13,100 +17,85 @@ import SwiftSyntax
 public final class NoLeadingUnderscores: SyntaxLintRule {
 
   public override func visit(_ node: AssociatedtypeDeclSyntax) {
-    diagnoseUnderscoreViolation(name: node.identifier)
-  }
-
-  public override func visit(_ node: ClassDeclSyntax) {
-    diagnoseUnderscoreViolation(name: node.identifier)
-    super.visit(node) // Visit children despite override
-  }
-
-  public override func visit(_ node: EnumDeclSyntax) {
-    diagnoseUnderscoreViolation(name: node.identifier)
+    diagnoseIfNameStartsWithUnderscore(node.identifier)
     super.visit(node)
   }
 
-  public override func visit(_ node: EnumCaseDeclSyntax) {
-    for element in node.elements {
-      diagnoseUnderscoreViolation(name: element.identifier)
-    }
+  public override func visit(_ node: ClassDeclSyntax) {
+    diagnoseIfNameStartsWithUnderscore(node.identifier)
+    super.visit(node)
+  }
+
+  public override func visit(_ node: EnumCaseElementSyntax) {
+    diagnoseIfNameStartsWithUnderscore(node.identifier)
+    super.visit(node)
+  }
+
+  public override func visit(_ node: EnumDeclSyntax) {
+    diagnoseIfNameStartsWithUnderscore(node.identifier)
+    super.visit(node)
   }
 
   public override func visit(_ node: FunctionDeclSyntax) {
-    diagnoseUnderscoreViolation(name: node.identifier)
-    // Check parameter names of function
-    let parameters = node.signature.input.parameterList
-    for parameter in parameters {
-      if let typeIdentifier = parameter.firstName {
-        diagnoseUnderscoreViolation(name: typeIdentifier)
-      }
-      if let varIdentifier = parameter.secondName {
-        diagnoseUnderscoreViolation(name: varIdentifier)
-      }
+    diagnoseIfNameStartsWithUnderscore(node.identifier)
+    super.visit(node)
+  }
+
+  public override func visit(_ node: FunctionParameterSyntax) {
+    // If both names are provided, we want to check `secondName`, which will be the parameter name
+    // (in that case, `firstName` is the label). If only one name is present, then it is recorded in
+    // `firstName`, and it is both the label and the parameter name.
+    if let variableIdentifier = node.secondName ?? node.firstName {
+      diagnoseIfNameStartsWithUnderscore(variableIdentifier)
     }
-    // Check generic parameter names
-    if let genParameters = node.genericParameterClause?.genericParameterList {
-      for genParameter in genParameters {
-        diagnoseUnderscoreViolation(name: genParameter.name)
-      }
-    }
+    super.visit(node)
+  }
+
+  public override func visit(_ node: GenericParameterSyntax) {
+    diagnoseIfNameStartsWithUnderscore(node.name)
+    super.visit(node)
+  }
+
+  public override func visit(_ node: IdentifierPatternSyntax) {
+    diagnoseIfNameStartsWithUnderscore(node.identifier)
     super.visit(node)
   }
 
   public override func visit(_ node: PrecedenceGroupDeclSyntax) {
-    diagnoseUnderscoreViolation(name: node.identifier)
+    diagnoseIfNameStartsWithUnderscore(node.identifier)
+    super.visit(node)
   }
 
   public override func visit(_ node: ProtocolDeclSyntax) {
-    diagnoseUnderscoreViolation(name: node.identifier)
+    diagnoseIfNameStartsWithUnderscore(node.identifier)
     super.visit(node)
   }
 
   public override func visit(_ node: StructDeclSyntax) {
-    diagnoseUnderscoreViolation(name: node.identifier)
-    // Check generic parameter names
-    if let genParameters = node.genericParameterClause?.genericParameterList {
-      for genParameter in genParameters {
-        diagnoseUnderscoreViolation(name: genParameter.name)
-      }
-    }
+    diagnoseIfNameStartsWithUnderscore(node.identifier)
     super.visit(node)
   }
 
   public override func visit(_ node: TypealiasDeclSyntax) {
-    diagnoseUnderscoreViolation(name: node.identifier)
-  }
-
-  public override func visit(_ node: InitializerDeclSyntax) {
-    // Check parameter names of initializer
-    let parameters = node.parameters.parameterList
-    for parameter in parameters {
-      if let typeIdentifier = parameter.firstName {
-        diagnoseUnderscoreViolation(name: typeIdentifier)
-      }
-      if let varIdentifier = parameter.secondName {
-        diagnoseUnderscoreViolation(name: varIdentifier)
-      }
-    }
+    diagnoseIfNameStartsWithUnderscore(node.identifier)
     super.visit(node)
   }
 
-  public override func visit(_ node: VariableDeclSyntax) {
-    for id in node.identifiers {
-      diagnoseUnderscoreViolation(name: id.identifier)
+  /// Checks the given token to determine if it begins with an underscore (but is not *just* an
+  /// underscore, which is allowed), emitting a diagnostic if it does.
+  ///
+  /// - Parameter token: The token to check.
+  private func diagnoseIfNameStartsWithUnderscore(_ token: TokenSyntax) {
+    let text = token.text
+    if text.count > 1 && text.first == "_" {
+      diagnose(.doNotStartWithUnderscore(identifier: text), on: token)
     }
-    super.visit(node)
-  }
-
-  func diagnoseUnderscoreViolation(name: TokenSyntax) {
-    let leadingChar = name.text.first
-    guard leadingChar == "_" else { return }
-    diagnose(.doNotLeadWithUnderscore(identifier: name.text), on: name)
   }
 }
 
 extension Diagnostic.Message {
-  static func doNotLeadWithUnderscore(identifier: String) -> Diagnostic.Message {
-    return .init(.warning, "identifier \(identifier) should not lead with '_'")
+
+  static func doNotStartWithUnderscore(identifier: String) -> Diagnostic.Message {
+    return .init(.warning, "identifier \(identifier) should not start with '_'")
   }
 }
