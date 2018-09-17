@@ -1,3 +1,17 @@
+//===----------------------------------------------------------------------===//
+//
+// This source file is part of the Swift Formatter open source project.
+//
+// Copyright (c) 2018 Apple Inc. and the Swift Formatter project authors
+// Licensed under Apache License v2.0
+//
+// See LICENSE.txt for license information
+// See CONTRIBUTORS.txt for the list of Swift Formatter project authors
+//
+// SPDX-License-Identifier: Apache-2.0
+//
+//===----------------------------------------------------------------------===//
+
 /// A Rule is a linting or formatting pass that executes in a given context.
 public protocol Rule {
   /// The context in which the rule is executed.
