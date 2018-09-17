@@ -36,7 +36,7 @@ let package = Package(
       dependencies: ["Core", "Configuration"]),
     .target(
       name: "Core",
-      dependencies: ["Configuration"]),
+      dependencies: ["Configuration", "SwiftSyntax"]),
     .target(
       name: "Configuration",
       dependencies: []),
