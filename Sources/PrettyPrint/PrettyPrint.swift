@@ -122,7 +122,7 @@ public class PrettyPrinter {
       indentStack.removeLast()
       breakStack.removeLast()
 
-    case .break(let size):
+    case .break(let size, let offset):
       if isDebugMode {
         if let forcebreak = forceBreakStack.last, forcebreak {
           writeBreakDebugMarker(style: .consistent)
@@ -136,9 +136,9 @@ public class PrettyPrinter {
         // Update the top of the breakStack to reflect the indentation level of the current group.
         let indentValue = indentStack.last ?? 0
         breakStack.removeLast()
-        breakStack.append(indentValue)
+        breakStack.append(indentValue + offset)
 
-        spaceRemaining = maxLineLength - indentValue
+        spaceRemaining = maxLineLength - indentValue - offset
         write("\n")
         lastBreak = true
       } else {
@@ -207,7 +207,7 @@ public class PrettyPrinter {
           lengths[index] += total
         }
 
-      case .break(let size):
+      case .break(let size, _):
         if let index = delimIndexStack.last, case .break = tokens[index] {
           lengths[index] += total
           delimIndexStack.removeLast()
