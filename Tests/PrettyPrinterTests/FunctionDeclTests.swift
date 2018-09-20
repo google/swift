@@ -4,16 +4,23 @@ public class FunctionDeclTests: PrettyPrintTestCase {
       """
       func myFun(var1: Int, var2: Double) {
         print("Hello World")
+        let a = 23
       }
       func reallyLongName(var1: Int, var2: Double, var3: Bool) {
         print("Hello World")
+        let a = 23
       }
+      func myFun() {
+        let a = 23
+      }
+      func myFun() { let a = "AAAA BBBB CCCC DDDD EEEE FFFF" }
       """
 
     let expected =
       """
       func myFun(var1: Int, var2: Double) {
         print("Hello World")
+        let a = 23
       }
       func reallyLongName(
         var1: Int,
@@ -21,6 +28,11 @@ public class FunctionDeclTests: PrettyPrintTestCase {
         var3: Bool
       ) {
         print("Hello World")
+        let a = 23
+      }
+      func myFun() { let a = 23 }
+      func myFun() {
+        let a = "AAAA BBBB CCCC DDDD EEEE FFFF"
       }
 
       """
@@ -65,17 +77,20 @@ public class FunctionDeclTests: PrettyPrintTestCase {
     let input =
     """
     func myFun<S, T>(var1: S, var2: T) {
+      let a = 123
       print("Hello World")
     }
 
     func longerNameFun<ReallyLongTypeName: Conform, TypeName>(var1: ReallyLongTypeNAme, var2: TypeName) {
       let a = 123
+      let b = 456
     }
     """
 
     let expected =
     """
     func myFun<S, T>(var1: S, var2: T) {
+      let a = 123
       print("Hello World")
     }
 
@@ -87,6 +102,7 @@ public class FunctionDeclTests: PrettyPrintTestCase {
       var2: TypeName
     ) {
       let a = 123
+      let b = 456
     }
 
     """

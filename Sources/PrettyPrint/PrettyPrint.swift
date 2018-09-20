@@ -229,7 +229,12 @@ public class PrettyPrinter {
           delimIndexStack.removeLast()
         }
 
-        lengths.append(0)
+        // Since newlines must always cause a line-break, we set their length as the full allowed
+        // width of the line. This causes any enclosing groups to have a length exceeding the line
+        // limit, and so the group must break and indent. e.g. single-line versus multi-line
+        // function bodies.
+        lengths.append(maxLineLength)
+        total += maxLineLength
 
       case .syntax(let syntaxToken):
         lengths.append(syntaxToken.text.count)

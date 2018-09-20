@@ -474,8 +474,8 @@ private final class TokenStreamCreator: SyntaxVisitor {
       if node.genericWhereClause == nil {
         before(body.leftBrace, tokens: .break)
       }
-      after(body.leftBrace, tokens: .newline(offset: 2), .open(.consistent, 0))
-      before(body.rightBrace, tokens: .newline(offset: -2), .close)
+      after(body.leftBrace, tokens: .break(offset: 2), .open(.consistent, 0))
+      before(body.rightBrace, tokens: .break(offset: -2), .close)
     }
 
     super.visit(node)
