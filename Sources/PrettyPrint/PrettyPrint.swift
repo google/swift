@@ -22,41 +22,39 @@ import Glibc
 import Darwin
 #endif
 
-// TODO(harlan): Comment this whole file.
-
-// Characters used in debug mode to mark breaks, groups, and other points of interest.
+/// Characters used in debug mode to mark breaks, groups, and other points of interest.
 fileprivate let spaceMarker = "\u{00B7}"
 fileprivate let breakMarker = "\u{23CE}"
 fileprivate let openGroupMarker = "\u{27EC}"
 fileprivate let closeGroupMarker = "\u{27ED}"
 
-/// PrettyPrinter takes a Syntax node and outputs a well-formatted, reindented reproduction of the
-/// code to stdout.
+/// PrettyPrinter takes a Syntax node and outputs a well-formatted, re-indented reproduction of the
+/// code as a String.
 public class PrettyPrinter {
   private let configuration: Configuration
   private let maxLineLength: Int
   private var tokens: [Token]
   private var outputBuffer: String = ""
 
-  // The number of spaces remaining on the current line.
+  /// The number of spaces remaining on the current line.
   private var spaceRemaining: Int
 
-  // Keep track of the token lengths.
+  /// Keep track of the token lengths.
   private var lengths = [Int]()
 
-  // Did the previous token trigger a newline?
+  /// Did the previous token create a new line?
   private var lastBreak = false
 
-  // What is the offset value of the last triggering break?
+  /// The offset value of the last break token.
   private var lastBreakOffset = 0
 
-  // What is the total number of spaces we need to indent from the last break?
+  /// The total number of spaces we need to indent from the last break.
   private var lastBreakValue = 0
 
-  // Keep track of the indentation level of the current group as the number of blank spaces.
+  /// Keep track of the indentation level of the current group as the number of blank spaces.
   private var indentStack = [0]
 
-  // Do we force breaks (for consistent breaking) within the current group?
+  /// Keep track of whether we are forcing breaks within a group (for consistent breaking).
   private var forceBreakStack = [false]
 
   /// If true, the pretty printer will output control characters that indicate where groups and
@@ -87,6 +85,7 @@ public class PrettyPrinter {
     self.spaceRemaining = self.maxLineLength
   }
 
+  /// Append the input string to the output buffer
   func write<S: StringProtocol>(_ str: S) {
     outputBuffer.append(String(str))
   }
@@ -96,21 +95,30 @@ public class PrettyPrinter {
   /// This method takes a Token and it's length, and it keeps track of how much space is left on the
   /// current line it is printing on. If a token exceeds the remaning space, we break to a new line,
   /// and apply the appropriate level of indentation.
+  ///
+  /// - Parameters:
+  ///   - token: The token to be printed.
+  ///   - length: The length of the token (number of columns).
   private func printToken(token: Token, length: Int) {
     assert(length >= 0, "Token lengths must be positive")
     switch token {
 
+    // Check if we need to force breaks in this group, and calculate the indentation to be used in
+    // the group.
     case .open(let breaktype, let offset):
       if isDebugMode {
         writeOpenGroupDebugMarker()
       }
 
+      // Determine if the break tokens in this group need to be forced.
       if length > spaceRemaining || lastBreak, case .consistent = breaktype {
         forceBreakStack.append(true)
       } else {
         forceBreakStack.append(false)
       }
 
+      // The preceding break's offset is added to the indentation of the group. The indent is
+      // incremented from the outer group's indent.
       let indentValue = indentStack.last ?? 0
       indentStack.append(indentValue + offset + lastBreakOffset)
       lastBreakOffset = 0
@@ -122,6 +130,8 @@ public class PrettyPrinter {
       forceBreakStack.removeLast()
       indentStack.removeLast()
 
+    // Create a line break if needed. Calculate the indentation required and adjust spaceRemaining
+    // accordingly.
     case .break(let size, let offset):
       if isDebugMode {
         if let forcebreak = forceBreakStack.last, forcebreak {
@@ -131,9 +141,11 @@ public class PrettyPrinter {
         }
       }
 
+      // Check if we are forcing breaks within our current group.
       let forcebreak = forceBreakStack.last ?? false
+
       if length > spaceRemaining || forcebreak {
-        // Update the top of the breakStack to reflect the indentation level of the current group.
+        // Check the indentation of the enclosing group.
         let indentValue = indentStack.last ?? 0
 
         spaceRemaining = maxLineLength - indentValue - offset
@@ -151,8 +163,8 @@ public class PrettyPrinter {
         lastBreakValue = 0
       }
 
+    // Apply N line breaks, calculate the indentation required, and adjust spaceRemaining.
     case .newlines(let N, let offset):
-      // Newlines are treated as forced `breaks` with a size of zero.
       let indentValue = indentStack.last ?? 0
 
       spaceRemaining = maxLineLength - indentValue - offset
@@ -162,6 +174,7 @@ public class PrettyPrinter {
       lastBreakOffset = offset
       lastBreakValue = indentValue + offset
 
+    // Print any indentation required, followed by the text content of the syntax token.
     case .syntax(let syntaxToken):
       if lastBreak {
         // If the last token created a new line, we need to apply indentation.
@@ -183,17 +196,25 @@ public class PrettyPrinter {
   ///
   /// This method is based on the `scan` function described in Derek Oppen's "Pretty Printing" paper
   /// (1979).
+  ///
+  /// - Returns: A String containing the formatted source code.
   public func prettyPrint() -> String {
-    var delimIndexStack = [Int]() // Keep track of the indicies of the .open token locations.
-    var total = 0 // Keep a running total of the token lengths.
+    // Keep track of the indicies of the .open and .break token locations.
+    var delimIndexStack = [Int]()
+    // Keep a running total of the token lengths.
+    var total = 0
 
     // Calculate token lengths
     for (i, token) in tokens.enumerated() {
       switch token {
+      // Open tokens have lengths equal to the total of the contents of its group. The value is
+      // calcualted when close tokens are encountered.
       case .open:
         lengths.append(-total)
         delimIndexStack.append(i)
 
+      // Close tokens have a length of 0. Calculate the length of the corresponding open token, and
+      // the previous break token (if any).
       case .close:
         lengths.append(0)
 
@@ -213,6 +234,8 @@ public class PrettyPrinter {
           lengths[index] += total
         }
 
+      // Break lengths are equal to its size plus the token or group following it. Calculate the
+      // length of any prior break tokens.
       case .break(let size, _):
         if let index = delimIndexStack.last, case .break = tokens[index] {
           lengths[index] += total
@@ -223,6 +246,8 @@ public class PrettyPrinter {
         delimIndexStack.append(i)
         total += size
 
+      // The length of newlines are equal to the maximum allowed line length. Calculate the length
+      // of any prior break tokens.
       case .newlines:
         if let index = delimIndexStack.last, case .break = tokens[index] {
           lengths[index] += total
@@ -236,6 +261,7 @@ public class PrettyPrinter {
         lengths.append(maxLineLength)
         total += maxLineLength
 
+      // Syntax tokens have a length equal to the number of columns needed to print its contents.
       case .syntax(let syntaxToken):
         lengths.append(syntaxToken.text.count)
         total += syntaxToken.text.count
@@ -245,8 +271,12 @@ public class PrettyPrinter {
       }
     }
 
-    // Update any remaining unresolved .open token lengths
+    // There may be an extra break token that needs to have its length calculated.
+    assert(delimIndexStack.count < 2, "Too many unresolved delmiter token lengths.")
     if let index = delimIndexStack.popLast() {
+      if case .open = tokens[index] {
+        assert(false, "Open tokens must be closed.")
+      }
       lengths[index] += total
     }
 

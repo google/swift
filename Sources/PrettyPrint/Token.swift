@@ -27,19 +27,20 @@ enum BreakStyle {
 }
 
 enum Token {
-  case comment(Comment, hasTrailingSpace: Bool)
-  case newlines(Int, offset: Int)
-  case `break`(size: Int, offset: Int)
+  case syntax(TokenSyntax)
   case open(BreakStyle, Int)
   case close
-  case syntax(TokenSyntax)
+  case `break`(size: Int, offset: Int)
+  case newlines(Int, offset: Int)
+  case comment(Comment, hasTrailingSpace: Bool)
+
+  // Convenience overloads for the enum types
+  static let open = Token.open(.inconsistent, 0)
 
   static let newline = Token.newlines(1, offset: 0)
   static func newline(offset: Int) -> Token {
     return Token.newlines(1, offset: offset)
   }
-
-  static let open = Token.open(.inconsistent, 0)
 
   static let `break` = Token.break(size: 1, offset: 0)
   static func `break`(offset: Int) -> Token {
