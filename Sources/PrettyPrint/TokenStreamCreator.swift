@@ -187,6 +187,9 @@ private final class TokenStreamCreator: SyntaxVisitor {
   }
 
   override func visit(_ node: MemberDeclBlockSyntax) {
+    for i in 0..<(node.members.count - 1) {
+      after(node.members[i].lastToken, tokens: .newline)
+    }
     super.visit(node)
   }
 
@@ -373,6 +376,18 @@ private final class TokenStreamCreator: SyntaxVisitor {
   }
 
   override func visit(_ node: ClassDeclSyntax) {
+    after(node.modifiers?.lastToken, tokens: .break)
+    after(node.classKeyword, tokens: .break)
+
+    before(node.genericWhereClause?.firstToken, tokens: .break, .open(.consistent, 0))
+    after(node.genericWhereClause?.lastToken, tokens: .break, .close)
+
+    if node.genericWhereClause == nil {
+      before(node.members.leftBrace, tokens: .break)
+    }
+    after(node.members.leftBrace, tokens: .break(size: 0, offset: 2), .open(.consistent, 0))
+    before(node.members.rightBrace, tokens: .break(size: 0, offset: -2), .close)
+
     super.visit(node)
   }
 
@@ -529,6 +544,8 @@ private final class TokenStreamCreator: SyntaxVisitor {
   }
 
   override func visit(_ node: InheritedTypeSyntax) {
+    before(node.firstToken, tokens: .open(.inconsistent, 0))
+    after(node.lastToken, tokens: .close)
     super.visit(node)
   }
 
@@ -577,11 +594,6 @@ private final class TokenStreamCreator: SyntaxVisitor {
   }
 
   override func visit(_ node: PatternBindingSyntax) {
-    if let typeToken = node.typeAnnotation {
-      after(typeToken.lastToken, tokens: .break)
-    } else {
-      after(node.pattern.lastToken, tokens: .break)
-    }
     super.visit(node)
   }
 
@@ -702,6 +714,7 @@ private final class TokenStreamCreator: SyntaxVisitor {
   }
 
   override func visit(_ node: InitializerClauseSyntax) {
+    before(node.equal, tokens: .break)
     after(node.equal, tokens: .break)
     super.visit(node)
   }
@@ -798,6 +811,9 @@ private final class TokenStreamCreator: SyntaxVisitor {
   }
 
   override func visit(_ node: TypeInheritanceClauseSyntax) {
+    after(node.colon, tokens: .break(offset: 2))
+    before(node.inheritedTypeCollection.firstToken, tokens: .open(.consistent, 0))
+    after(node.inheritedTypeCollection.lastToken, tokens: .break(size: 0, offset: -2), .close)
     super.visit(node)
   }
 

@@ -128,7 +128,10 @@ public class PrettyPrinter {
         writeCloseGroupDebugMarker()
       }
       forceBreakStack.removeLast()
-      indentStack.removeLast()
+      let indentValue = indentStack.popLast() ?? 0
+      // The offset of the last break needs to be adjusted according to its parent group. This is so
+      // the next open token's indent is initialized with the correct value.
+      lastBreakOffset += indentValue
 
     // Create a line break if needed. Calculate the indentation required and adjust spaceRemaining
     // accordingly.
@@ -144,7 +147,7 @@ public class PrettyPrinter {
       // Check if we are forcing breaks within our current group.
       let forcebreak = forceBreakStack.last ?? false
 
-      if length > spaceRemaining || forcebreak {
+      if (length > spaceRemaining || forcebreak) && !lastBreak {
         // Check the indentation of the enclosing group.
         let indentValue = indentStack.last ?? 0
 
@@ -155,8 +158,10 @@ public class PrettyPrinter {
         lastBreakOffset = offset
         lastBreakValue = indentValue + offset
       } else {
-        writeSpaces(size)
-        spaceRemaining -= size
+        if !lastBreak {
+          writeSpaces(size)
+          spaceRemaining -= size
+        }
 
         lastBreak = false
         lastBreakOffset = 0
