@@ -79,14 +79,7 @@ private final class TokenStreamCreator: SyntaxVisitor {
     afterMap[tok, default: []].append(tokens)
   }
 
-  override func visitPre(_ node: Syntax) {
-    // All nodes with trailing commas should have a space after if they aren't required to have a
-    // newline after.
-    if let withTrailingComma = node as? WithTrailingCommaSyntax,
-       let trailingComma = withTrailingComma.trailingComma {
-      after(trailingComma, tokens: .break)
-    }
-  }
+  override func visitPre(_ node: Syntax) {}
 
   override func visit(_ node: DeclNameArgumentsSyntax) {
     super.visit(node)
@@ -198,10 +191,24 @@ private final class TokenStreamCreator: SyntaxVisitor {
   }
 
   override func visit(_ node: EnumDeclSyntax) {
+    after(node.enumKeyword, tokens: .break)
+
+    before(node.genericWhereClause?.firstToken, tokens: .break, .open(.consistent, 0))
+    after(node.genericWhereClause?.lastToken, tokens: .break, .close)
+
+    if node.genericWhereClause == nil {
+      before(node.members.leftBrace, tokens: .break)
+    }
+    after(node.members.leftBrace, tokens: .break(size: 0, offset: 2), .open(.consistent, 0))
+    before(node.members.rightBrace, tokens: .break(size: 0, offset: -2), .close)
+
     super.visit(node)
   }
 
   override func visit(_ node: EnumCaseDeclSyntax) {
+    before(node.firstToken, tokens: .open)
+    after(node.caseKeyword, tokens: .break)
+    after(node.lastToken, tokens: .close)
     super.visit(node)
   }
 
@@ -214,6 +221,7 @@ private final class TokenStreamCreator: SyntaxVisitor {
   }
 
   override func visit(_ node: EnumCaseElementSyntax) {
+    after(node.trailingComma, tokens: .break(offset: 2))
     super.visit(node)
   }
 
@@ -376,7 +384,6 @@ private final class TokenStreamCreator: SyntaxVisitor {
   }
 
   override func visit(_ node: ClassDeclSyntax) {
-    after(node.modifiers?.lastToken, tokens: .break)
     after(node.classKeyword, tokens: .break)
 
     before(node.genericWhereClause?.firstToken, tokens: .break, .open(.consistent, 0))
@@ -431,7 +438,6 @@ private final class TokenStreamCreator: SyntaxVisitor {
   }
 
   override func visit(_ node: StructDeclSyntax) {
-    after(node.modifiers?.lastToken, tokens: .break)
     after(node.structKeyword, tokens: .break)
 
     before(node.genericWhereClause?.firstToken, tokens: .break, .open(.consistent, 0))
@@ -487,11 +493,11 @@ private final class TokenStreamCreator: SyntaxVisitor {
   }
 
   override func visit(_ node: DeclModifierSyntax) {
+    after(node.name, tokens: .break)
     super.visit(node)
   }
 
   override func visit(_ node: FunctionDeclSyntax) {
-    after(node.modifiers?.lastToken, tokens: .break)
     after(node.funcKeyword, tokens: .break)
 
     before(node.genericWhereClause?.firstToken, tokens: .break, .open(.consistent, 0))
@@ -537,6 +543,7 @@ private final class TokenStreamCreator: SyntaxVisitor {
   }
 
   override func visit(_ node: TupleElementSyntax) {
+    after(node.trailingComma, tokens: .break)
     super.visit(node)
   }
 
@@ -557,7 +564,11 @@ private final class TokenStreamCreator: SyntaxVisitor {
 
   override func visit(_ node: InheritedTypeSyntax) {
     before(node.firstToken, tokens: .open(.inconsistent, 0))
-    after(node.lastToken, tokens: .close)
+    if let trailingComma = node.trailingComma {
+      after(trailingComma, tokens: .close, .break)
+    } else {
+      after(node.lastToken, tokens: .close)
+    }
     super.visit(node)
   }
 
@@ -689,7 +700,11 @@ private final class TokenStreamCreator: SyntaxVisitor {
   override func visit(_ node: GenericParameterSyntax) {
     before(node.firstToken, tokens: .open)
     after(node.colon, tokens: .break)
-    after(node.lastToken, tokens: .close)
+    if let trailingComma = node.trailingComma {
+      after(trailingComma, tokens: .close, .break)
+    } else {
+      after(node.lastToken, tokens: .close)
+    }
     super.visit(node)
   }
 
@@ -782,11 +797,16 @@ private final class TokenStreamCreator: SyntaxVisitor {
     before(node.firstToken, tokens: .open)
     before(node.equalityToken, tokens: .break)
     after(node.equalityToken, tokens: .break)
-    after(node.lastToken, tokens: .close)
+    if let trailingComma = node.trailingComma {
+      after(trailingComma, tokens: .close, .break)
+    } else {
+      after(node.lastToken, tokens: .close)
+    }
     super.visit(node)
   }
 
   override func visit(_ node: TuplePatternElementSyntax) {
+    after(node.trailingComma, tokens: .break)
     super.visit(node)
   }
 
@@ -844,7 +864,11 @@ private final class TokenStreamCreator: SyntaxVisitor {
   override func visit(_ node: ConformanceRequirementSyntax) {
     before(node.firstToken, tokens: .open)
     after(node.colon, tokens: .break)
-    after(node.lastToken, tokens: .close)
+    if let trailingComma = node.trailingComma {
+      after(trailingComma, tokens: .close, .break)
+    } else {
+      after(node.lastToken, tokens: .close)
+    }
     super.visit(node)
   }
 
