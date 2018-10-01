@@ -131,6 +131,10 @@ public class StructDeclTests: PrettyPrintTestCase {
         let A: Int
         let B: Double
       }
+      struct MyStruct<S, T> where S: Collection, T: ReallyLongStructName, U: AnotherLongStruct {
+        let A: Int
+        let B: Double
+      }
       """
 
     let expected =
@@ -140,9 +144,15 @@ public class StructDeclTests: PrettyPrintTestCase {
         let B: Double
       }
       struct MyStruct<S, T>
+      where S: Collection, T: ReallyLongStructName {
+        let A: Int
+        let B: Double
+      }
+      struct MyStruct<S, T>
       where
         S: Collection,
-        T: ReallyLongStructName
+        T: ReallyLongStructName,
+        U: AnotherLongStruct
       {
         let A: Int
         let B: Double
@@ -173,10 +183,7 @@ public class StructDeclTests: PrettyPrintTestCase {
         let B: Double
       }
       struct MyStruct<S, T>: ProtoOne, ProtoTwo
-      where
-        S: Collection,
-        T: Protocol
-      {
+      where S: Collection, T: Protocol {
         let A: Int
         let B: Double
       }

@@ -89,6 +89,10 @@ public class ExtensionDeclTests: PrettyPrintTestCase {
         let A: Int
         let B: Double
       }
+      extension MyExtension where S: Collection, T: ReallyLongExtensionName, U: AnotherLongExtension {
+        let A: Int
+        let B: Double
+      }
       """
 
     let expected =
@@ -98,9 +102,15 @@ public class ExtensionDeclTests: PrettyPrintTestCase {
         let B: Double
       }
       extension MyExtension
+      where S: Collection, T: ReallyLongExtensionName {
+        let A: Int
+        let B: Double
+      }
+      extension MyExtension
       where
         S: Collection,
-        T: ReallyLongExtensionName
+        T: ReallyLongExtensionName,
+        U: AnotherLongExtension
       {
         let A: Int
         let B: Double
@@ -131,10 +141,7 @@ public class ExtensionDeclTests: PrettyPrintTestCase {
         let B: Double
       }
       extension MyExtension: ProtoOne, ProtoTwo
-      where
-        S: Collection,
-        T: Protocol
-      {
+      where S: Collection, T: Protocol {
         let A: Int
         let B: Double
       }

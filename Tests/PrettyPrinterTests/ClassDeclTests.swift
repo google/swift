@@ -131,6 +131,10 @@ public class ClassDeclTests: PrettyPrintTestCase {
         let A: Int
         let B: Double
       }
+      class MyClass<S, T> where S: Collection, T: ReallyLongClassName, U: LongerClassName {
+        let A: Int
+        let B: Double
+      }
       """
 
     let expected =
@@ -140,9 +144,15 @@ public class ClassDeclTests: PrettyPrintTestCase {
         let B: Double
       }
       class MyClass<S, T>
+      where S: Collection, T: ReallyLongClassName {
+        let A: Int
+        let B: Double
+      }
+      class MyClass<S, T>
       where
         S: Collection,
-        T: ReallyLongClassName
+        T: ReallyLongClassName,
+        U: LongerClassName
       {
         let A: Int
         let B: Double
@@ -173,10 +183,7 @@ public class ClassDeclTests: PrettyPrintTestCase {
         let B: Double
       }
       class MyClass<S, T>: SuperOne, SuperTwo
-      where
-        S: Collection,
-        T: Protocol
-      {
+      where S: Collection, T: Protocol {
         let A: Int
         let B: Double
       }

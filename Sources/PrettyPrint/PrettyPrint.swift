@@ -42,7 +42,12 @@ public class PrettyPrinter {
   /// Keep track of the token lengths.
   private var lengths = [Int]()
 
-  /// Did the previous token create a new line?
+  /// This is set to true when a break creates a new line. Since consecutive break tokens may not
+  /// all create new lines, only syntax tokens set this to false.
+  private var lastBreakConsecutive = false
+
+  /// Did the previous token create a new line? This is used to determine if a group needs to
+  /// consistently break.
   private var lastBreak = false
 
   /// The offset value of the last break token.
@@ -111,7 +116,7 @@ public class PrettyPrinter {
       }
 
       // Determine if the break tokens in this group need to be forced.
-      if length > spaceRemaining || lastBreak, case .consistent = breaktype {
+      if (length > spaceRemaining || lastBreak), case .consistent = breaktype {
         forceBreakStack.append(true)
       } else {
         forceBreakStack.append(false)
@@ -147,7 +152,7 @@ public class PrettyPrinter {
       // Check if we are forcing breaks within our current group.
       let forcebreak = forceBreakStack.last ?? false
 
-      if (length > spaceRemaining || forcebreak) && !lastBreak {
+      if (length > spaceRemaining || forcebreak) && !lastBreakConsecutive {
         // Check the indentation of the enclosing group.
         let indentValue = indentStack.last ?? 0
 
@@ -155,10 +160,11 @@ public class PrettyPrinter {
         write("\n")
 
         lastBreak = true
+        lastBreakConsecutive = true
         lastBreakOffset = offset
         lastBreakValue = indentValue + offset
       } else {
-        if !lastBreak {
+        if !lastBreakConsecutive {
           writeSpaces(size)
           spaceRemaining -= size
         }
@@ -176,16 +182,18 @@ public class PrettyPrinter {
       write(String(repeating: "\n", count: N))
 
       lastBreak = true
+      lastBreakConsecutive = true
       lastBreakOffset = offset
       lastBreakValue = indentValue + offset
 
     // Print any indentation required, followed by the text content of the syntax token.
     case .syntax(let syntaxToken):
-      if lastBreak {
+      if lastBreakConsecutive {
         // If the last token created a new line, we need to apply indentation.
         writeSpaces(lastBreakValue)
 
         lastBreak = false
+        lastBreakConsecutive = false
         lastBreakOffset = 0
         lastBreakValue = 0
       }

@@ -193,8 +193,11 @@ private final class TokenStreamCreator: SyntaxVisitor {
   override func visit(_ node: EnumDeclSyntax) {
     after(node.enumKeyword, tokens: .break)
 
-    before(node.genericWhereClause?.firstToken, tokens: .break, .open(.consistent, 0))
-    after(node.genericWhereClause?.lastToken, tokens: .break, .close)
+    before(
+      node.genericWhereClause?.firstToken,
+      tokens: .break, .open(.inconsistent, 0), .break(size: 0), .open(.consistent, 0)
+    )
+    after(node.genericWhereClause?.lastToken, tokens: .break, .close, .close)
 
     if node.genericWhereClause == nil {
       before(node.members.leftBrace, tokens: .break)
@@ -388,8 +391,11 @@ private final class TokenStreamCreator: SyntaxVisitor {
   override func visit(_ node: ClassDeclSyntax) {
     after(node.classKeyword, tokens: .break)
 
-    before(node.genericWhereClause?.firstToken, tokens: .break, .open(.consistent, 0))
-    after(node.genericWhereClause?.lastToken, tokens: .break, .close)
+    before(
+      node.genericWhereClause?.firstToken,
+      tokens: .break, .open(.inconsistent, 0), .break(size: 0), .open(.consistent, 0)
+    )
+    after(node.genericWhereClause?.lastToken, tokens: .break, .close, .close)
 
     if node.genericWhereClause == nil {
       before(node.members.leftBrace, tokens: .break)
@@ -460,8 +466,12 @@ private final class TokenStreamCreator: SyntaxVisitor {
   override func visit(_ node: StructDeclSyntax) {
     after(node.structKeyword, tokens: .break)
 
-    before(node.genericWhereClause?.firstToken, tokens: .break, .open(.consistent, 0))
-    after(node.genericWhereClause?.lastToken, tokens: .break, .close)
+    before(
+      node.genericWhereClause?.firstToken,
+      tokens: .break, .open(.inconsistent, 0), .break(size: 0), .open(.consistent, 0)
+    )
+    after(node.genericWhereClause?.lastToken, tokens: .break, .close, .close)
+
 
     if node.genericWhereClause == nil {
       before(node.members.leftBrace, tokens: .break)
@@ -523,8 +533,11 @@ private final class TokenStreamCreator: SyntaxVisitor {
   override func visit(_ node: FunctionDeclSyntax) {
     after(node.funcKeyword, tokens: .break)
 
-    before(node.genericWhereClause?.firstToken, tokens: .break, .open(.consistent, 0))
-    after(node.genericWhereClause?.lastToken, tokens: .break, .close)
+    before(
+      node.genericWhereClause?.firstToken,
+      tokens: .break, .open(.inconsistent, 0), .break(size: 0), .open(.consistent, 0)
+    )
+    after(node.genericWhereClause?.lastToken, tokens: .break, .close, .close)
 
     if let body = node.body {
       if node.genericWhereClause == nil {
@@ -584,8 +597,11 @@ private final class TokenStreamCreator: SyntaxVisitor {
   override func visit(_ node: ExtensionDeclSyntax) {
     after(node.extensionKeyword, tokens: .break)
 
-    before(node.genericWhereClause?.firstToken, tokens: .break, .open(.consistent, 0))
-    after(node.genericWhereClause?.lastToken, tokens: .break, .close)
+    before(
+      node.genericWhereClause?.firstToken,
+      tokens: .break, .open(.inconsistent, 0), .break(size: 0), .open(.consistent, 0)
+    )
+    after(node.genericWhereClause?.lastToken, tokens: .break, .close, .close)
 
     if node.genericWhereClause == nil {
       before(node.members.leftBrace, tokens: .break)

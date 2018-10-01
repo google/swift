@@ -135,7 +135,8 @@ public class FunctionDeclTests: PrettyPrintTestCase {
     public func index<Elements: Collection, Element>(
       of element: Element,
       in collection: Elements
-    ) -> Elements.Index? where Elements.Element == Element {
+    ) -> Elements.Index?
+    where Elements.Element == Element {
       let a = 123
       let b = "abc"
     }
@@ -154,7 +155,7 @@ public class FunctionDeclTests: PrettyPrintTestCase {
 
     """
 
-    assertPrettyPrintEqual(input: input, expected: expected, linelength: 60)
+    assertPrettyPrintEqual(input: input, expected: expected, linelength: 50)
   }
 
   public func testFunctionFullWrap() {
