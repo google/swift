@@ -409,6 +409,24 @@ private final class TokenStreamCreator: SyntaxVisitor {
   }
 
   override func visit(_ node: ForInStmtSyntax) {
+    before(node.forKeyword, tokens: .open(.inconsistent, 4))
+    after(node.forKeyword, tokens: .break)
+    before(node.inKeyword, tokens: .break)
+    after(node.inKeyword, tokens: .break)
+
+    if let whereClause = node.whereClause {
+      before(
+        whereClause.firstToken,
+        tokens: .close, .break, .open(.inconsistent, 0), .break(size: 0), .open(.consistent, 0)
+      )
+      before(node.body.leftBrace, tokens: .break, .close, .close)
+    } else {
+      before(node.body.leftBrace, tokens: .close, .break)
+    }
+
+    after(node.body.leftBrace, tokens: .newline(offset: 2), .open(.consistent, 0))
+    before(node.body.rightBrace, tokens: .newline(offset: -2), .close)
+
     super.visit(node)
   }
 
@@ -475,6 +493,9 @@ private final class TokenStreamCreator: SyntaxVisitor {
   }
 
   override func visit(_ node: WhereClauseSyntax) {
+    before(node.whereKeyword, tokens: .open(.inconsistent, 2))
+    after(node.whereKeyword, tokens: .break)
+    after(node.lastToken, tokens: .close)
     super.visit(node)
   }
 
