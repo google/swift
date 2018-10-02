@@ -142,14 +142,6 @@ private final class TokenStreamCreator: SyntaxVisitor {
     super.visit(node)
   }
 
-  override func visit(_ node: SwitchCaseLabelSyntax) {
-    super.visit(node)
-  }
-
-  override func visit(_ node: SwitchDefaultLabelSyntax) {
-    super.visit(node)
-  }
-
   override func visit(_ node: ObjcKeyPathExprSyntax) {
     super.visit(node)
   }
@@ -285,13 +277,40 @@ private final class TokenStreamCreator: SyntaxVisitor {
   }
 
   override func visit(_ node: CodeBlockItemSyntax) {
-    if !(node.parent?.parent is CodeBlockSyntax) {
+    if !(node.parent?.parent is CodeBlockSyntax || node.parent?.parent is SwitchCaseSyntax) {
       after(node.lastToken, tokens: .newline)
     }
     super.visit(node)
   }
 
+  override func visit(_ node: SwitchStmtSyntax) {
+    before(node.switchKeyword, tokens: .open(.inconsistent, 7))
+    after(node.switchKeyword, tokens: .break)
+    after(node.expression.lastToken, tokens: .close, .break)
+    after(node.leftBrace, tokens: .newline, .open(.consistent, 0))
+    before(node.rightBrace, tokens: .break, .close)
+    super.visit(node)
+  }
+
   override func visit(_ node: SwitchCaseSyntax) {
+    before(node.firstToken, tokens: .open)
+    after(node.label.lastToken, tokens: .newline(offset: 2), .open(.consistent, 0))
+    for i in 0..<(node.statements.count - 1) {
+      after(node.statements[i].lastToken, tokens: .newline)
+    }
+    after(node.lastToken, tokens: .break(offset: -2), .close, .close)
+    super.visit(node)
+  }
+
+  override func visit(_ node: SwitchCaseLabelSyntax) {
+    before(node.caseKeyword, tokens: .open(.inconsistent, 5))
+    after(node.caseKeyword, tokens: .break)
+    after(node.colon, tokens: .close)
+    super.visit(node)
+  }
+
+  override func visit(_ node: SwitchDefaultLabelSyntax) {
+    // Implementation not needed.
     super.visit(node)
   }
 
@@ -479,10 +498,6 @@ private final class TokenStreamCreator: SyntaxVisitor {
     after(node.members.leftBrace, tokens: .break(size: 0, offset: 2), .open(.consistent, 0))
     before(node.members.rightBrace, tokens: .break(size: 0, offset: -2), .close)
 
-    super.visit(node)
-  }
-
-  override func visit(_ node: SwitchStmtSyntax) {
     super.visit(node)
   }
 
