@@ -763,6 +763,12 @@ private final class TokenStreamCreator: SyntaxVisitor {
   }
 
   override func visit(_ node: RepeatWhileStmtSyntax) {
+    after(node.repeatKeyword, tokens: .break)
+    after(node.body.leftBrace, tokens: .break(offset: 2), .open(.consistent, 0))
+    before(node.body.rightBrace, tokens: .break(offset: -2), .close, .open(.inconsistent, 8))
+    before(node.whileKeyword, tokens: .break)
+    after(node.whileKeyword, tokens: .break)
+    after(node.condition.lastToken, tokens: .close)
     super.visit(node)
   }
 
