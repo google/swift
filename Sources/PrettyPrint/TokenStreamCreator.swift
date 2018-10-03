@@ -467,8 +467,6 @@ private final class TokenStreamCreator: SyntaxVisitor {
   }
 
   override func visit(_ node: ConditionElementSyntax) {
-    before(node.condition.firstToken, tokens: .open)
-    after(node.condition.lastToken, tokens: .close)
     after(node.trailingComma, tokens:. break)
     super.visit(node)
   }
@@ -482,6 +480,12 @@ private final class TokenStreamCreator: SyntaxVisitor {
   }
 
   override func visit(_ node: WhileStmtSyntax) {
+    before(node.firstToken, tokens: .open(.inconsistent, 6))
+    after(node.labelColon, tokens: .break)
+    after(node.whileKeyword, tokens: .break)
+    before(node.body.leftBrace, tokens: .break(offset: -6), .close)
+    after(node.body.leftBrace, tokens: .break(offset: 2), .open(.consistent, 0))
+    before(node.body.rightBrace, tokens: .break(offset: -2), .close)
     super.visit(node)
   }
 
