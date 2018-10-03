@@ -456,6 +456,20 @@ private final class TokenStreamCreator: SyntaxVisitor {
   }
 
   override func visit(_ node: GuardStmtSyntax) {
+    before(node.guardKeyword, tokens: .open(.inconsistent, 6))
+    after(node.guardKeyword, tokens: .break)
+    before(node.elseKeyword, tokens: .close, .break)
+    after(node.elseKeyword, tokens: .break)
+
+    after(node.body.leftBrace, tokens: .break(offset: 2), .open(.consistent, 0))
+    before(node.body.rightBrace, tokens: .break(offset: -2), .close)
+    super.visit(node)
+  }
+
+  override func visit(_ node: ConditionElementSyntax) {
+    before(node.condition.firstToken, tokens: .open)
+    after(node.condition.lastToken, tokens: .close)
+    after(node.trailingComma, tokens:. break)
     super.visit(node)
   }
 
@@ -756,10 +770,6 @@ private final class TokenStreamCreator: SyntaxVisitor {
     super.visit(node)
   }
 
-  override func visit(_ node: ConditionElementSyntax) {
-    super.visit(node)
-  }
-
   override func visit(_ node: DeclNameArgumentSyntax) {
     super.visit(node)
   }
@@ -952,6 +962,9 @@ private final class TokenStreamCreator: SyntaxVisitor {
   }
 
   override func visit(_ node: OptionalBindingConditionSyntax) {
+    before(node.firstToken, tokens: .open(.inconsistent, 2))
+    after(node.letOrVarKeyword, tokens: .break)
+    after(node.lastToken, tokens: .close)
     super.visit(node)
   }
 
