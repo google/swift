@@ -277,8 +277,11 @@ private final class TokenStreamCreator: SyntaxVisitor {
   }
 
   override func visit(_ node: CodeBlockItemSyntax) {
+    before(node.firstToken, tokens: .open)
     if !(node.parent?.parent is CodeBlockSyntax || node.parent?.parent is SwitchCaseSyntax) {
-      after(node.lastToken, tokens: .newline)
+      after(node.lastToken, tokens: .close, .newline)
+    } else {
+      after(node.lastToken, tokens: .close)
     }
     super.visit(node)
   }
@@ -426,6 +429,9 @@ private final class TokenStreamCreator: SyntaxVisitor {
   }
 
   override func visit(_ node: DeferStmtSyntax) {
+    after(node.deferKeyword, tokens: .break)
+    after(node.body.leftBrace, tokens: .break(offset: 2), .open(.consistent, 0))
+    before(node.body.rightBrace, tokens: .break(offset: -2), .close)
     super.visit(node)
   }
 

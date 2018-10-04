@@ -158,6 +158,52 @@ public class FunctionDeclTests: PrettyPrintTestCase {
     assertPrettyPrintEqual(input: input, expected: expected, linelength: 50)
   }
 
+  public func testFunctionWithDefer() {
+    let input =
+      """
+      func myFun() {
+        defer { print("Hello world") }
+        return 0
+      }
+      func myFun() {
+        defer { print("Hello world with longer message") }
+        return 0
+      }
+      func myFun() {
+        defer {
+          print("First message")
+          print("Second message")
+        }
+        return 0
+      }
+      """
+
+
+    let expected =
+      """
+      func myFun() {
+        defer { print("Hello world") }
+        return 0
+      }
+      func myFun() {
+        defer {
+          print("Hello world with longer message")
+        }
+        return 0
+      }
+      func myFun() {
+        defer {
+          print("First message")
+          print("Second message")
+        }
+        return 0
+      }
+
+      """
+
+    assertPrettyPrintEqual(input: input, expected: expected, linelength: 48)
+  }
+
   public func testFunctionFullWrap() {
     let input =
     """
