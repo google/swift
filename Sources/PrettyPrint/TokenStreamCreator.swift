@@ -522,6 +522,9 @@ private final class TokenStreamCreator: SyntaxVisitor {
   }
 
   override func visit(_ node: ImportDeclSyntax) {
+    after(node.attributes?.lastToken, tokens: .space)
+    after(node.importTok, tokens: .space)
+    after(node.importKind, tokens: .space)
     super.visit(node)
   }
 
