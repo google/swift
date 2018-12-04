@@ -33,6 +33,7 @@ enum Token {
   case newlines(Int, offset: Int)
   case comment(Comment)
   case reset
+  case verbatim(Verbatim)
 
   // Convenience overloads for the enum types
   static let open = Token.open(.inconsistent, 0)
@@ -50,5 +51,9 @@ enum Token {
   }
   static func `break`(size: Int) -> Token {
     return Token.break(size: size, offset: 0)
+  }
+
+  static func verbatim(text: String) -> Token {
+    return Token.verbatim(Verbatim(text: text))
   }
 }

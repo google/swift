@@ -239,6 +239,10 @@ public class PrettyPrinter {
       }
       write(comment.print(indent: lastBreakValue))
       spaceRemaining -= comment.length
+
+    case .verbatim(let verbatim):
+      write(verbatim.print(indent: lastBreakValue))
+      spaceRemaining -= length
     }
   }
 
@@ -337,6 +341,10 @@ public class PrettyPrinter {
       case .comment(let comment):
         lengths.append(comment.length)
         total += comment.length
+
+      case .verbatim:
+        lengths.append(maxLineLength)
+        total += maxLineLength
       }
     }
 
