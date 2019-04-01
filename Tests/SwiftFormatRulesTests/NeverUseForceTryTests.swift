@@ -11,9 +11,17 @@ public class NeverUseForceTryTests: DiagnosingTestCase {
       let document = try! Document(path: "important.data")
       let document = try Document(path: "important.data")
       let x = try! someThrowingFunction()
+      let x = try? someThrowingFunction(
+        try! someThrowingFunction()
+      )
+      let x = try someThrowingFunction(
+        try! someThrowingFunction()
+      )
       if let data = try? fetchDataFromDisk() { return data }
       """
     performLint(NeverUseForceTry.self, input: input)
+    XCTAssertDiagnosed(.doNotForceTry)
+    XCTAssertDiagnosed(.doNotForceTry)
     XCTAssertDiagnosed(.doNotForceTry)
     XCTAssertDiagnosed(.doNotForceTry)
     XCTAssertNotDiagnosed(.doNotForceTry)
