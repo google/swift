@@ -49,7 +49,7 @@ public final class FormatPipeline: SyntaxRewriter, Pipeline {
   public func addFormatter(_ formatType: SyntaxFormatRule.Type, for syntaxTypes: Syntax.Type...) {
     for type in syntaxTypes {
       let formatter = formatType.init(context: context)
-
+      if context.configuration.suppressFormatRules.contains(formatter.ruleName) { continue }
       // TODO(b/77533378): Respect priority of inserted Formatting passes. Should this be sorted on
       //                   insertion based on the priority of the pass type?
       passMap[SyntaxType(type: type), default: []].append(formatter.visit)

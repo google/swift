@@ -28,12 +28,20 @@ public class Configuration: Codable {
     case respectsExistingLineBreaks
     case blankLineBetweenMembers
     case surroundSymbolsWithBackticks
+    case suppressFormatRules
+    case suppressLintRules
   }
 
   /// The version of this configuration.
   private let version: Int
 
   /// MARK: Common configuration
+
+  /// List of rule names to skip when running in format mode.
+  public var suppressFormatRules: [String] = []
+
+  /// List of rule names to skip when running in lint mode.
+  public var suppressLintRules: [String] = []
 
   /// The maximum number of consecutive blank lines that may appear in a file.
   public var maximumBlankLines = 1
@@ -101,6 +109,8 @@ public class Configuration: Codable {
     self.blankLineBetweenMembers = try container.decodeIfPresent(
       BlankLineBetweenMembersConfiguration.self, forKey: .blankLineBetweenMembers)
       ?? BlankLineBetweenMembersConfiguration()
+    self.suppressFormatRules = try container.decodeIfPresent([String].self, forKey: .suppressFormatRules) ?? []
+    self.suppressLintRules = try container.decodeIfPresent([String].self, forKey: .suppressLintRules) ?? []
   }
 
   public func encode(to encoder: Encoder) throws {
@@ -113,6 +123,8 @@ public class Configuration: Codable {
     try container.encode(indentation, forKey: .indentation)
     try container.encode(respectsExistingLineBreaks, forKey: .respectsExistingLineBreaks)
     try container.encode(blankLineBetweenMembers, forKey: .blankLineBetweenMembers)
+    try container.encode(suppressFormatRules, forKey: .suppressFormatRules)
+    try container.encode(suppressLintRules, forKey: .suppressLintRules)
   }
 }
 

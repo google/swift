@@ -51,6 +51,7 @@ public final class LintPipeline: SyntaxVisitor, Pipeline {
   public func addLinter(_ lintRule: SyntaxLintRule.Type, for syntaxTypes: Syntax.Type...) {
     for type in syntaxTypes {
       let rule = lintRule.init(context: context)
+      if context.configuration.suppressLintRules.contains(rule.ruleName) { continue }
       passMap[SyntaxType(type: type), default: []].append(.linter(rule))
     }
   }
@@ -64,6 +65,7 @@ public final class LintPipeline: SyntaxVisitor, Pipeline {
   public func addFormatter(_ formatRule: SyntaxFormatRule.Type, for syntaxTypes: Syntax.Type...) {
     for type in syntaxTypes {
       let rule = formatRule.init(context: context)
+      if context.configuration.suppressLintRules.contains(rule.ruleName) { continue }
       passMap[SyntaxType(type: type), default: []].append(.formatter(rule))
     }
   }
