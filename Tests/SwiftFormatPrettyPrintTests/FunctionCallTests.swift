@@ -1,5 +1,66 @@
+import SwiftFormatConfiguration
+
 public class FunctionCallTests: PrettyPrintTestCase {
-  public func testBasicFunctionCalls() {
+
+  public func testBasicFunctionCalls_noPackArguments() {
+    let input =
+      """
+      let a = myFunc()
+      let a = myFunc(var1: 123, var2: "abc")
+      let a = myFunc(var1: 123, var2: "abc", var3: Bool, var4: (1, 2, 3))
+      let a = myFunc(var1, var2, var3)
+      let a = myFunc(var1, var2, var3, var4, var5, var6)
+      let a = myFunc(var1, var2, var3, var4, var5, var6, var7, x)
+      let a = myFunc(var1: 123, var2: someFun(var1: "abc", var2: 123, var3: Bool, var4: 1.23))
+      """
+
+    let expected =
+      """
+      let a = myFunc()
+      let a = myFunc(var1: 123, var2: "abc")
+      let a = myFunc(
+        var1: 123,
+        var2: "abc",
+        var3: Bool,
+        var4: (1, 2, 3)
+      )
+      let a = myFunc(var1, var2, var3)
+      let a = myFunc(
+        var1,
+        var2,
+        var3,
+        var4,
+        var5,
+        var6
+      )
+      let a = myFunc(
+        var1,
+        var2,
+        var3,
+        var4,
+        var5,
+        var6,
+        var7,
+        x
+      )
+      let a = myFunc(
+        var1: 123,
+        var2: someFun(
+          var1: "abc",
+          var2: 123,
+          var3: Bool,
+          var4: 1.23
+        )
+      )
+
+      """
+
+    let config = Configuration()
+    config.lineBreakBeforeEachArgument = true
+    assertPrettyPrintEqual(input: input, expected: expected, linelength: 45, configuration: config)
+  }
+
+  public func testBasicFunctionCalls_packArguments() {
     let input =
       """
       let a = myFunc()
@@ -32,7 +93,9 @@ public class FunctionCallTests: PrettyPrintTestCase {
 
       """
 
-    assertPrettyPrintEqual(input: input, expected: expected, linelength: 45)
+    let config = Configuration()
+    config.lineBreakBeforeEachArgument = false
+    assertPrettyPrintEqual(input: input, expected: expected, linelength: 45, configuration: config)
   }
 
   public func testDiscretionaryLineBreakBeforeClosingParenthesis() {
@@ -65,6 +128,8 @@ public class FunctionCallTests: PrettyPrintTestCase {
       )
 
       """
-    assertPrettyPrintEqual(input: input, expected: expected, linelength: 45)
+    let config = Configuration()
+    config.lineBreakBeforeEachArgument = false
+    assertPrettyPrintEqual(input: input, expected: expected, linelength: 45, configuration: config)
   }
 }

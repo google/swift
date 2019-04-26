@@ -1,4 +1,7 @@
+import SwiftFormatConfiguration
+
 public class EnumDeclTests: PrettyPrintTestCase {
+
   public func testBasicEnumDeclarations() {
     let input =
       """
@@ -38,7 +41,51 @@ public class EnumDeclTests: PrettyPrintTestCase {
     assertPrettyPrintEqual(input: input, expected: expected, linelength: 23)
   }
 
-  public func testMixedEnumCaseStyles() {
+  public func testMixedEnumCaseStyles_noPackArguments() {
+    let input =
+      """
+      enum MyEnum {
+        case first
+        case second, third
+        case fourth(Int)
+        case fifth(a: Int, b: Bool)
+      }
+      enum MyEnum {
+        case first
+        case second, third, fourth, fifth
+        case sixth(Int)
+        case seventh(a: Int, b: Bool, c: Double)
+      }
+      """
+
+    let expected =
+      """
+      enum MyEnum {
+        case first
+        case second, third
+        case fourth(Int)
+        case fifth(a: Int, b: Bool)
+      }
+      enum MyEnum {
+        case first
+        case second, third, fourth,
+          fifth
+        case sixth(Int)
+        case seventh(
+          a: Int,
+          b: Bool,
+          c: Double
+        )
+      }
+
+      """
+
+    let config = Configuration()
+    config.lineBreakBeforeEachArgument = true
+    assertPrettyPrintEqual(input: input, expected: expected, linelength: 30, configuration: config)
+  }
+
+  public func testMixedEnumCaseStyles_packArguments() {
     let input =
       """
       enum MyEnum {
@@ -75,7 +122,9 @@ public class EnumDeclTests: PrettyPrintTestCase {
 
       """
 
-    assertPrettyPrintEqual(input: input, expected: expected, linelength: 30)
+    let config = Configuration()
+    config.lineBreakBeforeEachArgument = false
+    assertPrettyPrintEqual(input: input, expected: expected, linelength: 30, configuration: config)
   }
 
   public func testIndirectEnum() {
@@ -151,7 +200,9 @@ public class EnumDeclTests: PrettyPrintTestCase {
 
       """
 
-    assertPrettyPrintEqual(input: input, expected: expected, linelength: 30)
+    let config = Configuration()
+    config.lineBreakBeforeEachArgument = false
+    assertPrettyPrintEqual(input: input, expected: expected, linelength: 30, configuration: config)
   }
 
   public func testEnumInheritence() {
@@ -339,7 +390,9 @@ public class EnumDeclTests: PrettyPrintTestCase {
 
       """
 
-    assertPrettyPrintEqual(input: input, expected: expected, linelength: 50)
+    let config = Configuration()
+    config.lineBreakBeforeEachArgument = false
+    assertPrettyPrintEqual(input: input, expected: expected, linelength: 50, configuration: config)
   }
 
   public func testEmptyEnum() {

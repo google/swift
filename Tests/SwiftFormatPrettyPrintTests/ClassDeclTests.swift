@@ -1,4 +1,7 @@
+import SwiftFormatConfiguration
+
 public class ClassDeclTests: PrettyPrintTestCase {
+
   public func testBasicClassDeclarations() {
     let input =
       """
@@ -38,7 +41,51 @@ public class ClassDeclTests: PrettyPrintTestCase {
     assertPrettyPrintEqual(input: input, expected: expected, linelength: 25)
   }
 
-  public func testGenericClassDeclarations() {
+  public func testGenericClassDeclarations_noPackArguments() {
+    let input =
+      """
+      class MyClass<T> {
+        let A: Int
+        let B: Bool
+      }
+      class MyClass<T, S> {
+        let A: Int
+        let B: Bool
+      }
+      class MyClass<One, Two, Three, Four> {
+        let A: Int
+        let B: Bool
+      }
+      """
+
+    let expected =
+      """
+      class MyClass<T> {
+        let A: Int
+        let B: Bool
+      }
+      class MyClass<T, S> {
+        let A: Int
+        let B: Bool
+      }
+      class MyClass<
+        One,
+        Two,
+        Three,
+        Four
+      > {
+        let A: Int
+        let B: Bool
+      }
+
+      """
+
+    let config = Configuration()
+    config.lineBreakBeforeEachArgument = true
+    assertPrettyPrintEqual(input: input, expected: expected, linelength: 30)
+  }
+
+  public func testGenericClassDeclarations_packArguments() {
     let input =
       """
       class MyClass<T> {
@@ -74,7 +121,9 @@ public class ClassDeclTests: PrettyPrintTestCase {
 
       """
 
-    assertPrettyPrintEqual(input: input, expected: expected, linelength: 30)
+    let config = Configuration()
+    config.lineBreakBeforeEachArgument = false
+    assertPrettyPrintEqual(input: input, expected: expected, linelength: 30, configuration: config)
   }
 
   public func testClassInheritence() {
@@ -262,7 +311,9 @@ public class ClassDeclTests: PrettyPrintTestCase {
 
       """
 
-    assertPrettyPrintEqual(input: input, expected: expected, linelength: 50)
+    let config = Configuration()
+    config.lineBreakBeforeEachArgument = false
+    assertPrettyPrintEqual(input: input, expected: expected, linelength: 50, configuration: config)
   }
 
   public func testEmptyClass() {

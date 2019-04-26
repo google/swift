@@ -1,4 +1,7 @@
+import SwiftFormatConfiguration
+
 public class StructDeclTests: PrettyPrintTestCase {
+
   public func testBasicStructDeclarations() {
     let input =
       """
@@ -38,7 +41,51 @@ public class StructDeclTests: PrettyPrintTestCase {
     assertPrettyPrintEqual(input: input, expected: expected, linelength: 25)
   }
 
-  public func testGenericStructDeclarations() {
+  public func testGenericStructDeclarations_noPackArguments() {
+    let input =
+      """
+      struct MyStruct<T> {
+        let A: Int
+        let B: Bool
+      }
+      struct MyStruct<T, S> {
+        let A: Int
+        let B: Bool
+      }
+      struct MyStruct<One, Two, Three, Four> {
+        let A: Int
+        let B: Bool
+      }
+      """
+
+    let expected =
+      """
+      struct MyStruct<T> {
+        let A: Int
+        let B: Bool
+      }
+      struct MyStruct<T, S> {
+        let A: Int
+        let B: Bool
+      }
+      struct MyStruct<
+        One,
+        Two,
+        Three,
+        Four
+      > {
+        let A: Int
+        let B: Bool
+      }
+
+      """
+
+    let config = Configuration()
+    config.lineBreakBeforeEachArgument = true
+    assertPrettyPrintEqual(input: input, expected: expected, linelength: 30, configuration: config)
+  }
+
+  public func testGenericStructDeclarations_packArguments() {
     let input =
       """
       struct MyStruct<T> {
@@ -74,7 +121,9 @@ public class StructDeclTests: PrettyPrintTestCase {
 
       """
 
-    assertPrettyPrintEqual(input: input, expected: expected, linelength: 30)
+    let config = Configuration()
+    config.lineBreakBeforeEachArgument = false
+    assertPrettyPrintEqual(input: input, expected: expected, linelength: 30, configuration: config)
   }
 
   public func testStructInheritence() {
@@ -262,7 +311,9 @@ public class StructDeclTests: PrettyPrintTestCase {
 
       """
 
-    assertPrettyPrintEqual(input: input, expected: expected, linelength: 50)
+    let config = Configuration()
+    config.lineBreakBeforeEachArgument = false
+    assertPrettyPrintEqual(input: input, expected: expected, linelength: 50, configuration: config)
   }
 
   public func testEmptyStruct() {

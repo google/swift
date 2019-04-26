@@ -1,4 +1,7 @@
+import SwiftFormatConfiguration
+
 public class SubscriptDeclTests: PrettyPrintTestCase {
+
   public func testBasicSubscriptDeclarations() {
     let input =
       """
@@ -36,7 +39,52 @@ public class SubscriptDeclTests: PrettyPrintTestCase {
     assertPrettyPrintEqual(input: input, expected: expected, linelength: 50)
   }
 
-  public func testSubscriptGenerics() {
+  public func testSubscriptGenerics_noPackArguments() {
+    let input =
+      """
+      struct MyStruct {
+        subscript<T>(index: T) -> Double {
+          return 1.23
+        }
+        subscript<S, T>(row: S, col: T) -> Double {
+          return self.values[row][col]
+        }
+        subscript<LongTypeName1, LongTypeName2, LongTypeName3>(var1: LongTypeName1, var2: LongTypeName2, var3: LongTypeName3) -> Int {
+          return self.values[var1][var2][var3]
+        }
+      }
+      """
+
+    let expected =
+      """
+      struct MyStruct {
+        subscript<T>(index: T) -> Double {
+          return 1.23
+        }
+        subscript<S, T>(row: S, col: T) -> Double {
+          return self.values[row][col]
+        }
+        subscript<
+          LongTypeName1,
+          LongTypeName2,
+          LongTypeName3
+        >(
+          var1: LongTypeName1,
+          var2: LongTypeName2,
+          var3: LongTypeName3
+        ) -> Int {
+          return self.values[var1][var2][var3]
+        }
+      }
+
+      """
+
+    let config = Configuration()
+    config.lineBreakBeforeEachArgument = true
+    assertPrettyPrintEqual(input: input, expected: expected, linelength: 50, configuration: config)
+  }
+
+  public func testSubscriptGenerics_packArguments() {
     let input =
       """
       struct MyStruct {
@@ -73,7 +121,9 @@ public class SubscriptDeclTests: PrettyPrintTestCase {
 
       """
 
-    assertPrettyPrintEqual(input: input, expected: expected, linelength: 50)
+    let config = Configuration()
+    config.lineBreakBeforeEachArgument = false
+    assertPrettyPrintEqual(input: input, expected: expected, linelength: 50, configuration: config)
   }
 
   public func testSubscriptGenericWhere() {
@@ -109,7 +159,9 @@ public class SubscriptDeclTests: PrettyPrintTestCase {
 
       """
 
-    assertPrettyPrintEqual(input: input, expected: expected, linelength: 50)
+    let config = Configuration()
+    config.lineBreakBeforeEachArgument = false
+    assertPrettyPrintEqual(input: input, expected: expected, linelength: 50, configuration: config)
   }
 
   public func testSubscriptAttributes() {

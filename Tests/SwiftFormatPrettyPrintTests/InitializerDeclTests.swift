@@ -1,5 +1,53 @@
+import SwiftFormatConfiguration
+
 public class InitializerDeclTests: PrettyPrintTestCase {
-  public func testBasicInitializerDeclarations() {
+
+  public func testBasicInitializerDeclarations_noPackArguments() {
+    let input =
+      """
+      struct Struct {
+        init(var1: Int, var2: Double) {
+            print("Hello World")
+            let a = 23
+        }
+        init(reallyLongLabelVar1: Int, var2: Double, var3: Bool) {
+            print("Hello World")
+            let a = 23
+        }
+        init() { let a = 23 }
+        init() { let a = "AAAA BBBB CCCC DDDD EEEE FFFF" }
+      }
+      """
+
+    let expected =
+      """
+      struct Struct {
+        init(var1: Int, var2: Double) {
+          print("Hello World")
+          let a = 23
+        }
+        init(
+          reallyLongLabelVar1: Int,
+          var2: Double,
+          var3: Bool
+        ) {
+          print("Hello World")
+          let a = 23
+        }
+        init() { let a = 23 }
+        init() {
+          let a = "AAAA BBBB CCCC DDDD EEEE FFFF"
+        }
+      }
+
+      """
+
+    let config = Configuration()
+    config.lineBreakBeforeEachArgument = true
+    assertPrettyPrintEqual(input: input, expected: expected, linelength: 50, configuration: config)
+  }
+
+  public func testBasicInitializerDeclarations_packArguments() {
     let input =
       """
       struct Struct {
@@ -38,7 +86,9 @@ public class InitializerDeclTests: PrettyPrintTestCase {
 
       """
 
-    assertPrettyPrintEqual(input: input, expected: expected, linelength: 50)
+    let config = Configuration()
+    config.lineBreakBeforeEachArgument = false
+    assertPrettyPrintEqual(input: input, expected: expected, linelength: 50, configuration: config)
   }
 
   public func testInitializerOptionality() {
@@ -80,7 +130,9 @@ public class InitializerDeclTests: PrettyPrintTestCase {
 
       """
     
-    assertPrettyPrintEqual(input: input, expected: expected, linelength: 50)
+    let config = Configuration()
+    config.lineBreakBeforeEachArgument = false
+    assertPrettyPrintEqual(input: input, expected: expected, linelength: 50, configuration: config)
   }
 
   public func testInitializerDeclThrows() {
@@ -112,7 +164,9 @@ public class InitializerDeclTests: PrettyPrintTestCase {
 
       """
 
-    assertPrettyPrintEqual(input: input, expected: expected, linelength: 50)
+    let config = Configuration()
+    config.lineBreakBeforeEachArgument = false
+    assertPrettyPrintEqual(input: input, expected: expected, linelength: 50, configuration: config)
   }
 
   public func testInitializerGenericParameters() {
@@ -191,7 +245,9 @@ public class InitializerDeclTests: PrettyPrintTestCase {
 
     """
 
-    assertPrettyPrintEqual(input: input, expected: expected, linelength: 50)
+    let config = Configuration()
+    config.lineBreakBeforeEachArgument = false
+    assertPrettyPrintEqual(input: input, expected: expected, linelength: 50, configuration: config)
   }
 
   public func testInitializerAttributes() {
@@ -238,35 +294,37 @@ public class InitializerDeclTests: PrettyPrintTestCase {
 
   public func testInitializerFullWrap() {
     let input =
-    """
-    struct Struct {
-      @objc @inlinable public init<Elements: Collection, Element>(element: Element, in collection: Elements) where Elements.Element == Element, Element: Equatable {
-        let a = 123
-        let b = "abc"
+      """
+      struct Struct {
+        @objc @inlinable public init<Elements: Collection, Element>(element: Element, in collection: Elements) where Elements.Element == Element, Element: Equatable {
+          let a = 123
+          let b = "abc"
+        }
       }
-    }
-    """
+      """
 
     let expected =
-    """
-    struct Struct {
-      @objc @inlinable public init<
-        Elements: Collection, Element
-      >(
-        element: Element,
-        in collection: Elements
-      )
-      where Elements.Element == Element,
-        Element: Equatable
-      {
-        let a = 123
-        let b = "abc"
+      """
+      struct Struct {
+        @objc @inlinable public init<
+          Elements: Collection, Element
+        >(
+          element: Element,
+          in collection: Elements
+        )
+        where Elements.Element == Element,
+          Element: Equatable
+        {
+          let a = 123
+          let b = "abc"
+        }
       }
-    }
 
-    """
+      """
 
-    assertPrettyPrintEqual(input: input, expected: expected, linelength: 40)
+    let config = Configuration()
+    config.lineBreakBeforeEachArgument = false
+    assertPrettyPrintEqual(input: input, expected: expected, linelength: 40, configuration: config)
   }
 
   public func testEmptyInitializer() {

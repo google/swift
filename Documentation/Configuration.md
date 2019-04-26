@@ -52,6 +52,13 @@ top-level keys and values:
     the keyword, forcing it onto its own line. If false (the default), the
     keyword will be placed after the closing brace (separated by a space).
 
+*   `lineBreakBeforeEachArgument` _(boolean)_: Determines the line-breaking
+    behavior for generic arguments and function arguments when a declaration is
+    wrapped onto multiple lines. If true (the default), a line break will be
+    added before each argument, forcing the entire argument list to be laid out
+    vertically. If false, arguments will be laid out horizontally first, with
+    line breaks only being fired when the line length would be exceeded.
+
 > TODO: Add support for enabling/disabling specific syntax transformations in
 > the pipeline.
 
@@ -71,7 +78,8 @@ An example `.swift-format` configuration file is shown below.
     "blankLineBetweenMembers": {
         "ignoreSingleLineProperties": true
     },
-    "lineBreakBeforeControlFlowKeywords": true
+    "lineBreakBeforeControlFlowKeywords": true,
+    "lineBreakBeforeEachArgument": true
 }
 ```
 

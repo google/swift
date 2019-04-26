@@ -52,7 +52,8 @@ public class SubscriptExprTests: PrettyPrintTestCase {
       """
       let a = myCollection[index] { $0 < $1 }
       let a = myCollection[label: index] {
-        arg1, arg2 in
+        arg1,
+        arg2 in
         foo()
       }
       let a = myCollection[

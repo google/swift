@@ -602,7 +602,7 @@ private final class TokenStreamCreator: SyntaxVisitor {
       // stays with the open curly brace.
       let breakBeforeRightParen = node.trailingClosure != nil
 
-      after(node.leftParen, tokens: .break(.open, size: 0), .open)
+      after(node.leftParen, tokens: .break(.open, size: 0), .open(argumentListConsistency()))
       before(
         node.rightParen,
         tokens: .break(.close(mustBreak: breakBeforeRightParen), size: 0), .close)
@@ -649,9 +649,16 @@ private final class TokenStreamCreator: SyntaxVisitor {
   }
 
   override func visit(_ node: ClosureSignatureSyntax) -> SyntaxVisitorContinueKind {
+    let consistency: GroupBreakStyle
+    if let input = node.input as? ClosureParamListSyntax {
+      consistency = argumentListConsistency()
+    } else {
+      consistency = .inconsistent
+    }
+
     before(node.firstToken, tokens: .open)
     after(node.capture?.rightSquare, tokens: .break(.same))
-    before(node.input?.firstToken, tokens: .open)
+    before(node.input?.firstToken, tokens: .open(consistency))
     after(node.input?.lastToken, tokens: .close)
     before(node.throwsTok, tokens: .break)
     before(node.output?.arrow, tokens: .break)
@@ -719,7 +726,7 @@ private final class TokenStreamCreator: SyntaxVisitor {
   }
 
   override func visit(_ node: ParameterClauseSyntax) -> SyntaxVisitorContinueKind {
-    after(node.leftParen, tokens: .break(.open, size: 0), .open)
+    after(node.leftParen, tokens: .break(.open, size: 0), .open(argumentListConsistency()))
     before(node.rightParen, tokens: .break(.close, size: 0), .close)
     return .visitChildren
   }
@@ -842,7 +849,7 @@ private final class TokenStreamCreator: SyntaxVisitor {
   }
 
   override func visit(_ node: GenericParameterClauseSyntax) -> SyntaxVisitorContinueKind {
-    after(node.leftAngleBracket, tokens: .break(.open, size: 0), .open)
+    after(node.leftAngleBracket, tokens: .break(.open, size: 0), .open(argumentListConsistency()))
     before(node.rightAngleBracket, tokens: .break(.close, size: 0), .close)
     return .visitChildren
   }
@@ -1594,6 +1601,12 @@ private final class TokenStreamCreator: SyntaxVisitor {
     } else {
       before(node.rightBrace, tokens: .break(.same, size: 0))
     }
+  }
+
+  /// Returns the group consistency that should be used for argument lists based on the user's
+  /// current configuration.
+  private func argumentListConsistency() -> GroupBreakStyle {
+    return config.lineBreakBeforeEachArgument ? .consistent : .inconsistent
   }
 
   private func extractTrailingComment(_ token: TokenSyntax) {
