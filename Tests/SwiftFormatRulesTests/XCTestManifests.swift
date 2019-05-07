@@ -284,6 +284,8 @@ extension OrderedImportsTests {
         ("testImportsOrderWithDocComment", testImportsOrderWithDocComment),
         ("testImportsOrderWithoutModuleType", testImportsOrderWithoutModuleType),
         ("testInvalidImportsOrder", testInvalidImportsOrder),
+        ("testNonHeaderComment", testNonHeaderComment),
+        ("testSeparatedFileHeader", testSeparatedFileHeader),
         ("testValidOrderedImport", testValidOrderedImport),
     ]
 }
