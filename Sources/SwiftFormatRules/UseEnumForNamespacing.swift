@@ -66,14 +66,33 @@ public final class UseEnumForNamespacing: SyntaxFormatRule {
     name: TokenSyntax,
     members: MemberDeclBlockSyntax
   ) -> EnumDeclSyntax {
+    // Since we remove the "final" modifier, we need to preserve its trivia if it is the first
+    // modifier.
+    var newLeadingTrivia: Trivia? = nil
+    if let firstMod = modifiers?.first, firstMod.name.text == "final" {
+      newLeadingTrivia = firstMod.leadingTrivia
+    }
+
     let newModifiers = modifiers?.remove(name: "final")
-    return EnumDeclSyntax {
+
+    let outputEnum = EnumDeclSyntax {
       if let mods = newModifiers {
         for mod in mods { $0.addModifier(mod) }
       }
       $0.useEnumKeyword(declarationKeyword.withKind(.enumKeyword))
       $0.useIdentifier(name)
       $0.useMembers(members)
+    }
+
+    if let trivia = newLeadingTrivia {
+      return replaceTrivia(
+        on: outputEnum,
+        token: outputEnum.firstToken,
+        leadingTrivia: trivia
+      ) as! EnumDeclSyntax
+    }
+    else {
+      return outputEnum
     }
   }
 
