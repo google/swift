@@ -47,4 +47,44 @@ public class GuardStmtTests: PrettyPrintTestCase {
 
     assertPrettyPrintEqual(input: input, expected: expected, linelength: 35)
   }
+
+  public func testGuardWithFuncCall() {
+    let input =
+      """
+      guard let myvar = myClass.itsFunc(first: .someStuff, second: .moreStuff).first else {
+        // do stuff
+      }
+      guard let myvar1 = myClass.itsFunc(first: .someStuff, second: .moreStuff).first,
+      let myvar2 = myClass.diffFunc(first: .someStuff, second: .moreStuff).first else {
+        // do stuff
+      }
+      """
+
+    let expected =
+      """
+      guard
+        let myvar = myClass.itsFunc(
+          first: .someStuff,
+          second: .moreStuff
+        ).first
+      else {
+        // do stuff
+      }
+      guard
+        let myvar1 = myClass.itsFunc(
+          first: .someStuff,
+          second: .moreStuff
+        ).first,
+        let myvar2 = myClass.diffFunc(
+          first: .someStuff,
+          second: .moreStuff
+        ).first
+      else {
+        // do stuff
+      }
+
+      """
+
+    assertPrettyPrintEqual(input: input, expected: expected, linelength: 35)
+  }
 }
