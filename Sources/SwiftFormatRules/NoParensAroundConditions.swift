@@ -40,7 +40,7 @@ public final class NoParensAroundConditions: SyntaxFormatRule {
     }
 
     diagnose(.removeParensAroundExpression, on: expr) {
-      $0.highlight(expr.sourceRange(in: self.context.fileURL))
+      $0.highlight(expr.sourceRange(converter: self.context.sourceLocationConverter))
     }
 
     return replaceTrivia(
@@ -59,7 +59,7 @@ public final class NoParensAroundConditions: SyntaxFormatRule {
 
   public override func visit(_ node: ConditionElementSyntax) -> Syntax {
     guard let tup = node.condition as? TupleExprSyntax,
-      tup.elementList.count == 1 else {
+      tup.elementList.firstAndOnly != nil else {
         return node
     }
     return node.withCondition(extractExpr(tup))
@@ -68,7 +68,7 @@ public final class NoParensAroundConditions: SyntaxFormatRule {
   /// FIXME(hbh): Parsing for SwitchStmtSyntax is not implemented.
   public override func visit(_ node: SwitchStmtSyntax) -> StmtSyntax {
     guard let tup = node.expression as? TupleExprSyntax,
-      tup.elementList.count == 1 else {
+      tup.elementList.firstAndOnly != nil else {
       return node
     }
     return node.withExpression(extractExpr(tup))
@@ -76,7 +76,7 @@ public final class NoParensAroundConditions: SyntaxFormatRule {
 
   public override func visit(_ node: RepeatWhileStmtSyntax) -> StmtSyntax {
     guard let tup = node.condition as? TupleExprSyntax,
-      tup.elementList.count == 1 else {
+      tup.elementList.firstAndOnly != nil else {
       return node
     }
     let newNode = node.withCondition(extractExpr(tup))

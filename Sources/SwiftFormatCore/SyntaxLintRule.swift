@@ -14,15 +14,7 @@ import Foundation
 import SwiftSyntax
 
 /// A rule that lints a given file.
-open class SyntaxLintRule: SyntaxVisitor, Rule {
-  /// The context in which the rule is executed.
-  public let context: Context
-
-  /// Creates a new SyntaxLintRule in the given context.
-  public required init(context: Context) {
-    self.context = context
-  }
-}
+public protocol SyntaxLintRule: SyntaxVisitor, Rule {}
 
 extension Rule {
   /// Emits the provided diagnostic to the diagnostic engine.
@@ -38,12 +30,7 @@ extension Rule {
   ) {
     // TODO: node?.startLocation should be returning the position ignoring leading trivia. It isn't
     // working properly, so we are using this workaround until it is fixed.
-    let loc = node.map {
-      SourceLocation(
-        file: context.fileURL.path,
-        position: $0.positionAfterSkippingLeadingTrivia
-      )
-    }
+    let loc = node.map { $0.startLocation(converter: context.sourceLocationConverter) }
     context.diagnosticEngine?.diagnose(
       message.withRule(self),
       location: loc,

@@ -19,8 +19,14 @@ import SwiftSyntax
 /// Lint: If an identifier contains non-ASCII characters, a lint error is raised.
 ///
 /// - SeeAlso: https://google.github.io/swift#identifiers
-public final class IdentifiersMustBeASCII: SyntaxLintRule {
-  public override func visit(_ node: IdentifierPatternSyntax) -> SyntaxVisitorContinueKind {
+public struct IdentifiersMustBeASCII: SyntaxLintRule {
+  public let context: Context
+
+  public init(context: Context) {
+    self.context = context
+  }
+
+  public func visit(_ node: IdentifierPatternSyntax) -> SyntaxVisitorContinueKind {
     let identifier = node.identifier.text
     let invalidCharacters = identifier.unicodeScalars.filter { !$0.isASCII }.map { $0.description }
 

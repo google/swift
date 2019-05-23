@@ -2,7 +2,7 @@
 //
 // This source file is part of the Swift.org open source project
 //
-// Copyright (c) 2014 - 2018 Apple Inc. and the Swift project authors
+// Copyright (c) 2014 - 2019 Apple Inc. and the Swift project authors
 // Licensed under Apache License v2.0 with Runtime Library Exception
 //
 // See https://swift.org/LICENSE.txt for license information
@@ -10,16 +10,19 @@
 //
 //===----------------------------------------------------------------------===//
 
-import Foundation
 import SwiftFormatCore
+import SwiftSyntax
 
-/// Source files are encoded in UTF-8.
+/// A syntax visitor that delegates to individual rules for linting.
 ///
-/// Lint: Files encoded in anything but UTF-8 will yield a lint error.
-///
-/// Format: If the given file is not UTF-8, it will be transcoded to UTF-8.
-///
-/// SeeAlso: https://google.github.io/swift#file-encoding
-public final class UseOnlyUTF8: FileRule {
+/// This file will be extended with `visit` methods in Pipelines+Generated.swift.
+struct LintPipeline: SyntaxVisitor {
 
+  /// The formatter context.
+  let context: Context
+
+  /// Creates a new lint pipeline.
+  init(context: Context) {
+    self.context = context
+  }
 }

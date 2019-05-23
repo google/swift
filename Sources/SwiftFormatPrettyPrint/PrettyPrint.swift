@@ -490,7 +490,8 @@ public class PrettyPrinter {
   private func diagnose(_ message: Diagnostic.Message, at position: AbsolutePosition?) {
     let location: SourceLocation?
     if let position = position {
-      location = SourceLocation(file: context.fileURL.path, position: position)
+      location =
+        SourceLocation(offset: position.utf8Offset, converter: context.sourceLocationConverter)
     } else {
       location = nil
     }

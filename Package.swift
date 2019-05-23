@@ -23,7 +23,7 @@ let package = Package(
   ],
   dependencies: [
     .package(url: "https://github.com/apple/swift-package-manager.git", from: "0.1.0"),
-    .package(url: "https://github.com/apple/swift-syntax", from: "0.50000.0"),
+    .package(url: "https://github.com/apple/swift-syntax", .revision("swift-DEVELOPMENT-SNAPSHOT-2019-05-13-m")),
   ],
   targets: [
     .target(

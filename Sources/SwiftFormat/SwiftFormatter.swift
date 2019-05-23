@@ -57,7 +57,7 @@ public final class SwiftFormatter {
     if FileManager.default.fileExists(atPath: url.path, isDirectory: &isDir), isDir.boolValue {
       throw SwiftFormatError.isDirectory
     }
-    let sourceFile = try SyntaxTreeParser.parse(url)
+    let sourceFile = try SyntaxParser.parse(url)
     try format(syntax: sourceFile, assumingFileURL: url, to: &outputStream)
   }
 
@@ -70,13 +70,12 @@ public final class SwiftFormatter {
   ///     be written.
   /// - Throws: If an unrecoverable error occurs when formatting the code.
   public func format<Output: TextOutputStream>(
-    syntax: Syntax, assumingFileURL url: URL, to outputStream: inout Output
+    syntax: SourceFileSyntax, assumingFileURL url: URL, to outputStream: inout Output
   ) throws {
-    let context
-      = Context(configuration: configuration, diagnosticEngine: diagnosticEngine, fileURL: url)
+    let context = Context(
+      configuration: configuration, diagnosticEngine: diagnosticEngine, fileURL: url,
+      sourceFileSyntax: syntax)
     let pipeline = FormatPipeline(context: context)
-    populate(pipeline)
-
     let transformedSyntax = pipeline.visit(syntax)
 
     if debugOptions.contains(.disablePrettyPrint) {

@@ -34,12 +34,37 @@ public class Context {
   /// Indicates whether the visitor has already determined a value for importsXCTest
   public var didSetImportsXCTest: Bool
 
+  /// An object that converts `AbsolutePosition` values to `SourceLocation` values.
+  public let sourceLocationConverter: SourceLocationConverter
+
   /// Creates a new Context with the provided configuration, diagnostic engine, and file URL.
-  public init(configuration: Configuration, diagnosticEngine: DiagnosticEngine?, fileURL: URL) {
+  public init(
+    configuration: Configuration,
+    diagnosticEngine: DiagnosticEngine?,
+    fileURL: URL,
+    sourceFileSyntax: SourceFileSyntax
+  ) {
     self.configuration = configuration
     self.diagnosticEngine = diagnosticEngine
     self.fileURL = fileURL
     self.importsXCTest = false
     self.didSetImportsXCTest = false
+    self.sourceLocationConverter =
+      SourceLocationConverter(file: fileURL.path, tree: sourceFileSyntax)
+  }
+
+  /// Creates a new Context with the provided configuration, diagnostic engine, and source text.
+  public init(
+    configuration: Configuration,
+    diagnosticEngine: DiagnosticEngine?,
+    fileURL: URL,
+    sourceText: String
+  ) {
+    self.configuration = configuration
+    self.diagnosticEngine = diagnosticEngine
+    self.fileURL = fileURL
+    self.importsXCTest = false
+    self.didSetImportsXCTest = false
+    self.sourceLocationConverter = SourceLocationConverter(file: fileURL.path, source: sourceText)
   }
 }

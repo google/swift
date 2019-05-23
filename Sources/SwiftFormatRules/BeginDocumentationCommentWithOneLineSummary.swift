@@ -19,7 +19,7 @@ import SwiftSyntax
 /// Lint: If a comment does not begin with a single-line summary, a lint error is raised.
 ///
 /// - SeeAlso: https://google.github.io/swift#single-sentence-summary
-public final class BeginDocumentationCommentWithOneLineSummary: SyntaxLintRule {
+public struct BeginDocumentationCommentWithOneLineSummary: SyntaxLintRule {
 
   /// Unit tests can testably import this module and set this to true in order to force the rule
   /// to use the fallback (simple period separator) mode instead of the `NSLinguisticTag` mode,
@@ -28,57 +28,63 @@ public final class BeginDocumentationCommentWithOneLineSummary: SyntaxLintRule {
   /// This allows test runs on those platforms to test both implementations.
   static var forcesFallbackModeForTesting = false
 
-  override public func visit(_ node: FunctionDeclSyntax) -> SyntaxVisitorContinueKind {
+  public let context: Context
+
+  public init(context: Context) {
+    self.context = context
+  }
+
+  public func visit(_ node: FunctionDeclSyntax) -> SyntaxVisitorContinueKind {
     diagnoseDocComments(in: node)
     return .skipChildren
   }
 
-  override public func visit(_ node: EnumDeclSyntax) -> SyntaxVisitorContinueKind {
+  public func visit(_ node: EnumDeclSyntax) -> SyntaxVisitorContinueKind {
     diagnoseDocComments(in: node)
     return .skipChildren
   }
 
-  override public func visit(_ node: InitializerDeclSyntax) -> SyntaxVisitorContinueKind {
+  public func visit(_ node: InitializerDeclSyntax) -> SyntaxVisitorContinueKind {
     diagnoseDocComments(in: node)
     return .skipChildren
   }
 
-  override public func visit(_ node: DeinitializerDeclSyntax) -> SyntaxVisitorContinueKind {
+  public func visit(_ node: DeinitializerDeclSyntax) -> SyntaxVisitorContinueKind {
     diagnoseDocComments(in: node)
     return .skipChildren
   }
 
-  override public func visit(_ node: SubscriptDeclSyntax) -> SyntaxVisitorContinueKind {
+  public func visit(_ node: SubscriptDeclSyntax) -> SyntaxVisitorContinueKind {
     diagnoseDocComments(in: node)
     return .skipChildren
   }
 
-  override public func visit(_ node: ClassDeclSyntax) -> SyntaxVisitorContinueKind {
+  public func visit(_ node: ClassDeclSyntax) -> SyntaxVisitorContinueKind {
     diagnoseDocComments(in: node)
     return .skipChildren
   }
 
-  override public func visit(_ node: VariableDeclSyntax) -> SyntaxVisitorContinueKind {
+  public func visit(_ node: VariableDeclSyntax) -> SyntaxVisitorContinueKind {
     diagnoseDocComments(in: node)
     return .skipChildren
   }
 
-  override public func visit(_ node: StructDeclSyntax) -> SyntaxVisitorContinueKind {
+  public func visit(_ node: StructDeclSyntax) -> SyntaxVisitorContinueKind {
     diagnoseDocComments(in: node)
     return .skipChildren
   }
 
-  override public func visit(_ node: ProtocolDeclSyntax) -> SyntaxVisitorContinueKind {
+  public func visit(_ node: ProtocolDeclSyntax) -> SyntaxVisitorContinueKind {
     diagnoseDocComments(in: node)
     return .skipChildren
   }
 
-  override public func visit(_ node: TypealiasDeclSyntax) -> SyntaxVisitorContinueKind {
+  public func visit(_ node: TypealiasDeclSyntax) -> SyntaxVisitorContinueKind {
     diagnoseDocComments(in: node)
     return .skipChildren
   }
 
-  override public func visit(_ node: AssociatedtypeDeclSyntax) -> SyntaxVisitorContinueKind {
+  public func visit(_ node: AssociatedtypeDeclSyntax) -> SyntaxVisitorContinueKind {
     diagnoseDocComments(in: node)
     return .skipChildren
   }

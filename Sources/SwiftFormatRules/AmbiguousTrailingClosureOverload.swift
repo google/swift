@@ -20,7 +20,13 @@ import SwiftSyntax
 ///       error is raised.
 ///
 /// - SeeAlso: https://google.github.io/swift#trailing-closures
-public final class AmbiguousTrailingClosureOverload: SyntaxLintRule {
+public struct AmbiguousTrailingClosureOverload: SyntaxLintRule {
+  public let context: Context
+
+  public init(context: Context) {
+    self.context = context
+  }
+
   func diagnoseBadOverloads(_ overloads: [String: [FunctionDeclSyntax]]) {
     for (_, decls) in overloads where decls.count > 1 {
       let decl = decls[0]
@@ -28,7 +34,7 @@ public final class AmbiguousTrailingClosureOverload: SyntaxLintRule {
         for decl in decls.dropFirst() {
           $0.note(
             .otherAmbiguousOverloadHere(decl.fullDeclName),
-            location: decl.identifier.startLocation(in: self.context.fileURL)
+            location: decl.identifier.startLocation(converter: self.context.sourceLocationConverter)
           )
         }
       }
@@ -40,8 +46,7 @@ public final class AmbiguousTrailingClosureOverload: SyntaxLintRule {
     var staticOverloads = [String: [FunctionDeclSyntax]]()
     for fn in functions {
       let params = fn.signature.input.parameterList
-      guard params.count == 1 else { continue }
-      let firstParam = params[0]
+      guard let firstParam = params.firstAndOnly else { continue }
       guard firstParam.type is FunctionTypeSyntax else { continue }
       if let mods = fn.modifiers, mods.has(modifier: "static") || mods.has(modifier: "class") {
         staticOverloads[fn.identifier.text, default: []].append(fn)
@@ -54,19 +59,19 @@ public final class AmbiguousTrailingClosureOverload: SyntaxLintRule {
     diagnoseBadOverloads(staticOverloads)
   }
 
-  public override func visit(_ node: SourceFileSyntax) -> SyntaxVisitorContinueKind {
+  public func visit(_ node: SourceFileSyntax) -> SyntaxVisitorContinueKind {
     let functions = node.statements.compactMap { $0.item as? FunctionDeclSyntax }
     discoverAndDiagnoseOverloads(functions)
     return .visitChildren
   }
 
-  public override func visit(_ node: CodeBlockSyntax) -> SyntaxVisitorContinueKind {
+  public func visit(_ node: CodeBlockSyntax) -> SyntaxVisitorContinueKind {
     let functions = node.statements.compactMap { $0.item as? FunctionDeclSyntax }
     discoverAndDiagnoseOverloads(functions)
     return .visitChildren
   }
 
-  public override func visit(_ decls: MemberDeclBlockSyntax) -> SyntaxVisitorContinueKind {
+  public func visit(_ decls: MemberDeclBlockSyntax) -> SyntaxVisitorContinueKind {
     let functions = decls.members.compactMap { $0.decl as? FunctionDeclSyntax }
     discoverAndDiagnoseOverloads(functions)
     return .visitChildren

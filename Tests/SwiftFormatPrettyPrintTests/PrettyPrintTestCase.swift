@@ -20,7 +20,8 @@ public class PrettyPrintTestCase: XCTestCase {
     let context = Context(
       configuration: configuration,
       diagnosticEngine: nil,
-      fileURL: URL(fileURLWithPath: "/tmp/file.swift"))
+      fileURL: URL(fileURLWithPath: "/tmp/file.swift"),
+      sourceText: input)
 
     // Assert that the input, when formatted, is what we expected.
     if let formatted = prettyPrintedSource(input, context: context) {
@@ -41,7 +42,7 @@ public class PrettyPrintTestCase: XCTestCase {
   /// Returns the given source code reformatted with the pretty printer.
   private func prettyPrintedSource(_ original: String, context: Context) -> String? {
     do {
-      let syntax = try SyntaxTreeParser.parse(original)
+      let syntax = try SyntaxParser.parse(source: original)
       let printer = PrettyPrinter(context: context, node: syntax, printTokenStream: false)
       return printer.prettyPrint()
     } catch {

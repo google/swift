@@ -21,8 +21,14 @@ import SwiftSyntax
 ///       raised.
 ///
 /// - SeeAlso: https://google.github.io/swift#identifiers
-public final class AlwaysUseLowerCamelCase: SyntaxLintRule {
-  public override func visit(_ node: VariableDeclSyntax) -> SyntaxVisitorContinueKind {
+public struct AlwaysUseLowerCamelCase: SyntaxLintRule {
+  public let context: Context
+
+  public init(context: Context) {
+    self.context = context
+  }
+
+  public func visit(_ node: VariableDeclSyntax) -> SyntaxVisitorContinueKind {
     for binding in node.bindings {
       guard let pat = binding.pattern as? IdentifierPatternSyntax else {
         continue
@@ -32,12 +38,12 @@ public final class AlwaysUseLowerCamelCase: SyntaxLintRule {
     return .skipChildren
   }
 
-  public override func visit(_ node: FunctionDeclSyntax) -> SyntaxVisitorContinueKind {
+  public func visit(_ node: FunctionDeclSyntax) -> SyntaxVisitorContinueKind {
     diagnoseLowerCamelCaseViolations(node.identifier)
     return .skipChildren
   }
 
-  public override func visit(_ node: EnumCaseElementSyntax) -> SyntaxVisitorContinueKind {
+  public func visit(_ node: EnumCaseElementSyntax) -> SyntaxVisitorContinueKind {
     diagnoseLowerCamelCaseViolations(node.identifier)
     return .skipChildren
   }
@@ -47,7 +53,7 @@ public final class AlwaysUseLowerCamelCase: SyntaxLintRule {
     if text.isEmpty { return }
     if text.dropFirst().contains("_") || ("A"..."Z").contains(text.first!) {
       diagnose(.variableNameMustBeLowerCamelCase(text), on: identifier) {
-        $0.highlight(identifier.sourceRange(in: self.context.fileURL))
+        $0.highlight(identifier.sourceRange(converter: self.context.sourceLocationConverter))
       }
     }
   }
@@ -58,4 +64,3 @@ extension Diagnostic.Message {
     return .init(.warning, "variable '\(name)' must be lower-camel-case")
   }
 }
-

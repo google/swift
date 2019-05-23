@@ -88,9 +88,7 @@ public final class UseEarlyExits: SyntaxFormatRule {
   /// Returns true if the last statement in the given code block is one that will cause an early
   /// exit from the control flow construct or function.
   private func codeBlockEndsWithEarlyExit(_ codeBlock: CodeBlockSyntax) -> Bool {
-    let statements = codeBlock.statements
-    guard statements.count > 0 else { return false }
-    let lastStatement = statements[statements.count - 1]
+    guard let lastStatement = codeBlock.statements.last else { return false }
 
     switch lastStatement.item {
     case is ReturnStmtSyntax, is ThrowStmtSyntax, is BreakStmtSyntax, is ContinueStmtSyntax:

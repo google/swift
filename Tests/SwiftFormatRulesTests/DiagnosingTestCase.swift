@@ -27,17 +27,6 @@ public class DiagnosingTestCase: XCTestCase {
     func finalize() {}
   }
 
-  /// Creates a new Context and DiagnosticTrackingConsumer for this test case.
-  public override func setUp() {
-    context = Context(
-      configuration: Configuration(),
-      diagnosticEngine: DiagnosticEngine(),
-      fileURL: URL(fileURLWithPath: "/tmp/test.swift")
-    )
-    consumer = DiagnosticTrackingConsumer()
-    context?.diagnosticEngine?.addConsumer(consumer)
-  }
-
   public override func tearDown() {
     guard shouldCheckForUnassertedDiagnostics else { return }
 
@@ -48,6 +37,18 @@ public class DiagnosingTestCase: XCTestCase {
     }
   }
 
+  /// Creates and returns a new `Context` from the given source text.
+  private func makeContext(sourceText: String) -> Context {
+    let context = Context(
+      configuration: Configuration(),
+      diagnosticEngine: DiagnosticEngine(),
+      fileURL: URL(fileURLWithPath: "/tmp/test.swift"),
+      sourceText: sourceText)
+    consumer = DiagnosticTrackingConsumer()
+    context.diagnosticEngine?.addConsumer(consumer)
+    return context
+  }
+
   /// Performs a lint using the provided linter rule on the provided input.
   ///
   /// - Parameters:
@@ -55,20 +56,22 @@ public class DiagnosingTestCase: XCTestCase {
   ///   - input: The input code.
   ///   - file: The file the test resides in (defaults to the current caller's file)
   ///   - line:  The line the test resides in (defaults to the current caller's line)
-  func performLint(
-    _ type: SyntaxLintRule.Type,
+  func performLint<LintRule: SyntaxLintRule>(
+    _ type: LintRule.Type,
     input: String,
     file: StaticString = #file,
     line: UInt = #line
   ) {
+    context = makeContext(sourceText: input)
+
     // If we're linting, then indicate that we want to fail for unasserted diagnostics when the test
     // is torn down.
     shouldCheckForUnassertedDiagnostics = true
 
     do {
-      let syntax = try SyntaxTreeParser.parse(input)
-      let linter = type.init(context: context!)
-      syntax.walk(linter)
+      let syntax = try SyntaxParser.parse(source: input)
+      var linter = type.init(context: context!)
+      syntax.walk(&linter)
     } catch {
       XCTFail("\(error)", file: file, line: line)
     }
@@ -94,9 +97,11 @@ public class DiagnosingTestCase: XCTestCase {
     line: UInt = #line,
     checkForUnassertedDiagnostics: Bool = false
   ) {
+    context = makeContext(sourceText: input)
+
     do {
       shouldCheckForUnassertedDiagnostics = checkForUnassertedDiagnostics
-      let syntax = try SyntaxTreeParser.parse(input)
+      let syntax = try SyntaxParser.parse(source: input)
       let formatter = formatType.init(context: context!)
       let result = formatter.visit(syntax)
       XCTAssertDiff(result: result.description, expected: expected, file: file, line: line)
@@ -174,9 +179,7 @@ public class DiagnosingTestCase: XCTestCase {
   ) {
     // This has to be a linear search, because the tests are going to check for the version
     // of the diagnostic that is not annotated with '[NameOfRule]:'.
-    let maybeIdx = consumer.registeredDiagnostics.index {
-      $0.contains(message.text)
-    }
+    let maybeIdx = consumer.registeredDiagnostics.firstIndex { $0.contains(message.text) }
 
     guard let idx = maybeIdx else {
       XCTFail("diagnostic '\(message.text)' not raised", file: file, line: line)

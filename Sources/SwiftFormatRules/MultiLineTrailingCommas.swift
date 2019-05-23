@@ -27,7 +27,7 @@ public final class MultiLineTrailingCommas: SyntaxFormatRule {
   public override func visit(_ node: ArrayExprSyntax) -> ExprSyntax {
     guard !node.elements.isEmpty else { return node }
 
-    let lastElt = node.elements[node.elements.count - 1]
+    guard let lastElt = node.elements.last else { return node }
     guard lastElt.trailingComma == nil else { return node }
     guard node.rightSquare.leadingTrivia.containsNewlines else { return node }
 
@@ -54,7 +54,7 @@ public final class MultiLineTrailingCommas: SyntaxFormatRule {
     guard let elements = node.content as? DictionaryElementListSyntax else { return node }
     guard !elements.isEmpty else { return node }
 
-    let lastElt = elements[elements.count - 1]
+    guard let lastElt = elements.last else { return node }
     guard lastElt.trailingComma == nil else { return node }
     guard node.rightSquare.leadingTrivia.containsNewlines else { return node }
 

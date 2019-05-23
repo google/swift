@@ -119,9 +119,12 @@ public final class BlankLineBetweenMembers: SyntaxFormatRule {
   func ignoreItem(item: MemberDeclListItemSyntax) -> Bool {
     guard let firstToken = item.firstToken else { return false }
     guard let lastToken = item.lastToken else { return false }
-    
-    let isSingleLine = firstToken.positionAfterSkippingLeadingTrivia.line ==
-      lastToken.positionAfterSkippingLeadingTrivia.line
+
+    let firstTokenLocation = context.sourceLocationConverter.location(
+      for: firstToken.positionAfterSkippingLeadingTrivia)
+    let lastTokenLocation = context.sourceLocationConverter.location(
+      for: lastToken.positionAfterSkippingLeadingTrivia)
+    let isSingleLine = firstTokenLocation.line == lastTokenLocation.line
 
     let ignoreLine = context.configuration.blankLineBetweenMembers
       .ignoreSingleLineProperties

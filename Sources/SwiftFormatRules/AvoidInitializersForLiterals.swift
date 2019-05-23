@@ -26,8 +26,14 @@ fileprivate let knownIntTypes = Set(intSizes.map { "Int\($0)" } + intSizes.map {
 ///       that kind of literal type, a lint error is raised.
 ///
 /// - SeeAlso: https://google.github.io/swift#numeric-and-string-literals
-public final class AvoidInitializersForLiterals: SyntaxLintRule {
-  public override func visit(_ node: FunctionCallExprSyntax) -> SyntaxVisitorContinueKind {
+public struct AvoidInitializersForLiterals: SyntaxLintRule {
+  public let context: Context
+
+  public init(context: Context) {
+    self.context = context
+  }
+
+  public func visit(_ node: FunctionCallExprSyntax) -> SyntaxVisitorContinueKind {
     // Ensure we're calling a known Integer initializer.
     guard let callee = node.calledExpression as? IdentifierExprSyntax else {
       // Ensure we properly visit the children of this node, in case we have other function calls
@@ -51,15 +57,16 @@ public final class AvoidInitializersForLiterals: SyntaxLintRule {
       return .visitChildren
     }
 
+    let sourceLocationConverter = self.context.sourceLocationConverter
     diagnose(.avoidInitializerStyleCast(node.description), on: callee) {
-      $0.highlight(callee.sourceRange(in: self.context.fileURL))
+      $0.highlight(callee.sourceRange(converter: sourceLocationConverter))
     }
     return .skipChildren
   }
 }
 
 fileprivate func extractLiteral(_ node: FunctionCallExprSyntax, _ typeName: String) -> ExprSyntax? {
-  guard let firstArg = node.argumentList.first, node.argumentList.count == 1 else {
+  guard let firstArg = node.argumentList.firstAndOnly else {
     return nil
   }
   if knownIntTypes.contains(typeName) {

@@ -29,16 +29,6 @@ public class WhitespaceTestCase: XCTestCase {
     func finalize() {}
   }
 
-  public override func setUp() {
-    context = Context(
-      configuration: Configuration(),
-      diagnosticEngine: DiagnosticEngine(),
-      fileURL: URL(fileURLWithPath: "/tmp/test.swift")
-    )
-    consumer = DiagnosticTrackingConsumer()
-    context?.diagnosticEngine?.addConsumer(consumer)
-  }
-
   public override func tearDown() {
     guard shouldCheckForUnassertedDiagnostics else { return }
 
@@ -57,6 +47,15 @@ public class WhitespaceTestCase: XCTestCase {
     input: String,
     expected: String
   ) {
+    context = Context(
+      configuration: Configuration(),
+      diagnosticEngine: DiagnosticEngine(),
+      fileURL: URL(fileURLWithPath: "/tmp/test.swift"),
+      sourceText: input
+    )
+    consumer = DiagnosticTrackingConsumer()
+    context?.diagnosticEngine?.addConsumer(consumer)
+
     shouldCheckForUnassertedDiagnostics = true
     if let ctx = self.context {
       let ws = WhitespaceLinter(user: input, formatted: expected, context: ctx)
@@ -79,7 +78,7 @@ public class WhitespaceTestCase: XCTestCase {
     file: StaticString = #file,
     sourceLine: UInt = #line
   ) {
-    let maybeIdx = consumer.registeredDiagnostics.index {
+    let maybeIdx = consumer.registeredDiagnostics.firstIndex {
       $0 == (message.text, line: line, column: column)
     }
 

@@ -315,9 +315,7 @@ public struct WhitespaceLinter {
     actions: ((inout Diagnostic.Builder) -> Void)? = nil
   ) {
     let loc = SourceLocation(
-      file: context.fileURL.path,
-      position: AbsolutePosition(line: line, column: column, utf8Offset: utf8Offset)
-    )
+      line: line, column: column, offset: utf8Offset, file: context.fileURL.path)
     context.diagnosticEngine?.diagnose(
       message,
       location: loc,

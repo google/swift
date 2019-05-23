@@ -42,16 +42,16 @@ public final class UseShorthandTypeNames: SyntaxFormatRule {
 
     switch node.name.text {
     case "Array":
-      guard argList.count == 1 else { return node }
-      let newArray = shortenArrayType(arguments: argList, trivia: trivia)
+      guard let arg = argList.firstAndOnly else { return node }
+      let newArray = shortenArrayType(argument: arg, trivia: trivia)
       return newArray
     case "Dictionary":
-      guard argList.count == 2 else { return node }
-      let newDictionary = shortenDictionaryType(arguments: argList, trivia: trivia)
+      guard let args = exactlyTwoChildren(of: argList) else { return node }
+      let newDictionary = shortenDictionaryType(arguments: args, trivia: trivia)
       return newDictionary
     case "Optional":
-      guard argList.count == 1 else { return node }
-      let newOptional = shortenOptionalType(arguments: argList, trivia: trivia)
+      guard let arg = argList.firstAndOnly else { return node }
+      let newOptional = shortenOptionalType(argument: arg, trivia: trivia)
       return newOptional
     default:
       break
@@ -66,12 +66,12 @@ public final class UseShorthandTypeNames: SyntaxFormatRule {
     let trivia = retrieveTrivia(from: node)
     switch exp.identifier.text {
     case "Array":
-      guard argList.count == 1 else { return node }
-      let newArray = shortenArrayExp(arguments: argList, trivia: trivia)
+      guard let arg = argList.firstAndOnly else { return node }
+      let newArray = shortenArrayExp(argument: arg, trivia: trivia)
       return newArray ?? node
     case "Dictionary":
-      guard argList.count == 2 else { return node }
-      let newDictionary = shortenDictExp(arguments: argList, trivia: trivia)
+      guard let args = exactlyTwoChildren(of: argList) else { return node }
+      let newDictionary = shortenDictExp(arguments: args, trivia: trivia)
       return newDictionary ?? node
     default:
       break
@@ -79,54 +79,62 @@ public final class UseShorthandTypeNames: SyntaxFormatRule {
     return node
   }
 
+  /// Returns the two arguments in the given argument list, if there are exactly two elements;
+  /// otherwise, it returns nil.
+  func exactlyTwoChildren(of argumentList: GenericArgumentListSyntax) -> [GenericArgumentSyntax]? {
+    var iterator = argumentList.makeIterator()
+    guard let first = iterator.next() else { return nil }
+    guard let second = iterator.next() else { return nil }
+    guard iterator.next() == nil else { return nil }
+    return [first, second]
+  }
+
   // Get type identifier from generic argument, construct shorthand array form, as a type
-  func shortenArrayType(arguments: GenericArgumentListSyntax,
-                        trivia: (Trivia, Trivia)) -> TypeSyntax {
-    let type = arguments[0].argumentType
+  func shortenArrayType(argument: GenericArgumentSyntax, trivia: (Trivia, Trivia)) -> TypeSyntax {
     let (leading, trailing) = trivia
     let leftBracket = SyntaxFactory.makeLeftSquareBracketToken(leadingTrivia: leading)
     let rightBracket = SyntaxFactory.makeRightSquareBracketToken(trailingTrivia: trailing)
-    let newArray = SyntaxFactory.makeArrayType(leftSquareBracket: leftBracket,
-                                               elementType: type,
-                                               rightSquareBracket: rightBracket)
+    let newArray = SyntaxFactory.makeArrayType(
+      leftSquareBracket: leftBracket,
+      elementType: argument.argumentType,
+      rightSquareBracket: rightBracket)
     return newArray
   }
 
   // Get type identifiers from generic arguments, construct shorthand dictionary form, as a type
-  func shortenDictionaryType(arguments: GenericArgumentListSyntax,
-                         trivia: (Trivia, Trivia)) -> TypeSyntax {
-    let firstType = arguments[0].argumentType
-    let secondType = arguments[1].argumentType
+  func shortenDictionaryType(arguments: [GenericArgumentSyntax], trivia: (Trivia, Trivia))
+    -> TypeSyntax
+  {
     let (leading, trailing) = trivia
     let leftBracket = SyntaxFactory.makeLeftSquareBracketToken(leadingTrivia: leading)
     let rightBracket = SyntaxFactory.makeRightSquareBracketToken(trailingTrivia: trailing)
     let colon = SyntaxFactory.makeColonToken(trailingTrivia: .spaces(1))
-    let newDictionary = SyntaxFactory.makeDictionaryType(leftSquareBracket: leftBracket,
-                                                         keyType: firstType,
-                                                         colon: colon,
-                                                         valueType: secondType,
-                                                         rightSquareBracket: rightBracket)
+    let newDictionary = SyntaxFactory.makeDictionaryType(
+      leftSquareBracket: leftBracket,
+      keyType: arguments[0].argumentType,
+      colon: colon,
+      valueType: arguments[1].argumentType,
+      rightSquareBracket: rightBracket)
     return newDictionary
   }
 
   // Get type identifier from generic argument, construct shorthand optional form, as a type
-  func shortenOptionalType(arguments: GenericArgumentListSyntax,
-                       trivia: (Trivia, Trivia)) -> TypeSyntax {
-    let type = arguments[0].argumentType
+  func shortenOptionalType(argument: GenericArgumentSyntax, trivia: (Trivia, Trivia))
+    -> TypeSyntax
+  {
     let (_, trailing) = trivia
     let questionMark = SyntaxFactory.makePostfixQuestionMarkToken(trailingTrivia: trailing)
-    let newOptional = SyntaxFactory.makeOptionalType(wrappedType: type,
-                                                     questionMark: questionMark)
+    let newOptional = SyntaxFactory.makeOptionalType(
+      wrappedType: argument.argumentType, questionMark: questionMark)
     return newOptional
   }
 
   // Construct an array expression from type information in the generic argument
-  func shortenArrayExp(arguments: GenericArgumentListSyntax,
-                       trivia: (Trivia, Trivia)) -> ArrayExprSyntax? {
+  func shortenArrayExp(argument arg: GenericArgumentSyntax, trivia: (Trivia, Trivia))
+    -> ArrayExprSyntax?
+  {
     var element = SyntaxFactory.makeBlankArrayElement()
 
-    // Get type id, create an expression, nest in the array element
-    let arg = arguments[0]
     // Type id can be in a simple type identifier (ex: Int)
     if let simpleId = arg.argumentType as? SimpleTypeIdentifierSyntax {
       let idExp = SyntaxFactory.makeIdentifierExpr(identifier: simpleId.name,
@@ -156,8 +164,9 @@ public final class UseShorthandTypeNames: SyntaxFormatRule {
   }
 
   // Construct a dictionary expression from type information in the generic arguments
-  func shortenDictExp(arguments: GenericArgumentListSyntax,
-                      trivia: (Trivia, Trivia)) -> DictionaryExprSyntax? {
+  func shortenDictExp(arguments: [GenericArgumentSyntax], trivia: (Trivia, Trivia))
+    -> DictionaryExprSyntax?
+  {
     let blank = SyntaxFactory.makeBlankIdentifierExpr()
     let colon = SyntaxFactory.makeColonToken(trailingTrivia: .spaces(1))
     var element = SyntaxFactory.makeDictionaryElement(keyExpression: blank,
@@ -265,4 +274,3 @@ extension Diagnostic.Message {
     return .init(.warning, "use \(type) type shorthand form")
   }
 }
-

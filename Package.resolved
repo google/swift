@@ -14,9 +14,9 @@
         "package": "SwiftSyntax",
         "repositoryURL": "https://github.com/apple/swift-syntax",
         "state": {
-          "branch": null,
-          "revision": "43aa4a19b8105a803d8149ad2a86aa53a77efef3",
-          "version": "0.50000.0"
+          "branch": "swift-DEVELOPMENT-SNAPSHOT-2019-05-13-m",
+          "revision": "d74527c44c1d468f4bf454bd3ad9b3bf55bde42a",
+          "version": null
         }
       }
     ]

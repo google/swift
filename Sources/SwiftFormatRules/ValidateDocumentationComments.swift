@@ -22,8 +22,14 @@ import SwiftSyntax
 ///       invalid (uses `Parameters` when there is only one parameter) will yield a lint error.
 ///
 /// - SeeAlso: https://google.github.io/swift#parameter-returns-and-throws-tags
-public final class ValidateDocumentationComments: SyntaxLintRule {
-  public override func visit(_ node: FunctionDeclSyntax) -> SyntaxVisitorContinueKind {
+public struct ValidateDocumentationComments: SyntaxLintRule {
+  public let context: Context
+
+  public init(context: Context) {
+    self.context = context
+  }
+
+  public func visit(_ node: FunctionDeclSyntax) -> SyntaxVisitorContinueKind {
     guard let declComment = node.docComment else { return .skipChildren }
     guard let commentInfo = node.docCommentInfo else { return .skipChildren }
     guard let params = commentInfo.parameters else { return .skipChildren }

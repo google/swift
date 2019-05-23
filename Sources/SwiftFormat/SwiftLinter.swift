@@ -53,7 +53,7 @@ public final class SwiftLinter {
     if FileManager.default.fileExists(atPath: url.path, isDirectory: &isDir), isDir.boolValue {
       throw SwiftFormatError.isDirectory
     }
-    let sourceFile = try SyntaxTreeParser.parse(url)
+    let sourceFile = try SyntaxParser.parse(url)
     try lint(syntax: sourceFile, assumingFileURL: url)
   }
 
@@ -65,13 +65,12 @@ public final class SwiftLinter {
   ///   - outputStream: A value conforming to `TextOutputStream` to which the formatted output will
   ///     be written.
   /// - Throws: If an unrecoverable error occurs when formatting the code.
-  public func lint(syntax: Syntax, assumingFileURL url: URL) throws {
-    let context
-      = Context(configuration: configuration, diagnosticEngine: diagnosticEngine, fileURL: url)
-    let pipeline = LintPipeline(context: context)
-    populate(pipeline)
-
-    syntax.walk(pipeline)
+  public func lint(syntax: SourceFileSyntax, assumingFileURL url: URL) throws {
+    let context = Context(
+      configuration: configuration, diagnosticEngine: diagnosticEngine, fileURL: url,
+      sourceFileSyntax: syntax)
+    var pipeline = LintPipeline(context: context)
+    syntax.walk(&pipeline)
 
     // Perform whitespace linting by comparing the input source text with the output of the
     // pretty-printer.

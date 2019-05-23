@@ -24,9 +24,15 @@ import SwiftSyntax
 ///         TODO(abl): This is not a neutral format operation.
 ///
 /// - SeeAlso: https://google.github.io/swift#pattern-matching
-public final class UseLetInEveryBoundCaseVariable: SyntaxLintRule {
+public struct UseLetInEveryBoundCaseVariable: SyntaxLintRule {
 
-  public override func visit(_ node: SwitchCaseLabelSyntax) -> SyntaxVisitorContinueKind {
+  public let context: Context
+
+  public init(context: Context) {
+    self.context = context
+  }
+
+  public func visit(_ node: SwitchCaseLabelSyntax) -> SyntaxVisitorContinueKind {
     for item in node.caseItems {
       guard item.pattern is ValueBindingPatternSyntax else { continue }
       diagnose(.useLetInBoundCaseVariables, on: node)

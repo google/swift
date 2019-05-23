@@ -26,20 +26,28 @@ import SwiftSyntax
 /// Lint: Declaring a property with an implicitly unwrapped type yields a lint error.
 ///
 /// - SeeAlso: https://google.github.io/swift#implicitly-unwrapped-optionals
-public final class NeverUseImplicitlyUnwrappedOptionals: SyntaxLintRule {
+public struct NeverUseImplicitlyUnwrappedOptionals: SyntaxLintRule {
+
+  public let context: Context
+
+  public init(context: Context) {
+    self.context = context
+  }
 
   // Checks if "XCTest" is an import statement
-  public override func visit(_ node: SourceFileSyntax) -> SyntaxVisitorContinueKind {
+  public func visit(_ node: SourceFileSyntax) -> SyntaxVisitorContinueKind {
     setImportsXCTest(context: context, sourceFile: node)
     return .visitChildren
   }
 
-  public override func visit(_ node: VariableDeclSyntax) -> SyntaxVisitorContinueKind {
+  public func visit(_ node: VariableDeclSyntax) -> SyntaxVisitorContinueKind {
     guard !context.importsXCTest else { return .skipChildren }
     // Ignores IBOutlet variables
     if let attributes = node.attributes {
       for attribute in attributes {
-        if attribute.attributeName.text == "IBOutlet" { return .skipChildren }
+        if (attribute as? AttributeSyntax)?.attributeName.text == "IBOutlet" {
+          return .skipChildren
+        }
       }
     }
     // Finds type annotation for variable(s)

@@ -12,6 +12,12 @@ invoked via an [API](#api-usage).
 
 ## Command Line Usage
 
+> NOTE: `swift-format` currently uses the standalone Swift parser that
+> requires a **trunk development snapshot** of Swift downloaded from swift.org,
+> and the version of the snapshot must match the version of `SwiftSyntax`
+> listed in [Package.swift](Package.swift) (or be the most recent version
+> before it, if there is not an exact match).
+
 ```
 swift-format [OPTIONS] FILE...
 ```
