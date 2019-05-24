@@ -284,7 +284,6 @@ extension FormatPipeline {
     node = DoNotUseSemicolons(context: context).visit(node)
     node = FullyIndirectEnum(context: context).visit(node)
     node = GroupNumericLiterals(context: context).visit(node)
-    node = GroupOverloads(context: context).visit(node)
     node = MultiLineTrailingCommas(context: context).visit(node)
     node = NoAccessLevelOnExtensionDeclaration(context: context).visit(node)
     node = NoBlockComments(context: context).visit(node)
@@ -293,19 +292,15 @@ extension FormatPipeline {
     node = NoEmptyTrailingClosureParentheses(context: context).visit(node)
     node = NoLabelsInCasePatterns(context: context).visit(node)
     node = NoParensAroundConditions(context: context).visit(node)
-    node = NoPlaygroundLiterals(context: context).visit(node)
     node = NoVoidReturnOnFunctionSignature(context: context).visit(node)
     node = OneCasePerLine(context: context).visit(node)
     node = OneVariableDeclarationPerLine(context: context).visit(node)
     node = OrderedImports(context: context).visit(node)
-    node = ParameterizedAttributesOnNewLines(context: context).visit(node)
     node = ReturnVoidInsteadOfEmptyTuple(context: context).visit(node)
     node = UseEnumForNamespacing(context: context).visit(node)
     node = UseShorthandTypeNames(context: context).visit(node)
     node = UseSingleLinePropertyGetter(context: context).visit(node)
-    node = UseTrailingClosure(context: context).visit(node)
     node = UseTripleSlashForDocumentationComments(context: context).visit(node)
-    node = ValidStringLiterals(context: context).visit(node)
     return node
   }
 }

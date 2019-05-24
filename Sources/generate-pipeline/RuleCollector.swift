@@ -23,8 +23,8 @@ final class RuleCollector {
     /// The type name of the rule.
     let typeName: String
 
-    /// The members defined by the rule type.
-    let members: MemberDeclListSyntax
+    /// The syntax node types visited by the rule type.
+    let visitedNodes: [String]
 
     /// Indicates whether the rule can format code (all rules can lint).
     let canFormat: Bool
@@ -70,16 +70,8 @@ final class RuleCollector {
         // the names of the types they touch so that they can be interleaved into one pass over the
         // tree.
         allLinters.insert(detectedRule.typeName)
-        for member in detectedRule.members {
-          guard let function = member.decl as? FunctionDeclSyntax else { continue }
-          guard function.identifier.text == "visit" else { continue }
-          let params = function.signature.input.parameterList
-          guard let firstType = params.firstAndOnly?.type as? SimpleTypeIdentifierSyntax else {
-            continue
-          }
-
-          let nodeType = firstType.name.text
-          syntaxNodeLinters[nodeType, default: []].append(detectedRule.typeName)
+        for visitedNode in detectedRule.visitedNodes {
+          syntaxNodeLinters[visitedNode, default: []].append(detectedRule.typeName)
         }
       }
     }
@@ -116,13 +108,33 @@ final class RuleCollector {
         continue
       }
 
+      let canFormat: Bool
       switch identifier.name.text {
       case "SyntaxLintRule":
-        return DetectedRule(typeName: typeName, members: members, canFormat: false)
+        canFormat = false
       case "SyntaxFormatRule":
-        return DetectedRule(typeName: typeName, members: members, canFormat: true)
-      default: continue
+        canFormat = true
+      default:
+        // Keep looking at the other inheritances.
+        continue
       }
+
+      // Now that we know it's a format or lint rule, collect the `visit` methods.
+      var visitedNodes = [String]()
+      for member in members {
+        guard let function = member.decl as? FunctionDeclSyntax else { continue }
+        guard function.identifier.text == "visit" else { continue }
+        let params = function.signature.input.parameterList
+        guard let firstType = params.firstAndOnly?.type as? SimpleTypeIdentifierSyntax else {
+          continue
+        }
+        visitedNodes.append(firstType.name.text)
+      }
+
+      /// Ignore it if it doesn't have any; there's no point in putting no-op rules in the pipeline.
+      /// Otherwise, return it (we don't need to look at the rest of the inheritances).
+      guard !visitedNodes.isEmpty else { return nil }
+      return DetectedRule(typeName: typeName, visitedNodes: visitedNodes, canFormat: canFormat)
     }
 
     return nil
