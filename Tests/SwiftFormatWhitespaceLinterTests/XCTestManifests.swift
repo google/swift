@@ -8,6 +8,7 @@ extension WhitespaceLintTests {
     static let __allTests__WhitespaceLintTests = [
         ("testAddLines", testAddLines),
         ("testIndentation", testIndentation),
+        ("testLineLength", testLineLength),
         ("testRemoveLines", testRemoveLines),
         ("testSpacing", testSpacing),
         ("testTrailingWhitespace", testTrailingWhitespace),

@@ -17,7 +17,7 @@ import SwiftSyntax
 
 /// Emits linter errors for whitespace style violations by comparing the raw text of the input Swift
 /// code with formatted text.
-public struct WhitespaceLinter {
+public class WhitespaceLinter {
 
   /// The text of the input source code to be linted.
   let userText: String
@@ -27,6 +27,9 @@ public struct WhitespaceLinter {
 
   /// The Context object containing the DiagnosticEngine.
   let context: Context
+
+  /// Is the current line too long?
+  var isLineTooLong: Bool
 
   /// Creates a new WhitespaceLinter with the given context.
   ///
@@ -38,6 +41,7 @@ public struct WhitespaceLinter {
     self.userText = user
     self.formattedText = formatted
     self.context = context
+    self.isLineTooLong = false
   }
 
   /// Perform whitespace linting.
@@ -60,6 +64,7 @@ public struct WhitespaceLinter {
 
       compareWhitespace(
         userOffset: userOffset,
+        formOffset: formOffset,
         isFirstCharacter: isFirstCharater,
         userWs: userNext.whitespace,
         formattedWs: formNext.whitespace
@@ -85,15 +90,22 @@ public struct WhitespaceLinter {
   ///   - userWs: The user leading whitespace buffer at the current character.
   ///   - formattedWs: The formatted leading whitespace buffer at the current character.
   func compareWhitespace(
-    userOffset: Int, isFirstCharacter: Bool, userWs: String, formattedWs: String
+    userOffset: Int, formOffset: Int, isFirstCharacter: Bool, userWs: String, formattedWs: String
   ) {
-    if userWs == formattedWs { return }
-
     // e.g. "\n" -> ["", ""], and "" -> [""]
     let userTokens = userWs.split(
       separator: "\n", omittingEmptySubsequences: false).map(String.init)
     let formTokens = formattedWs.split(
       separator: "\n", omittingEmptySubsequences: false).map(String.init)
+
+    checkForLineLengthErrors(
+      userOffset: userOffset,
+      formOffset: formOffset,
+      isFirstCharacter: isFirstCharacter,
+      user: userTokens,
+      form: formTokens)
+
+    if userWs == formattedWs { return }
 
     checkForIndentationErrors(
       userOffset: userOffset,
@@ -112,6 +124,85 @@ public struct WhitespaceLinter {
     checkForRemoveLineErrors(userOffset: userOffset, user: userTokens, form: formTokens)
 
     checkForAddLineErrors(userOffset: userOffset, user: userTokens, form: formTokens)
+  }
+
+  /// Check the user text for line length violations.
+  ///
+  /// - Parameters:
+  ///   - userOffset: The current non-whitespace character offset within the user text.
+  ///   - formOffset: The current non-whitespace character offset within the formatted text.
+  ///   - isFirstCharacter: Are we at the first character in the text?
+  ///   - user: The tokenized user whitespace buffer.
+  ///   - form: The tokenized formatted whitespace buffer.
+  func checkForLineLengthErrors(
+    userOffset: Int, formOffset: Int, isFirstCharacter: Bool, user: [String], form: [String]
+  ) {
+    // Only run this check at the start of a line.
+    guard (user.count > 1 && form.count > 1)
+      || (form.count == 1 && form.count == 1 && isFirstCharacter)
+    else {
+      return
+    }
+
+    let lengthLimit = context.configuration.lineLength
+
+    var userLength = 0
+    var formLength = 0
+
+    // Move the offset to the first non-whitespace character.
+    var adjustedUserOffset = userOffset
+    for i in 0..<(user.count - 1) {
+      adjustedUserOffset += user[i].count + 1
+    }
+
+    // Calculate the length of the user's line.
+    if let userIndent = user.last?.count {
+      userLength = userIndent
+      for i in adjustedUserOffset..<userText.count {
+        let index = userText.index(userText.startIndex, offsetBy: i)
+        let char = userText[index]
+
+        // Count characters up to the newline.
+        if char == "\n" { break }
+        else { userLength += 1 }
+      }
+    }
+
+    // Exit if the user's line is within limits
+    if userLength <= lengthLimit {
+      isLineTooLong = false
+      return
+    }
+
+    // Move the offset to the first non-whitespace character.
+    var adjustedFormOffset = formOffset
+    for i in 0..<(form.count - 1) {
+      adjustedFormOffset += form[i].count + 1
+    }
+
+    // Calculate the length of the formatted line.
+    if let formIndent = form.last?.count {
+      formLength = formIndent
+      for i in adjustedFormOffset..<formattedText.count {
+        let index = formattedText.index(formattedText.startIndex, offsetBy: i)
+        let char = formattedText[index]
+
+        // Count characters up to the newline.
+        if char == "\n" { break }
+        else { formLength += 1 }
+      }
+    }
+
+    // If the formatted text produces a line that is too long, don't raise an error.
+    if formLength > lengthLimit {
+      isLineTooLong = false
+      return
+    }
+
+    let pos = calculatePosition(offset: adjustedUserOffset, data: self.userText)
+
+    isLineTooLong = true
+    diagnose(.lineLengthError, line: pos.line, column: pos.column, utf8Offset: 0)
   }
 
   /// Compare user and formatted whitespace buffers, and check for indentation errors.
@@ -238,7 +329,7 @@ public struct WhitespaceLinter {
   ///   - user: The tokenized user whitespace buffer.
   ///   - form: The tokenized formatted whitespace buffer.
   func checkForAddLineErrors(userOffset: Int, user: [String], form: [String]) {
-    guard form.count > user.count else { return }
+    guard form.count > user.count && !isLineTooLong else { return }
     let pos = calculatePosition(offset: userOffset, data: self.userText)
     diagnose(
       .addLinesError(form.count - user.count), line: pos.line, column: pos.column, utf8Offset: 0
@@ -339,4 +430,5 @@ extension Diagnostic.Message {
   static func addLinesError(_ lines: Int) -> Diagnostic.Message {
     return .init(.warning, "[AddLines]: add \(lines) line breaks.")
   }
+  static let lineLengthError = Diagnostic.Message(.warning, "[LineLength]: line is too long.")
 }

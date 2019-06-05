@@ -129,4 +129,48 @@ public class WhitespaceLintTests: WhitespaceTestCase {
     XCTAssertDiagnosed(.removeLineError, line: 8, column: 0)
     XCTAssertDiagnosed(.removeLineError, line: 9, column: 0)
   }
+
+  public func testLineLength() {
+    let input =
+      """
+      func myFunc(longVar1: Bool, longVar2: Bool, longVar3: Bool, longVar4: Bool) {
+        // do stuff
+      }
+
+      func myFunc(longVar1: Bool, longVar2: Bool,
+        longVar3: Bool,
+        longVar4: Bool) {
+        // do stuff
+      }
+
+      """
+
+    let expected =
+      """
+      func myFunc(
+        longVar1: Bool,
+        longVar2: Bool,
+        longVar3: Bool,
+        longVar4: Bool
+      ) {
+        // do stuff
+      }
+
+      func myFunc(
+        longVar1: Bool,
+        longVar2: Bool,
+        longVar3: Bool,
+        longVar4: Bool
+      ) {
+        // do stuff
+      }
+
+      """
+
+    context?.configuration.lineLength = 30
+    performWhitespaceLint(input: input, expected: expected)
+    XCTAssertDiagnosed(.lineLengthError, line: 1, column: 1)
+    XCTAssertDiagnosed(.lineLengthError, line: 5, column: 1)
+    XCTAssertDiagnosed(.addLinesError(1), line: 7, column: 17)
+  }
 }

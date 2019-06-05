@@ -235,6 +235,7 @@ extension GuardStmtTests {
     // to regenerate.
     static let __allTests__GuardStmtTests = [
         ("testGuardStatement", testGuardStatement),
+        ("testGuardWithFuncCall", testGuardWithFuncCall),
     ]
 }
 
@@ -254,6 +255,7 @@ extension IfStmtTests {
     static let __allTests__IfStmtTests = [
         ("testIfElseStatement_breakBeforeElse", testIfElseStatement_breakBeforeElse),
         ("testIfElseStatement_noBreakBeforeElse", testIfElseStatement_noBreakBeforeElse),
+        ("testIfLetStatements", testIfLetStatements),
         ("testIfStatement", testIfStatement),
         ("testMatchingPatternConditions", testMatchingPatternConditions),
     ]
