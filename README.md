@@ -5,6 +5,12 @@ against the official Swift repository.
 
 # Projects
 
+### swift-format
+
+`swift-format` formats and diagnoses Swift source code according to a set of style guidelines. It can be used as a command line tool or linked into other applications as a Swift Package Manager dependency and invoked via an API
+
+The repo is in the `format` branch: https://github.com/google/swift/tree/format
+
 ### Swift for TensorFlow
 
 **Note:** Swift for TensorFlow source code has moved to the [tensorflow branch on apple/swift](https://github.com/apple/swift/tree/tensorflow).
