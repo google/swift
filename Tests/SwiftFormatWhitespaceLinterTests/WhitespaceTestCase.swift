@@ -45,7 +45,8 @@ public class WhitespaceTestCase: XCTestCase {
   ///  - expected: The formatted text.
   func performWhitespaceLint(
     input: String,
-    expected: String
+    expected: String,
+    linelength: Int? = nil
   ) {
     context = Context(
       configuration: Configuration(),
@@ -53,6 +54,9 @@ public class WhitespaceTestCase: XCTestCase {
       fileURL: URL(fileURLWithPath: "/tmp/test.swift"),
       sourceText: input
     )
+    if let linelength = linelength {
+      context?.configuration.lineLength = linelength
+    }
     consumer = DiagnosticTrackingConsumer()
     context?.diagnosticEngine?.addConsumer(consumer)
 

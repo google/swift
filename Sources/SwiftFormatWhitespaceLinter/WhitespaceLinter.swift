@@ -85,7 +85,8 @@ public class WhitespaceLinter {
   /// spaces and newlines in any order. e.g. " \n ", "  \n", etc.
   ///
   /// - Parameters:
-  ///   - userOffset: The current non-whitespace character offset within the user text.
+  ///   - userOffset: The current character offset within the user text.
+  ///   - formOffset: The current character offset within the formatted text.
   ///   - isFirstCharacter: Are we at the first character in the text?
   ///   - userWs: The user leading whitespace buffer at the current character.
   ///   - formattedWs: The formatted leading whitespace buffer at the current character.
@@ -129,8 +130,8 @@ public class WhitespaceLinter {
   /// Check the user text for line length violations.
   ///
   /// - Parameters:
-  ///   - userOffset: The current non-whitespace character offset within the user text.
-  ///   - formOffset: The current non-whitespace character offset within the formatted text.
+  ///   - userOffset: The current character offset within the user text.
+  ///   - formOffset: The current character offset within the formatted text.
   ///   - isFirstCharacter: Are we at the first character in the text?
   ///   - user: The tokenized user whitespace buffer.
   ///   - form: The tokenized formatted whitespace buffer.
@@ -214,7 +215,7 @@ public class WhitespaceLinter {
   ///     }
   ///
   /// - Parameters:
-  ///   - userOffset: The current non-whitespace character offset within the user text.
+  ///   - userOffset: The current character offset within the user text.
   ///   - isFirstCharacter: Are we at the first character in the text?
   ///   - user: The tokenized user whitespace buffer.
   ///   - form: The tokenized formatted whitespace buffer.
@@ -246,7 +247,7 @@ public class WhitespaceLinter {
   /// Compare user and formatted whitespace buffers, and check for trailing whitespace.
   ///
   /// - Parameters:
-  ///   - userOffset: The current non-whitespace character offset within the user text.
+  ///   - userOffset: The current character offset within the user text.
   ///   - user: The tokenized user whitespace buffer.
   ///   - form: The tokenized formatted whitespace buffer.
   func checkForTrailingWhitespaceErrors(userOffset: Int, user: [String], form: [String]) {
@@ -268,7 +269,7 @@ public class WhitespaceLinter {
   ///     let a : Int = 123  // Spacing error before the colon
   ///
   /// - Parameters:
-  ///   - userOffset: The current non-whitespace character offset within the user text.
+  ///   - userOffset: The current character offset within the user text.
   ///   - isFirstCharacter: Are we at the first character in the text?
   ///   - user: The tokenized user whitespace buffer.
   ///   - form: The tokenized formatted whitespace buffer.
@@ -297,7 +298,7 @@ public class WhitespaceLinter {
   ///       }  // this linebreak must be removed
   ///
   /// - Parameters:
-  ///   - userOffset: The current non-whitespace character offset within the user text.
+  ///   - userOffset: The current character offset within the user text.
   ///   - user: The tokenized user whitespace buffer.
   ///   - form: The tokenized formatted whitespace buffer.
   func checkForRemoveLineErrors(userOffset: Int, user: [String], form: [String]) {
@@ -325,7 +326,7 @@ public class WhitespaceLinter {
   ///       func myFun() { return 123 }  //  add linesbreaks before and after the return statement
   ///
   /// - Parameters:
-  ///   - userOffset: The current non-whitespace character offset within the user text.
+  ///   - userOffset: The current character offset within the user text.
   ///   - user: The tokenized user whitespace buffer.
   ///   - form: The tokenized formatted whitespace buffer.
   func checkForAddLineErrors(userOffset: Int, user: [String], form: [String]) {

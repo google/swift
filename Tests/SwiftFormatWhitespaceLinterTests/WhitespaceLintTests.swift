@@ -167,8 +167,7 @@ public class WhitespaceLintTests: WhitespaceTestCase {
 
       """
 
-    context?.configuration.lineLength = 30
-    performWhitespaceLint(input: input, expected: expected)
+    performWhitespaceLint(input: input, expected: expected, linelength: 30)
     XCTAssertDiagnosed(.lineLengthError, line: 1, column: 1)
     XCTAssertDiagnosed(.lineLengthError, line: 5, column: 1)
     XCTAssertDiagnosed(.addLinesError(1), line: 7, column: 17)
