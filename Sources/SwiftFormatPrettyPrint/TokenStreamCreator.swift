@@ -754,8 +754,8 @@ private final class TokenStreamCreator: SyntaxVisitor {
 
   func visit(_ node: ReturnClauseSyntax) -> SyntaxVisitorContinueKind {
     before(node.firstToken, tokens: .open)
-    before(node.returnType.firstToken, tokens: .break)
-    after(node.lastToken, tokens: .close)
+    before(node.returnType.firstToken, tokens: .break(.open))
+    after(node.lastToken, tokens: .break(.close, size: 0), .close)
     return .visitChildren
   }
 

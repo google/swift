@@ -101,6 +101,9 @@ public class FunctionDeclTests: PrettyPrintTestCase {
         print("Hello World")
         return 1.0
       }
+      func tupleFunc() throws -> (one: Int, two: Double, three: Bool, four: String) {
+        return (one: 1, two: 2.0, three: true, four: "four")
+      }
       """
 
     let expected =
@@ -114,6 +117,17 @@ public class FunctionDeclTests: PrettyPrintTestCase {
       ) -> Double {
         print("Hello World")
         return 1.0
+      }
+      func tupleFunc() throws
+        ->
+        (
+          one: Int, two: Double, three: Bool,
+          four: String
+        )
+      {
+        return (
+          one: 1, two: 2.0, three: true, four: "four"
+        )
       }
 
       """

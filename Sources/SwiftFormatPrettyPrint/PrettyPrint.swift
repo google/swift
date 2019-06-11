@@ -52,6 +52,9 @@ public class PrettyPrinter {
   /// Indicates whether or not the current line being printed is a continuation line.
   private var currentLineIsContinuation = false
 
+  /// Keeps track of the continuation line state as you go into and out of open-close break groups.
+  private var continuationStack: [Bool] = []
+
   /// Keeps track of the most recent number of consecutive newlines that have been printed.
   ///
   /// This value is reset to zero whenever non-newline content is printed.
@@ -202,6 +205,7 @@ public class PrettyPrinter {
 
       switch kind {
       case .open:
+        continuationStack.append(currentLineIsContinuation)
         currentLineIsContinuation = false
         openDelimiterBreakStack.append(lineNumber)
         indentationStack.append(configuration.indentation)
@@ -210,6 +214,7 @@ public class PrettyPrinter {
           fatalError("Unmatched closing break")
         }
         indentationStack.removeLast()
+        currentLineIsContinuation = continuationStack.popLast() ?? false
 
         let isDifferentLine = lineNumber != matchingOpenLineNumber
         if closeMustBreak {

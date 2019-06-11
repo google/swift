@@ -178,7 +178,8 @@ public class SwitchStmtTests: PrettyPrintTestCase {
       case (let distance, 0), (0, let distance):
         print(distance)
       case (let distance, 0), (0, let distance),
-        (let distance, 10): print(distance)
+        (let distance, 10):
+        print(distance)
       default: print("A message")
       }
       switch pointy {
