@@ -595,6 +595,7 @@ private final class TokenStreamCreator: SyntaxVisitor {
   }
 
   func visit(_ node: MemberAccessExprSyntax) -> SyntaxVisitorContinueKind {
+    before(node.dot, tokens: .break(.continue, size: 0))
     return .visitChildren
   }
 
