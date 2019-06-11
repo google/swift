@@ -169,11 +169,13 @@ public class PrettyPrinter {
   /// and apply the appropriate level of indentation.
   ///
   /// - Parameters:
-  ///   - token: The token to be printed.
-  ///   - length: The length of the token (number of columns).
-  private func printToken(token: Token, length: Int) {
+  ///   - idx: The index of the token/length pair to be printed.
+  private func printToken(idx: Int) {
+    let token = tokens[idx]
+    let length = lengths[idx]
+
     if self.printTokenStream {
-      printDebugToken(token: token, length: length)
+      printDebugToken(token: token, length: length, idx: idx)
     }
     assert(length >= 0, "Token lengths must be positive")
     switch token {
@@ -410,7 +412,7 @@ public class PrettyPrinter {
 
     // Print out the token stream, wrapping according to line-length limitations.
     for i in 0..<tokens.count {
-      printToken(token: tokens[i], length: lengths[i])
+      printToken(idx: i)
     }
 
     guard openDelimiterBreakStack.isEmpty else {
@@ -426,7 +428,7 @@ public class PrettyPrinter {
   /// Print out the token stream to the console for debugging.
   ///
   /// Indentation is applied to make identification of groups easier.
-  private func printDebugToken(token: Token, length: Int) {
+  private func printDebugToken(token: Token, length: Int, idx: Int) {
     func printDebugIndent() {
       print(debugIndent.indentation(), terminator: "")
     }
@@ -434,55 +436,55 @@ public class PrettyPrinter {
     switch token {
     case .syntax(let syntax):
       printDebugIndent()
-      print("[SYNTAX \"\(syntax)\" Length: \(length)]")
+      print("[SYNTAX \"\(syntax)\" Length: \(length) Idx: \(idx)]")
 
     case .break(let kind, let size, let ignoresDiscretionary):
       printDebugIndent()
       print(
         "[BREAK Kind: \(kind) Size: \(size) Length: \(length) "
-          + "Ignores Discretionary NL: \(ignoresDiscretionary)]")
+          + "Ignores Discretionary NL: \(ignoresDiscretionary) Idx: \(idx)]")
 
     case .open(let breakstyle):
       printDebugIndent()
       switch breakstyle {
       case .consistent:
-        print("[OPEN Consistent Length: \(length)]")
+        print("[OPEN Consistent Length: \(length) Idx: \(idx)]")
       case .inconsistent:
-        print("[OPEN Inconsistent Length: \(length)]")
+        print("[OPEN Inconsistent Length: \(length) Idx: \(idx)]")
       }
       debugIndent.append(.spaces(2))
 
     case .close:
       debugIndent.removeLast()
       printDebugIndent()
-      print("[CLOSE]")
+      print("[CLOSE Idx: \(idx)]")
 
     case .newlines(let N, let required):
       printDebugIndent()
-      print("[NEWLINES N: \(N) Required: \(required) Length: \(length)]")
+      print("[NEWLINES N: \(N) Required: \(required) Length: \(length) Idx: \(idx)]")
 
     case .space(let size):
       printDebugIndent()
-      print("[SPACE Size: \(size) Length: \(length)]")
+      print("[SPACE Size: \(size) Length: \(length) Idx: \(idx)]")
 
     case .comment(let comment, let wasEndOfLine):
       printDebugIndent()
       switch comment.kind {
       case .line:
-        print("[COMMENT Line Length: \(length) EOL: \(wasEndOfLine)]")
+        print("[COMMENT Line Length: \(length) EOL: \(wasEndOfLine) Idx: \(idx)]")
       case .docLine:
-        print("[COMMENT DocLine Length: \(length) EOL: \(wasEndOfLine)]")
+        print("[COMMENT DocLine Length: \(length) EOL: \(wasEndOfLine) Idx: \(idx)]")
       case .block:
-        print("[COMMENT Block Length: \(length) EOL: \(wasEndOfLine)]")
+        print("[COMMENT Block Length: \(length) EOL: \(wasEndOfLine) Idx: \(idx)]")
       case .docBlock:
-        print("[COMMENT DocBlock Length: \(length) EOL: \(wasEndOfLine)]")
+        print("[COMMENT DocBlock Length: \(length) EOL: \(wasEndOfLine) Idx: \(idx)]")
       }
       printDebugIndent()
       print(comment.print(indent: debugIndent))
 
     case .verbatim(let verbatim):
       printDebugIndent()
-      print("[VERBATIM Length: \(length)]")
+      print("[VERBATIM Length: \(length) Idx: \(idx)]")
       print(verbatim.print(indent: debugIndent))
     }
   }
