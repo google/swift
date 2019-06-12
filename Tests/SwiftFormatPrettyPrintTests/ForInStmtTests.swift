@@ -86,9 +86,8 @@ public class ForInStmtTests: PrettyPrintTestCase {
       """
       for item
         in aVeryLargeContainterObject
-      where
-        largeObject.hasProperty()
-        && condition
+      where largeObject
+        .hasProperty() && condition
       {
         let a = 123
         let b = 456

@@ -193,8 +193,8 @@ public class IfStmtTests: PrettyPrintTestCase {
 
     let expected =
       """
-      if let SomeReallyLongVar
-        = Some.More.Stuff(), let a = myfunc()
+      if let SomeReallyLongVar = Some.More
+        .Stuff(), let a = myfunc()
       {
         // do stuff
       }
