@@ -106,5 +106,13 @@ let package = Package(
         "SwiftSyntax",
       ]
     ),
+    .testTarget(
+      name: "SwiftFormatCoreTests",
+      dependencies: [
+        "SwiftFormatConfiguration",
+        "SwiftFormatCore",
+        "SwiftSyntax",
+      ]
+    ),
   ]
 )

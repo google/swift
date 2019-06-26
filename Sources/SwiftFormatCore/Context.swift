@@ -37,6 +37,9 @@ public class Context {
   /// An object that converts `AbsolutePosition` values to `SourceLocation` values.
   public let sourceLocationConverter: SourceLocationConverter
 
+  /// Contains the rules have been disabled by comments for certain line numbers.
+  public let ruleMask: RuleMask
+
   /// Creates a new Context with the provided configuration, diagnostic engine, and file URL.
   public init(
     configuration: Configuration,
@@ -51,6 +54,7 @@ public class Context {
     self.didSetImportsXCTest = false
     self.sourceLocationConverter =
       SourceLocationConverter(file: fileURL.path, tree: sourceFileSyntax)
+    self.ruleMask = RuleMask(sourceText: sourceFileSyntax.description)
   }
 
   /// Creates a new Context with the provided configuration, diagnostic engine, and source text.
@@ -66,5 +70,14 @@ public class Context {
     self.importsXCTest = false
     self.didSetImportsXCTest = false
     self.sourceLocationConverter = SourceLocationConverter(file: fileURL.path, source: sourceText)
+    self.ruleMask = RuleMask(sourceText: sourceText)
+  }
+
+  /// Given a rule's name and the node it is examining, determine if the rule is disabled at this
+  /// location or not.
+  public func isRuleDisabled(_ ruleName: String, node: Syntax) -> Bool {
+    let loc = node.startLocation(converter: self.sourceLocationConverter)
+    guard let line = loc.line else { return false }
+    return self.ruleMask.isDisabled(ruleName, line: line)
   }
 }
