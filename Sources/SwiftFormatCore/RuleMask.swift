@@ -11,6 +11,7 @@
 //===----------------------------------------------------------------------===//
 
 import Foundation
+import SwiftSyntax
 
 /// This class takes the raw source text and scans through it searching for comment pairs of the
 /// form:
@@ -38,51 +39,72 @@ public class RuleMask {
   /// Rule disable regex object.
   private let disableRegex: NSRegularExpression
 
-  /// This takes the raw text of the source and generates a map of the rules specified for
-  /// disable/enable and the line ranges for which they are disabled.
-  public init(sourceText: String) {
-    let sourceLines =
-      sourceText.split(separator: "\n", omittingEmptySubsequences: false).map(String.init)
+  /// Used to compute line numbers of syntax nodes.
+  private let sourceLocationConverter: SourceLocationConverter
 
+  /// This takes the head Syntax node of the source and generates a map of the rules specified for
+  /// disable/enable and the line ranges for which they are disabled.
+  public init(syntaxNode: Syntax, sourceLocationConverter: SourceLocationConverter) {
     enableRegex = try! NSRegularExpression(pattern: enablePattern, options: [])
     disableRegex = try! NSRegularExpression(pattern: disablePattern, options: [])
 
-    generateDictionary(sourceLines)
+    self.sourceLocationConverter = sourceLocationConverter
+    generateDictionary(syntaxNode)
   }
 
-  /// Generate the dictionary (ruleMap) from a list of the lines in the source.
-  private func generateDictionary(_ sourceLines: [String]) {
+  /// Calculate the starting line number of a syntax node.
+  private func getLine(_ node: Syntax) -> Int? {
+    let loc = node.startLocation(converter: self.sourceLocationConverter)
+    return loc.line
+  }
 
-    var disableStart: [String: Int] = [:]
-
-    for (idx, line) in sourceLines.enumerated() {
-      let nsrange = NSRange(line.startIndex..<line.endIndex, in: line)
-      if let match = disableRegex.firstMatch(in: line, options: [], range: nsrange) {
-        let matchRange = match.range(at: 1)
-        if matchRange.location != NSNotFound, let range = Range(matchRange, in: line) {
-
-          let rule = String(line[range])
-          guard !disableStart.keys.contains(rule) else { continue }
-
-          disableStart[rule] = idx + 1
-        }
+  /// Check if a comment matches a disable/enable flag.
+  private func getRule(regex: NSRegularExpression, text: String) -> String? {
+    let nsrange = NSRange(text.startIndex..<text.endIndex, in: text)
+    if let match = regex.firstMatch(in: text, options: [], range: nsrange) {
+      let matchRange = match.range(at: 1)
+      if matchRange.location != NSNotFound, let range = Range(matchRange, in: text) {
+        return String(text[range])
       }
+    }
+    return nil
+  }
 
-      if let match = enableRegex.firstMatch(in: line, options: [], range: nsrange) {
-        let matchRange = match.range(at: 1)
-        if matchRange.location != NSNotFound, let range = Range(matchRange, in: line) {
+  /// Generate the dictionary (ruleMap) by walking the syntax tokens.
+  private func generateDictionary(_ node: Syntax) {
+    var disableStart: [String: Int] = [:]
+    for token in node.tokens {
+      guard let leadingtrivia = token.leadingTrivia else { continue }
 
-          let rule = String(line[range])
-          guard let startIdx = disableStart.removeValue(forKey: rule) else { continue }
+      // Flags must be on lines by themselves: not at the end of an existing line.
+      var firstPiece = true
 
-          let exclusionRange = startIdx..<idx+1
-          if ruleMap.keys.contains(rule) {
-            ruleMap[rule]?.append(exclusionRange)
+      for piece in leadingtrivia {
+        guard case .lineComment(let text) = piece else {
+          firstPiece = false
+          continue
+        }
+        guard !firstPiece else { continue }
+
+        if let disableRule = getRule(regex: disableRegex, text: text) {
+          guard !disableStart.keys.contains(disableRule) else { continue }
+          guard let startLine = getLine(token) else { continue }
+          disableStart[disableRule] = startLine
+        }
+
+        if let enableRule = getRule(regex: enableRegex, text: text) {
+          guard let startLine = disableStart.removeValue(forKey: enableRule) else { continue }
+          guard let endLine = getLine(token) else { continue }
+          let exclusionRange = startLine..<endLine
+
+          if ruleMap.keys.contains(enableRule) {
+            ruleMap[enableRule]?.append(exclusionRange)
           }
           else {
-            ruleMap[rule] = [exclusionRange]
+            ruleMap[enableRule] = [exclusionRange]
           }
         }
+        firstPiece = false
       }
     }
   }

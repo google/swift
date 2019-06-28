@@ -1,8 +1,17 @@
+import SwiftSyntax
 import XCTest
 
 @testable import SwiftFormatCore
 
 public class RuleMaskTests: XCTestCase {
+
+  private func createMask(sourceText: String) -> RuleMask {
+    let fileURL = URL(fileURLWithPath: "/tmp/test.swift")
+    let converter = SourceLocationConverter(file: fileURL.path, source: sourceText)
+    let syntax = try! SyntaxParser.parse(source: sourceText)
+    return RuleMask(syntaxNode: syntax, sourceLocationConverter: converter)
+  }
+
   public func testSingleRule() {
     let text =
       """
@@ -13,7 +22,7 @@ public class RuleMaskTests: XCTestCase {
       let c = 789
       """
 
-    let mask = RuleMask(sourceText: text)
+    let mask = createMask(sourceText: text)
 
     XCTAssertFalse(mask.isDisabled("rule1", line: 1))
     XCTAssertTrue(mask.isDisabled("rule1", line: 3))
@@ -34,7 +43,7 @@ public class RuleMaskTests: XCTestCase {
       let e = "def"
       """
 
-    let mask = RuleMask(sourceText: text)
+    let mask = createMask(sourceText: text)
 
     XCTAssertFalse(mask.isDisabled("rule1", line: 1))
     XCTAssertTrue(mask.isDisabled("rule1", line: 3))
@@ -59,7 +68,7 @@ public class RuleMaskTests: XCTestCase {
       let c = 789
       """
 
-    let mask = RuleMask(sourceText: text)
+    let mask = createMask(sourceText: text)
 
     XCTAssertFalse(mask.isDisabled("rule1", line: 1))
     XCTAssertFalse(mask.isDisabled("rule1", line: 3))
@@ -80,7 +89,7 @@ public class RuleMaskTests: XCTestCase {
       let e = "def"
       """
 
-    let mask = RuleMask(sourceText: text)
+    let mask = createMask(sourceText: text)
 
     XCTAssertFalse(mask.isDisabled("rule1", line: 1))
     XCTAssertTrue(mask.isDisabled("rule1", line: 3))
@@ -99,7 +108,7 @@ public class RuleMaskTests: XCTestCase {
       let d = "abc"
       """
 
-    let mask1 = RuleMask(sourceText: text1)
+    let mask1 = createMask(sourceText: text1)
 
     XCTAssertFalse(mask1.isDisabled("rule1", line: 1))
     XCTAssertFalse(mask1.isDisabled("rule1", line: 6))
@@ -113,14 +122,14 @@ public class RuleMaskTests: XCTestCase {
       let d = "abc"
       """
 
-    let mask2 = RuleMask(sourceText: text2)
+    let mask2 = createMask(sourceText: text2)
 
     XCTAssertFalse(mask2.isDisabled("rule1", line: 1))
     XCTAssertFalse(mask2.isDisabled("rule1", line: 6))
   }
 
   public func testSpuriousFlags() {
-    let text =
+    let text1 =
       """
       let a = 123
       let b = 456 // swift-format-disable: rule1
@@ -129,10 +138,28 @@ public class RuleMaskTests: XCTestCase {
       let d = "abc"
       """
 
-    let mask = RuleMask(sourceText: text)
+    let mask1 = createMask(sourceText: text1)
 
-    XCTAssertFalse(mask.isDisabled("rule1", line: 1))
-    XCTAssertFalse(mask.isDisabled("rule1", line: 3))
-    XCTAssertFalse(mask.isDisabled("rule1", line: 5))
+    XCTAssertFalse(mask1.isDisabled("rule1", line: 1))
+    XCTAssertFalse(mask1.isDisabled("rule1", line: 3))
+    XCTAssertFalse(mask1.isDisabled("rule1", line: 5))
+
+    let text2 =
+      #"""
+      let a = 123
+      let b =
+        """
+        // swift-format-disable: rule1
+        """
+      let c = 789
+      // swift-format-enable: rule1
+      let d = "abc"
+      """#
+
+    let mask2 = createMask(sourceText: text2)
+
+    XCTAssertFalse(mask2.isDisabled("rule1", line: 1))
+    XCTAssertFalse(mask2.isDisabled("rule1", line: 6))
+    XCTAssertFalse(mask2.isDisabled("rule1", line: 8))
   }
 }

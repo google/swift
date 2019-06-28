@@ -54,7 +54,10 @@ public class Context {
     self.didSetImportsXCTest = false
     self.sourceLocationConverter =
       SourceLocationConverter(file: fileURL.path, tree: sourceFileSyntax)
-    self.ruleMask = RuleMask(sourceText: sourceFileSyntax.description)
+    self.ruleMask = RuleMask(
+      syntaxNode: sourceFileSyntax,
+      sourceLocationConverter: sourceLocationConverter
+    )
   }
 
   /// Creates a new Context with the provided configuration, diagnostic engine, and source text.
@@ -70,7 +73,8 @@ public class Context {
     self.importsXCTest = false
     self.didSetImportsXCTest = false
     self.sourceLocationConverter = SourceLocationConverter(file: fileURL.path, source: sourceText)
-    self.ruleMask = RuleMask(sourceText: sourceText)
+    let syntax = try! SyntaxParser.parse(source: sourceText)
+    self.ruleMask = RuleMask(syntaxNode: syntax, sourceLocationConverter: sourceLocationConverter)
   }
 
   /// Given a rule's name and the node it is examining, determine if the rule is disabled at this
