@@ -666,12 +666,19 @@ additional rules apply:
    same line as the return type, then a line break is first inserted **before**
    the `where` keyword and the `where` keyword is indented at the same level as
    the original line.
+   
+   如果范型约束列表和返回类型在同一行时超过了单行字符限制，在 `where` 关键字**之前**插入换行，并且和原始行缩进保持一致。
+   
 1. If the generic constraint list still exceeds the column limit after inserting
    the line break above, then the constraint list is oriented vertically with a
    line break after the `where` keyword and a line break after the final
    constraint.
+   
+   如果范型约束列表在换行之后依旧超过单行字符限制，那么在 `where` 关键字后换行，约束列表用垂直方向展示，并在最后一个约束后面换行。
 
 Concrete examples of this are shown in the relevant subsections below.
+
+具体例子见下面相关的分段。
 
 This line-wrapping style ensures that the different parts of a declaration are
 _quickly and easily identifiable to the reader_ by using indentation and line
@@ -679,6 +686,8 @@ breaks, while also preserving the same indentation level for those parts
 throughout the file. Specifically, it prevents the zig-zag effect that would be
 present if the arguments are indented based on opening parentheses, as is common
 in other languages:
+
+换行风格确保声明的不同部分通过缩进和换行让_读者_可以_快速容易地被识别_，而且在文件中这些部分的缩进风格应该保持相同。具体来说，这可以防止实参是基于开边括号缩进而出现的锯齿效应，这在其他语言里是很常见的：
 
 ~~~ swift
 public func index<Elements: Collection, Element>(of element: Element,  // AVOID.
@@ -689,11 +698,10 @@ public func index<Elements: Collection, Element>(of element: Element,  // AVOID.
 ~~~
 {:.bad}
 
-#### Function Declarations
+#### 函数声明/Function Declarations
 
 <pre class="lw-container">
 <span class="lw-ub"><em>modifiers</em> func <em>name</em>(</span><span class="lw-br"><em>formal arguments</em></span><span class="lw-ub">)</span>{
-
 <span class="lw-ub"><em>modifiers</em> func <em>name</em>(</span><span class="lw-br"><em>formal arguments</em></span><span class="lw-ub">) -&gt;</span><span class="lw-br"><em>result</em></span>{
 
 <span class="lw-ub"><em>modifiers</em> func <em>name</em>&lt;</span><span class="lw-br"><em>generic arguments</em></span><span class="lw-ub">&gt;(</span><span class="lw-br"><em>formal arguments</em></span><span class="lw-ub">) throws -&gt;</span><span class="lw-br"><em>result</em></span>{
@@ -703,6 +711,8 @@ public func index<Elements: Collection, Element>(of element: Element,  // AVOID.
 
 Applying the rules above from left to right gives us the following
 line-wrapping:
+
+将上面的规则从左到右应用得到下面的换行：
 
 ~~~ swift
 public func index<Elements: Collection, Element>(
@@ -719,6 +729,8 @@ public func index<Elements: Collection, Element>(
 Function declarations in protocols that are terminated with a closing
 parenthesis (`)`) may place the parenthesis on the same line as the final
 argument **or** on its own line.
+
+协议里的函数声明以闭边括号（`)`）结束可以将括号和最后的实参放在同一行**或者**另起一行。
 
 ~~~ swift
 public protocol ContrivedExampleDelegate {
@@ -741,6 +753,8 @@ arguments/constraints lists and/or the return type may also need to be wrapped.
 In these rare cases, the same line-wrapping rules apply to those parts as apply
 to the declaration itself.
 
+如果类型很复杂和/或有着深层的嵌套，在实参/约束列表和/或返回类型的单个元素可能也需要覆盖。在这些罕见的情况下，相同的换行规则像声明一样应用到这些部分。
+
 ~~~ swift
 public func performanceTrackingIndex<Elements: Collection, Element>(
   of element: Element,
@@ -758,12 +772,16 @@ public func performanceTrackingIndex<Elements: Collection, Element>(
 However, `typealias`es or some other means are often a better way to simplify
 complex declarations whenever possible.
 
-#### Type and Extension Declarations
+然而，如果可以的话用 `typealias` 或其他手段来简化复杂的声明通常是更好的解决方法。
+
+#### 类型和拓展声明/Type and Extension Declarations
 
 The examples below apply equally to `class`, `struct`, `enum`, `extension`, and
 `protocol` (with the obvious exception that all but the first do not have
 superclasses in their inheritance list, but they are otherwise structurally
 similar).
+
+下面的例子同样适用于 `class`，`struct`，`enum`，`extension` 和 `protocol`（除了第一个的继承列表里有父类外，其余结构都是类似的）。
 
 <pre class="lw-container">
 <span class="lw-ub"><em>modifiers</em> class <em>Name</em></span>{
@@ -818,15 +836,19 @@ where
 ~~~
 {:.good}
 
-#### Function Calls
+#### 函数调用/Function Calls
 
 When a function call is line-wrapped, each argument is written on its own line,
 indented +2 from the original line.
+
+当函数调用需要换行时，每一个实参单独一行，并在原始行缩进基础上 +2。
 
 As with function declarations, if the function call terminates its enclosing
 statement and ends with a closing parenthesis (`)`) (that is, it has no trailing
 closure), then the parenthesis may be placed **either** on the same line as the
 final argument **or** on its own line.
+
+和函数声明一样，如果函数调用的语句以闭边括号（`)`）结束（意味着没有尾随闭包），括号**既可以**和最后一个实参在同一行**也可以**另起一行。
 
 ~~~ swift
 let index = index(
