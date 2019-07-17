@@ -639,6 +639,7 @@ are:
        // ...
      }
    }
+   ~~~
 ~~~
    {:.good}
    
@@ -654,7 +655,7 @@ are:
        // ...
      }
    }
-   ~~~
+~~~
    {:.bad}
 
 For declarations that contain a `where` clause followed by generic constraints,
@@ -866,6 +867,8 @@ If the function call ends with a trailing closure and the closure's signature
 must be wrapped, then place it on its own line and wrap the argument list in
 parentheses to distinguish it from the body of the closure below it.
 
+如果函数调用以尾随闭包结束，并且闭包签名需要换行的话，另起一行并将实参列表包在括号中和下面的闭包体区分。
+
 ~~~ swift
 someAsynchronousAction.execute(withDelay: howManySeconds, context: actionContext) {
   (context, completion) in
@@ -875,13 +878,15 @@ someAsynchronousAction.execute(withDelay: howManySeconds, context: actionContext
 ~~~
 {:.good}
 
-#### Control Flow Statements
+#### 控制流语句/Control Flow Statements
 
 When a control flow statement (such as `if`, `guard`, `while`, or `for`) is
 wrapped, the first continuation line is indented to the same position as the
 token following the control flow keyword. Additional continuation lines are
 indented at that same position if they are syntactically parallel elements, or
 in +2 increments from that position if they are syntactically nested.
+
+当控制流语句（例如 `if`,`gurad`,`while` 或 `for`）需要换行时，首个后续行的缩进和紧接着控制流关键字的元素保持一致。其余的后续行如果是语法上平级的元素，那么缩进也保持一致，如果语法上有嵌套层级，则在原来缩进基础上+2。
 
 The open brace (`{`) preceding the body of the control flow statement can either
 be placed on the same line as the last continuation line or on the next line,
@@ -932,11 +937,13 @@ for element in collection
 ~~~
 {:.good}
 
-#### Other Expressions
+#### 其他表达式/Other Expressions
 
 When line-wrapping other expressions that are not function calls (as described
 above), the second line (the one immediately following the first break) is
 indented exactly +2 from the original line.
+
+不是函数调用（上面提到的）的其他表达式换行时，第二行（跟着第一个换行的行）的缩进在原始行的基础上+2。
 
 When there are multiple continuation lines, indentation may be varied in
 increments of +2 as needed. In general, two continuation lines use the same
@@ -944,6 +951,8 @@ indentation level if and only if they begin with syntactically parallel
 elements. However, if there are many continuation lines caused by long wrapped
 expressions, consider splitting them into multiple statements using temporary
 variables when possible.
+
+当有多个后续行时，缩进会根据需要在原来的基础上 +2 递增变化。通常来说，有且仅当两个后续行以语法上平级的元素开始的时候使用相同的缩进。然而，如果因为很长的表达式产生了很多个后续行，可以考虑在可能的时候将它分隔成多个语句，然后使用临时变量。
 
 ~~~ swift
 let result = anExpression + thatIsMadeUpOf * aLargeNumber +
@@ -959,20 +968,26 @@ let result = anExpression + thatIsMadeUpOf * aLargeNumber +
 ~~~
 {:.bad}
 
-### Horizontal Whitespace
+### 水平空格/Horizontal Whitespace
 
 > **Terminology note:** In this section, _horizontal whitespace_ refers to
 > _interior_ space. These rules are never interpreted as requiring or forbidding
 > additional space at the start of a line.
+>
+> **术语说明：**在这个章节，_水平空格_指的是_内部_空格。这些规则不适用于行开始时需要或者禁止的额外空格。
 
 Beyond where required by the language or other style rules, and apart from
 literals and comments, a single Unicode space also appears in the following
 places **only**:
 
+参考其他的语言和其他代码风格，除了字面量和注释外的单个 Unicode 空格**只能**在下面这些情况下出现：
+
 1. Separating any reserved word starting a conditional or switch statement (such
    as `if`, `guard`, `while`, or `switch`) from the expression that follows it
    if that expression starts with an open parenthesis (`(`).
 
+   条件或 switch 语句（例如 `if`，`guard`，`while` 或者 `switch`）开始的任何保留关键字要和它之后的表达式分隔开，如果该表达式以开边括号（`(`）开始的话。
+   
    ~~~ swift
    if (x == 0 && y == 0) || z == 0 {
      // ...
@@ -990,6 +1005,8 @@ places **only**:
 1. Before any closing curly brace (`}`) that follows code on the same line,
    before any open curly brace (`{`), and after any open curly brace (`{`) that
    is followed by code on the same line.
+   
+   后续代码在同一行的闭边花括号（`}`）之前，任何开边话括号（`{`）之前，同一行代码后续的开边的花括号（`{`）之后。
 
    ~~~ swift
    let nonNegativeCubes = numbers.map { $0 * $0 * $0 }.filter { $0 >= 0 }
@@ -1005,65 +1022,75 @@ places **only**:
 1. _On both sides_ of any binary or ternary operator, including the
    "operator-like" symbols described below, with exceptions noted at the end:
 
-   1. The `=` sign used in assignment, initialization of variables/properties,
+   在二元或者三元运算符的每一侧，包括下面描述的“类运算符”，除了最后的说明：
+   
+1. The `=` sign used in assignment, initialization of variables/properties,
       and default arguments in functions.
-
-      ~~~ swift
+   
+   `=` 运算符用在赋值，变量/属性的构造过程以及函数里的默认实参时。
+      
+   ~~~ swift
       var x = 5
-
+      
       func sum(_ numbers: [Int], initialValue: Int = 0) {
-        // ...
+     // ...
       }
-      ~~~
-      {:.good}
-
-      ~~~ swift
+   ~~~
+   {:.good}
+      
+   ~~~ swift
       var x=5
-
+      
       func sum(_ numbers: [Int], initialValue: Int=0) {
-        // ...
+     // ...
       }
-      ~~~
+~~~
       {:.bad}
-
+      
    1. The ampersand (`&`) in a protocol composition type.
-
-      ~~~ swift
+   
+      And 符号（`&`）用在协议组合类型时。
+   
+   ~~~ swift
       func sayHappyBirthday(to person: NameProviding & AgeProviding) {
         // ...
       }
       ~~~
       {:.good}
-
-      ~~~ swift
+   
+   ~~~ swift
       func sayHappyBirthday(to person: NameProviding&AgeProviding) {
-        // ...
+     // ...
       }
       ~~~
       {:.bad}
-
+   
    1. The operator symbol in a function declaring/implementing that operator.
-
+   
+   运算符用在函数声明/实现时。
+   
       ~~~ swift
       static func == (lhs: MyType, rhs: MyType) -> Bool {
         // ...
       }
       ~~~
-      {:.good}
-
-      ~~~ swift
+   {:.good}
+   
+   ~~~ swift
       static func ==(lhs: MyType, rhs: MyType) -> Bool {
         // ...
       }
       ~~~
       {:.bad}
-
-   1. The arrow (`->`) preceding the return type of a function.
-
+   
+1. The arrow (`->`) preceding the return type of a function.
+   
+      箭头（`->`）用在函数的返回类型之前。
+   
       ~~~ swift
       func sum(_ numbers: [Int]) -> Int {
         // ...
-      }
+   }
       ~~~
       {:.good}
 
@@ -1071,67 +1098,77 @@ places **only**:
       func sum(_ numbers: [Int])->Int {
         // ...
       }
-      ~~~
+   ~~~
       {:.bad}
-
+   
    1. **Exception:** There is no space on either side of the dot (`.`) used to
       reference value and type members.
 
-      ~~~ swift
+      **例外：**点（`.`）用在引用值和类型成员时两侧都没有空格。
+      
+   ~~~ swift
       let width = view.bounds.width
-      ~~~
+   ~~~
       {:.good}
-
-      ~~~ swift
+      
+   ~~~ swift
       let width = view . bounds . width
-      ~~~
+   ~~~
       {:.bad}
-
+   
    1. **Exception:** There is no space on either side of the `..<` or `...`
       operators used in range expressions.
-
+   
+      **例外：**`..<` 或者 `…` 运算符用在范围表达式时两侧都没空格。
+   
       ~~~ swift
       for number in 1...5 {
-        // ...
-      }
-
+     // ...
+   }
+      
       let substring = string[index..<string.endIndex]
-      ~~~
+   ~~~
       {:.good}
-
+      
       ~~~ swift
       for number in 1 ... 5 {
-        // ...
+     // ...
       }
-
+      
       let substring = string[index ..< string.endIndex]
       ~~~
       {:.bad}
-
+   
 1. After, but not before, the comma (`,`) in parameter lists and in
    tuple/array/dictionary literals.
 
+   逗号（`,`）用在形参列表和元组/数组/字典字面量时，逗号后面而不是前面。
+   
    ~~~ swift
    let numbers = [1, 2, 3]
-   ~~~
+~~~
    {:.good}
-
+   
    ~~~ swift
    let numbers = [1,2,3]
    let numbers = [1 ,2 ,3]
    let numbers = [1 , 2 , 3]
-   ~~~
+~~~
    {:.bad}
-
+   
 1. After, but not before, the colon (`:`) in
 
+   冒号（`:`）的后面而不是前面用在
+
    1. Superclass/protocol conformance lists and generic constraints.
+
+      父类/协议遵循列表和范型约束时。
 
       ~~~ swift
       struct HashTable: Collection {
         // ...
       }
-
+      
       struct AnyEquatable<Wrapped: Equatable>: Equatable {
         // ...
       }
@@ -1142,7 +1179,7 @@ places **only**:
       struct HashTable : Collection {
         // ...
       }
-
+      
       struct AnyEquatable<Wrapped : Equatable> : Equatable {
         // ...
       }
@@ -1151,9 +1188,11 @@ places **only**:
 
    1. Function argument labels and tuple element labels.
 
+      函数实参标签和元组元素标签时。
+
       ~~~ swift
       let tuple: (x: Int, y: Int)
-
+      
       func sum(_ numbers: [Int]) {
         // ...
       }
@@ -1163,11 +1202,11 @@ places **only**:
       ~~~ swift
       let tuple: (x:Int, y:Int)
       let tuple: (x : Int, y : Int)
-
+      
       func sum(_ numbers:[Int]) {
         // ...
       }
-
+      
       func sum(_ numbers : [Int]) {
         // ...
       }
@@ -1175,6 +1214,8 @@ places **only**:
       {:.bad}
 
    1. Variable/property declarations with explicit types.
+
+      变量/属性的类型显式声明时。
 
       ~~~ swift
       let number: Int = 5
@@ -1189,6 +1230,8 @@ places **only**:
 
    1. Shorthand dictionary type names.
 
+      字典类型缩写时。
+
       ~~~ swift
       var nameAgeMap: [String: Int] = []
       ~~~
@@ -1202,11 +1245,13 @@ places **only**:
 
    1. Dictionary literals.
 
+      字典字面量。
+      
       ~~~ swift
       let nameAgeMap = ["Ed": 40, "Timmy": 9]
-      ~~~
+   ~~~
       {:.good}
-
+      
       ~~~ swift
       let nameAgeMap = ["Ed":40, "Timmy":9]
       let nameAgeMap = ["Ed" : 40, "Timmy" : 9]
@@ -1216,40 +1261,48 @@ places **only**:
 1. At least two spaces before and exactly one space after the double slash
    (`//`) that begins an end-of-line comment.
 
+   双斜杠（`//`）用于开始行结束的注释时，双斜杠之前最少两个空格，之后是一个空格。
+   
    ~~~ swift
    let initialFactor = 2  // Warm up the modulator.
-   ~~~
+~~~
    {:.good}
-
+   
    ~~~ swift
    let initialFactor = 2 //    Warm up the modulator.
-   ~~~
+~~~
    {:.bad}
-
+   
 1. Outside, but not inside, the brackets of an array or dictionary literals and
    the parentheses of a tuple literal.
 
+   括号用于数组、字典或元组字面量时，括号外面而不是里面。
+   
    ~~~ swift
    let numbers = [1, 2, 3]
-   ~~~
+~~~
    {:.good}
-
+   
    ~~~ swift
    let numbers = [ 1, 2, 3 ]
    ~~~
    {:.bad}
 
-### Horizontal Alignment
+### 水平对齐/Horizontal Alignment
 
 > **Terminology note:** _Horizontal alignment_ is the practice of adding a
 > variable number of additional spaces in your code with the goal of making
 > certain tokens appear directly below certain other tokens on previous lines.
+>
+> **术语说明：**_水平对齐_是一种约定，通过在代码中添加不同数量的空格来让某些元素直接显示在前面行中该类型其他元素的下面。
 
 Horizontal alignment is forbidden except when writing obviously tabular data
 where omitting the alignment would be harmful to readability. In other cases
 (for example, lining up the types of stored property declarations in a `struct`
 or `class`), horizontal alignment is an invitation for maintenance problems if a
 new member is introduced that requires every other member to be realigned.
+
+水平对齐是禁止的，除了在明显的表格数据时省略会不利于可读性之外。其他情况下（例如：对 `struct` 或  `class` 里的存储属性声明的类型进行对齐），水平对齐会引起维护问题，因为在新的成员引入时其余所有的成员都需要重新对齐。
 
 ~~~ swift
 struct DataPoint {
@@ -1267,7 +1320,7 @@ struct DataPoint {
 ~~~
 {:.bad}
 
-### Vertical Whitespace
+### 垂直空格/Vertical Whitespace
 
 A single blank line appears in the following locations:
 
