@@ -374,7 +374,7 @@ Extensions can be used to organize functionality of a type across multiple
 can have a great effect on readability; you must use _**some** logical
 organizational structure_ that you could explain to a reviewer if asked.
 
-扩展可以将一个类型的功能组织到多个“单元”中。再加上成员排序和所选择的组织结构/分组会对代码可读性有很大的帮助；你需要使用能解释给 Review 者的***某个**逻辑结构进行组织*。
+扩展可以将一个类型的功能组织到多个“单元”中。再加上成员排序和所选择的组织结构/分组会对代码可读性有很大的帮助；你需要使用能解释给审查者的***某个**逻辑结构进行组织*。
 
 ## 常规格式/General Formatting
 
@@ -1357,16 +1357,24 @@ A single blank line appears in the following locations:
 1. _Optionally_ before the first member or after the last member of a type
    (neither is encouraged nor discouraged).
    
+   类型的第一个成员之前或者最后一个成员之后的空白行是_可选的_（不赞成也不反对）。
+   
 1. Anywhere explicitly required by other sections of this document.
+
+   本文档中其他章节中明确要求的地方。
 
 _Multiple_ blank lines are permitted, but never required (nor encouraged). If
 you do use multiple consecutive blank lines, do so consistently throughout your
 code base.
 
-### Parentheses
+_多个_空白行是允许的，但不是必须的（不赞成）。如果你使用多个连续的空白行，那么在你的代码里应该贯彻到底。
+
+### 括号/Parentheses
 
 Parentheses are **not** used around the top-most expression that follows an
 `if`, `guard`, `while`, or `switch` keyword.
+
+`if`，`guard`，`while` 或 `switch` 关键字后面的顶层表达式**不需要**使用括号。
 
 ~~~ swift
 if x == 0 {
@@ -1395,6 +1403,8 @@ agree that there is no reasonable chance that the code will be misinterpreted
 without them, nor that they would have made the code easier to read. It is _not_
 reasonable to assume that every reader has the entire Swift operator precedence
 table memorized.
+
+分组括号是可选的，只有当作者和审查者觉得没有它们时代码也不会被误解，或者会让代码更容易阅读时才可以被省略。**不**要认为每个阅读者都记得住完整的 Swift 操作符优先级表格。
 
 ## Formatting Specific Constructs
 
