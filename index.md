@@ -1028,7 +1028,7 @@ places **only**:
       and default arguments in functions.
    
    `=` 运算符用在赋值，变量/属性的构造过程以及函数里的默认实参时。
-      
+   
    ~~~ swift
       var x = 5
       
@@ -1037,13 +1037,14 @@ places **only**:
       }
    ~~~
    {:.good}
-      
+   
    ~~~ swift
       var x=5
       
       func sum(_ numbers: [Int], initialValue: Int=0) {
      // ...
       }
+   ~~~
 ~~~
       {:.bad}
       
@@ -1055,34 +1056,34 @@ places **only**:
       func sayHappyBirthday(to person: NameProviding & AgeProviding) {
         // ...
       }
-      ~~~
+~~~
       {:.good}
-   
+
    ~~~ swift
       func sayHappyBirthday(to person: NameProviding&AgeProviding) {
      // ...
       }
-      ~~~
+   ~~~
       {:.bad}
-   
+
    1. The operator symbol in a function declaring/implementing that operator.
-   
+
    运算符用在函数声明/实现时。
-   
+
       ~~~ swift
       static func == (lhs: MyType, rhs: MyType) -> Bool {
         // ...
       }
       ~~~
    {:.good}
-   
+
    ~~~ swift
       static func ==(lhs: MyType, rhs: MyType) -> Bool {
         // ...
       }
-      ~~~
+   ~~~
       {:.bad}
-   
+
 1. The arrow (`->`) preceding the return type of a function.
    
       箭头（`->`）用在函数的返回类型之前。
@@ -1091,14 +1092,14 @@ places **only**:
       func sum(_ numbers: [Int]) -> Int {
         // ...
    }
-      ~~~
+   ~~~
       {:.good}
 
       ~~~ swift
       func sum(_ numbers: [Int])->Int {
         // ...
       }
-   ~~~
+      ~~~
       {:.bad}
    
    1. **Exception:** There is no space on either side of the dot (`.`) used to
@@ -1110,7 +1111,7 @@ places **only**:
       let width = view.bounds.width
    ~~~
       {:.good}
-      
+   
    ~~~ swift
       let width = view . bounds . width
    ~~~
@@ -1123,10 +1124,11 @@ places **only**:
    
       ~~~ swift
       for number in 1...5 {
-     // ...
+       // ...
    }
       
       let substring = string[index..<string.endIndex]
+      ~~~
    ~~~
       {:.good}
       
@@ -1136,7 +1138,7 @@ places **only**:
       }
       
       let substring = string[index ..< string.endIndex]
-      ~~~
+   ~~~
       {:.bad}
    
 1. After, but not before, the comma (`,`) in parameter lists and in
@@ -1146,6 +1148,7 @@ places **only**:
    
    ~~~ swift
    let numbers = [1, 2, 3]
+   ~~~
 ~~~
    {:.good}
    
@@ -1155,7 +1158,7 @@ places **only**:
    let numbers = [1 , 2 , 3]
 ~~~
    {:.bad}
-   
+
 1. After, but not before, the colon (`:`) in
 
    冒号（`:`）的后面而不是前面用在
@@ -1249,13 +1252,14 @@ places **only**:
       
       ~~~ swift
       let nameAgeMap = ["Ed": 40, "Timmy": 9]
+      ~~~
    ~~~
       {:.good}
       
       ~~~ swift
       let nameAgeMap = ["Ed":40, "Timmy":9]
       let nameAgeMap = ["Ed" : 40, "Timmy" : 9]
-      ~~~
+   ~~~
       {:.bad}
 
 1. At least two spaces before and exactly one space after the double slash
@@ -1265,6 +1269,7 @@ places **only**:
    
    ~~~ swift
    let initialFactor = 2  // Warm up the modulator.
+   ~~~
 ~~~
    {:.good}
    
@@ -1272,7 +1277,7 @@ places **only**:
    let initialFactor = 2 //    Warm up the modulator.
 ~~~
    {:.bad}
-   
+
 1. Outside, but not inside, the brackets of an array or dictionary literals and
    the parentheses of a tuple literal.
 
@@ -1280,12 +1285,13 @@ places **only**:
    
    ~~~ swift
    let numbers = [1, 2, 3]
+   ~~~
 ~~~
    {:.good}
    
    ~~~ swift
    let numbers = [ 1, 2, 3 ]
-   ~~~
+~~~
    {:.bad}
 
 ### 水平对齐/Horizontal Alignment
@@ -1329,17 +1335,24 @@ A single blank line appears in the following locations:
 1. Between consecutive members of a type: properties, initializers, methods,
    enum cases, and nested types, **except that**:
 
-   
+   在类型中这些连续成员之间：属性，构造器，方法，枚举情况，嵌套类型，**除了**：
    
    1. A blank line is optional between two consecutive stored properties or two
       enum cases whose declarations fit entirely on a single line. Such blank
       lines can be used to create _logical groupings_ of these declarations.
+      
+      两个能在一行里的完整声明的存储属性或者枚举情况之间可的空白行是可选的。这时候空白行可以用来将这些声明进行_逻辑分组_。
+      
    1. A blank line is optional between two extremely closely related properties
    that do not otherwise meet the criterion above; for example, a private
       stored property and a related public computed property.
+      
+      两个不适用于前面规则的非常相关的属性之间的空白行是可选的。例如：一个私有的存储属性和它相关的公开计算属性。
    
 1. _Only as needed_ between statements to organize code into logical
    subsections.
+   
+   **只有当需要**组织代码进行逻辑分段的语句之间。
    
 1. _Optionally_ before the first member or after the last member of a type
    (neither is encouraged nor discouraged).
