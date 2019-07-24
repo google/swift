@@ -1565,8 +1565,12 @@ The cases of an enum must follow a logical ordering that the author could
 explain if asked. If there is no obviously logical ordering, use a
 lexicographical ordering based on the cases' names.
 
+枚举的 case 必须遵循一定的可以解释的排序逻辑。如果没有明显的排序逻辑，按照 case 名字的首字母排序。
+
 In the following example, the cases are arranged in numerical order based on the
 underlying HTTP status code and blank lines are used to separate groups.
+
+在下面的例子中，case 根据其表示的 HTTP 状态码的数字进行排序，并通过空行进行分组之间的分隔。
 
 ~~~ swift
 public enum HTTPStatus: Int {
@@ -1587,6 +1591,8 @@ The following version of the same enum is less readable. Although the cases are
 ordered lexicographically, the meaningful groupings of related values has been
 lost.
 
+相同的枚举，下面这个版本写法可读性就差一些。尽管 case 根据字母排序，但是却失去了对关联值的含义的表达。
+
 ~~~ swift
 public enum HTTPStatus: Int {
   case badRequest = 400
@@ -1600,12 +1606,14 @@ public enum HTTPStatus: Int {
 ~~~
 {:.bad}
 
-### Trailing Closures
+### 尾随闭包/Trailing Closures
 
 Functions should not be overloaded such that two overloads differ _only_ by the
 name of their trailing closure argument. Doing so prevents using trailing
 closure syntax&mdash;when the label is not present, a call to the function with
 a trailing closure is ambiguous.
+
+函数不能被进行这样的重载，两个重载_只有_尾随闭包的实参名字的区别。
 
 Consider the following example, which prohibits using trailing closure syntax to
 call `greet`:
