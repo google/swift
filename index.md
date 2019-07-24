@@ -1404,22 +1404,28 @@ without them, nor that they would have made the code easier to read. It is _not_
 reasonable to assume that every reader has the entire Swift operator precedence
 table memorized.
 
-分组括号是可选的，只有当作者和审查者觉得没有它们时代码也不会被误解，或者会让代码更容易阅读时才可以被省略。**不**要认为每个阅读者都记得住完整的 Swift 操作符优先级表格。
+分组括号是可选的，只有当作者和审查者觉得没有它们时代码也不会被误解，或者会让代码更容易阅读时才可以被省略。**不**要认为每个阅读者都能记得完整的 Swift 操作符优先级表格。
 
-## Formatting Specific Constructs
+## 特定结构格式化/Formatting Specific Constructs
 
-### Non-Documentation Comments
+### 非文档注释/Non-Documentation Comments
 
 Non-documentation comments always use the double-slash format (`//`), never the
 C-style block format (`/* ... */`).
 
-### Properties
+非文档注释总是用双斜杠进行格式化（`//`），而不要使用 C 风格的块格式化（`/* ... */`）。
+
+### 属性/Properties
 
 Local variables are declared close to the point at which they are first used
 (within reason) to minimize their scope.
 
+局部变量声明在尽可能接近第一次使用它们的地方，（在合理的情况下）最小化作用域。
+
 With the exception of tuple destructuring, every `let` or `var` statement
 (whether a property or a local variable) declares exactly one variable.
+
+除了元组的解构时，每个 `let` 或者 `var` 语句（无论是属性或者局部变量）只声明一个变量。
 
 ~~~ swift
 var a = 5
@@ -1434,11 +1440,13 @@ var a = 5, b = 10
 ~~~
 {:.bad}
 
-### Switch Statements
+### Switch 语句/Switch Statements
 
 Case statements are indented at the _same_ level as the switch statement to
 which they belong; the statements inside the case blocks are then indented +2
 spaces from that level.
+
+Case 语句的缩进和它们的 switch 语句保持_一致_;case 块里的语句在该缩进基础上+2 空格。
 
 ~~~ swift
 switch order {
@@ -1476,12 +1484,14 @@ print("Same")
 ~~~
 {:.bad}
 
-### Enum Cases
+### 枚举 Case/Enum Cases
 
 In general, there is only one `case` per line in an `enum`. The comma-delimited
 form may be used only when none of the cases have associated values or raw
 values, all cases fit on a single line, and the cases do not need further
 documentation because their meanings are obvious from their names.
+
+通常来说，在一个 `enum` 里每行只有一个 `case`。逗号分隔形式只能在 case 都没有关联值或者原始值时使用，所有 case 在写在单行里，并且 case 都能从名字明确其含义而不需要额外的文档。
 
 ~~~ swift
 public enum Token {
@@ -1512,6 +1522,8 @@ public enum Token {
 When all cases of an `enum` must be `indirect`, the `enum` itself is declared
 `indirect` and the keyword is omitted on the individual cases.
 
+当 `enum` 里所有 case 都需要被声明为 `indirect`，该 `enum` 就声明为 `indirect`，在单独的 case 前面的关键字就可以省略。
+
 ~~~ swift
 public indirect enum DependencyGraphNode {
   case userDefined(dependencies: [DependencyGraphNode])
@@ -1530,6 +1542,8 @@ public enum DependencyGraphNode {
 
 When an `enum` case does not have associated values, empty parentheses are never
 present.
+
+当 `enum` 的 case 没有关联值的时候，不应该出现空的括号。
 
 ~~~ swift
 public enum BinaryTree<Element> {
