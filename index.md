@@ -1613,10 +1613,12 @@ name of their trailing closure argument. Doing so prevents using trailing
 closure syntax&mdash;when the label is not present, a call to the function with
 a trailing closure is ambiguous.
 
-函数不能被进行这样的重载，两个重载_只有_尾随闭包的实参名字的区别。
+函数重载不能出现两个重载_只有_尾随闭包的实参名字的区别的情况。
 
 Consider the following example, which prohibits using trailing closure syntax to
 call `greet`:
+
+考虑下面的例子，这样将会不允许用尾随闭包语法来调用 `greet`：
 
 ~~~ swift
 func greet(enthusiastically nameProvider: () -> String) {
@@ -1633,6 +1635,8 @@ greet { "John" }  // error: ambiguous use of 'greet'
 
 This example is fixed by differentiating some part of the function name other
 than the closure argument&mdash;in this case, the base name:
+
+这个例子可以用除了闭包实参之外函数名的一部分差异来区分——这个例子中，是函数的基础名字：
 
 ~~~ swift
 func greetEnthusiastically(_ nameProvider: () -> String) {
@@ -1651,6 +1655,8 @@ greetApathetically { "not John" }
 If a function call has multiple closure arguments, then _none_ are called using
 trailing closure syntax; _all_ are labeled and nested inside the argument
 list's parentheses.
+
+当一个函数调用有多个闭包实参，那么_都不_使用尾随闭包语法调用；_都_需要写出标签并放在在实参列表的括号里。
 
 ~~~ swift
 UIView.animate(
@@ -1679,11 +1685,18 @@ If a function has a single closure argument and it is the final argument, then
 it is _always_ called using trailing closure syntax, except in the following
 cases to resolve ambiguity or parsing errors:
 
+如果函数只有一个闭包实参并且是最后的实参，那么_永远_使用尾随闭包语法调用它，除了下面这些解决歧义或者分析错误的情况：
+
 1. As described above, labeled closure arguments must be used to disambiguate
    between two overloads with otherwise identical arguments lists.
+   
+   如上面所描述，必须使用带标签的闭包参数来消除两个其他实参列表相同重载之间的歧义。
+   
 1. Labeled closure arguments must be used in control flow statements where the
    body of the trailing closure would be parsed as the body of the control flow
    statement.
+   
+   在控制流语句里必须使用带标签的闭包实参，因为尾随闭包会被分析成控制流语句的执行体。
 
 ~~~ swift
 Timer.scheduledTimer(timeInterval: 30, repeats: false) { timer in
@@ -1711,6 +1724,8 @@ if let firstActive = list.first { $0.isActive } {
 When a function called with trailing closure syntax takes no other arguments,
 empty parentheses (`()`) after the function name are _never_ present.
 
+如果函数调用使用尾随闭包语法时没有其他的实参，函数名后面的空括号（`()`）_永远不_需要出现。
+
 ~~~ swift
 let squares = [1, 2, 3].map { $0 * $0 }
 ~~~
@@ -1722,7 +1737,7 @@ let squares = [1, 2, 3].map() { $0 * $0 }
 ~~~
 {:.bad}
 
-### Trailing Commas
+### 末尾逗号/Trailing Commas
 
 Trailing commas in array and dictionary literals are _required_ when each
 element is placed on its own line. Doing so produces cleaner diffs when items
