@@ -1743,6 +1743,8 @@ Trailing commas in array and dictionary literals are _required_ when each
 element is placed on its own line. Doing so produces cleaner diffs when items
 are added to those literals later.
 
+当数组和字典里字面量里每个元素独占一行时_需要_加上末尾逗号。这样做在这些字面量后续加入新的元素时会有更明显的区分。
+
 ~~~ swift
 let configurationKeys = [
   "bufferSize",
@@ -1761,20 +1763,26 @@ let configurationKeys = [
 ~~~
 {:.bad}
 
-### Numeric Literals
+### 数字字面量/Numeric Literals
 
 It is recommended but not required that long numeric literals (decimal,
 hexadecimal, octal, and binary) use the underscore (`_`) separator to group
 digits for readability when the literal has numeric value or when there exists a
 domain-specific grouping.
 
+当长数字字面量（十进制，十六进制，八进制和二进制）有数值或存在特定领域分组时建议使用下划线（`_`）对数字进行分组，但不强制。
+
 Recommended groupings are three digits for decimal (thousands separators), four
 digits for hexadecimal, four or eight digits for binary literals, or
 value-specific field boundaries when they exist (such as three digits for octal
 file permissions).
 
+十进制建议每三个数字分组（按千数量级分隔），十六进制建议每四个数字分组，二进制建议每四或八个数字进行分组，或者根据存在的特定值的字段边界进行分组（例如八进制文件权限的三个数字）。
+
 Do not group digits if the literal is an opaque identifier that does not have a
 meaningful numeric value.
+
+如果字面量是透明标识符且没有数值含义，则不要分组。
 
 ### Attributes
 
