@@ -1784,12 +1784,14 @@ meaningful numeric value.
 
 如果字面量是透明标识符且没有数值含义，则不要分组。
 
-### Attributes
+### 注解/Attributes
 
 Parameterized attributes (such as `@availability(...)` or `@objc(...)`) are each
 written on their own line immediately before the declaration to which they
 apply, are lexicographically ordered, and are indented at the same level as the
 declaration.
+
+每个带参数的注解（例如 `@availability(…)` 或 `@objc(…)`）写在它们适用的声明前面单独一行，并且按照首字母排序，缩进和声明保持一致。
 
 ~~~ swift
 @available(iOS 9.0, *)
@@ -1814,6 +1816,8 @@ line as the declaration would require a declaration to be wrapped that
 previously did not need to be wrapped, then the attribute is placed on its own
 line.
 
+不带参数的注解（例如不带参数的 `@objc` ，`@IBOutlet` 或者 `@NSManaged`）当且仅当不需要换行时_可以_按首字母排序与声明写在同一行。如果增加了该注解到声明的同一行导致需要换行的话，则将注解另起一行。
+
 ~~~ swift
 public class MyViewController: UIViewController {
   @IBOutlet private var tableView: UITableView!
@@ -1822,20 +1826,24 @@ public class MyViewController: UIViewController {
 {:.good}
 
 
-## Naming
+## 命名/Naming
 
-### Apple's API Style Guidelines
+### Apple API 代码风格指南/Apple's API Style Guidelines
 
 Apple's
 [official Swift naming and API design guidelines](https://swift.org/documentation/api-design-guidelines/)
 hosted on swift.org are considered part of this style guide and are followed as
 if they were repeated here in their entirety.
 
-### Naming Conventions Are Not Access Control
+这里面部分代码风格指南是参考 Apple 官方的 Swift 命名和 API 代码风格指南而成的，并且遵循了那些在这里重复的部分。
+
+### 命名约定不涉及访问控制/Naming Conventions Are Not Access Control
 
 Restricted access control (`internal`, `fileprivate`, or `private`) is preferred
 for the purposes of hiding information from clients, rather than naming
 conventions.
+
+使用约定俗成的访问控制（`internal`，`fileprivate` 或 `private`）来达到隐藏信息的目的，而不要使用命名约定。
 
 Naming conventions (such as prefixing a leading underscore) are only used in
 rare situations when a declaration must be given higher visibility than is
@@ -1844,12 +1852,16 @@ example, a type that has a method that is only intended to be called by other
 parts of a library implementation that crosses module boundaries and must
 therefore be declared `public`.
 
-### Identifiers
+命名约定（例如下划线前缀）只有在声明必须使用比其他更高的可见性来解决语言的限制的罕见情况下使用——例如：类型有一个方法，只打算被另一个跨模块的库里的实现调用，导致必须被声明为 `public` 的情况下。
+
+### 标识符/Identifiers
 
 In general, identifiers contain only 7-bit ASCII characters. Unicode identifiers
 are allowed if they have a clear and legitimate meaning in the problem domain
 of the code base (for example, Greek letters that represent mathematical
 concepts) and are well understood by the team who owns the code.
+
+通常来说，标识符只包含 7 位 ASCII 码字符。Unicode 标识符只有在代码需要解决的问题领域有明确且合理的含义（例如：希腊字母用于表达数学上的概念）并且可以被团队成员理解的情况下才可以使用。
 
 ~~~ swift
 let smile = "😊"
@@ -1863,11 +1875,13 @@ let 😊 = "😊"
 ~~~
 {:.bad}
 
-### Initializers
+### 构造器/Initializers
 
 For clarity, initializer arguments that correspond directly to a stored property
 have the same name as the property. Explicit `self.` is used during assignment
 to disambiguate them.
+
+为了表达明确，构造器实参和直接对应的存储属性同名。使用显式 `self.` 在赋值的时候消除歧义。
 
 ~~~ swift
 public struct Person {
