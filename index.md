@@ -1911,10 +1911,12 @@ public struct Person {
 ~~~
 {:.bad}
 
-### Static and Class Properties
+### 静态属性和类属性/Static and Class Properties
 
 Static and class properties that return instances of the declaring type are
 _not_ suffixed with the name of the type.
+
+返回声明类型实例的静态属性和类属性**不需要**加上该类型名字的后缀。
 
 ~~~ swift
 public class UIColor {
@@ -1951,10 +1953,14 @@ declaring type, the names `shared` and `default` are commonly used. This style
 guide does not require specific names for these; the author should choose a name
 that makes sense for the type.
 
-### Global Constants
+当静态属性或者类属性用于描述该声明类型的单例实例时，通常使用 `shared` 和 `default` 作为名字。这个代码风格指南不强制要求这些命名，作者可以选择对该类型有意义的名字。
+
+### 全局常量/Global Constants
 
 Like other variables, global constants are `lowerCamelCase`. Hungarian notation,
 such as a leading `g` or `k`, is not used.
+
+和其他变量类似，全局常量也使用 `lowerCamelCase(驼峰命名法)`。不使用匈牙利命名法，例如以 `g` 或者 `k` 开头。
 
 ~~~ swift
 let secondsPerMinute = 60
@@ -1969,41 +1975,53 @@ let SECONDS_PER_MINUTE = 60
 ~~~
 {:.bad}
 
-### Delegate Methods
+### 代理方法/Delegate Methods
 
 Methods on delegate protocols and delegate-like protocols (such as data sources)
 are named using the linguistic syntax described below, which is inspired by
 Cocoa's protocols.
 
+代理协议和类似代理的协议（例如数据源协议）里的方法命名使用下面描述的口语化语法，受 Cocoa 框架里协议的命名启发而来。
+
 > The term "delegate's source object" refers to the object that invokes methods
 > on the delegate. For example, a `UITableView` is the source object that
 > invokes methods on the `UITableViewDelegate` that is set as the view's
 > `delegate` property.
+>
+> 术语“代理源对象”指的是响应代理方法的对象。例如：`UITableView` 是响应视图 `delegate` 属性设置的 `UITableViewDeleagte` 方法的源对象。
 
 All methods take the delegate's source object as the first argument.
 
+所有方法将代理源对象作为第一个实参。
+
 For methods that take the delegate's source object as their **only** argument:
+
+对于**只**有代理源对象实参的方法：
 
 * If the method returns `Void` (such as those used to notify the delegate that
   an event has occurred), then the method's base name is the **delegate's
   source type** followed by an **indicative verb phrase** describing the
   event. The argument is **unlabeled.**
 
+* 如果方法返回 `void`（例如用于提醒代理事件发生），那么方法名为**代理源类型**接上描述事件的**指示性动词**。实参**无标签**。
+  
   ~~~ swift
   func scrollViewDidBeginScrolling(_ scrollView: UIScrollView)
-  ~~~
+~~~
   {:.good}
-
+  
 * If the method returns `Bool` (such as those that make an assertion about the
   delegate's source object itself), then the method's name is the **delegate's
   source type** followed by an **indicative or conditional verb phrase**
   describing the assertion. The argument is **unlabeled.**
 
+* 如果方法返回 `Bool`(例如对代理源对象本身做断言)，那么方法名为**代理源类型**接上描述断言的**指示性或条件性动词**。实参**无标签**。
+  
   ~~~ swift
   func scrollViewShouldScrollToTop(_ scrollView: UIScrollView) -> Bool
-  ~~~
+~~~
   {:.good}
-
+  
 * If the method returns some other value (such as those querying for
   information about a property of the delegate's source object), then the
   method's base name is a **noun phrase** describing the property being
@@ -2011,6 +2029,8 @@ For methods that take the delegate's source object as their **only** argument:
   trailing preposition** that appropriately combines the noun phrase and the
   delegate's source object.
 
+* 如果方法返回其他值（例如查询代理源对象上的属性信息），那么方法名是描述查询属性的**名词**。实参**有标签**
+  
   ~~~ swift
   func numberOfSections(in scrollView: UIScrollView) -> Int
   ~~~
