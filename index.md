@@ -2029,7 +2029,7 @@ For methods that take the delegate's source object as their **only** argument:
   trailing preposition** that appropriately combines the noun phrase and the
   delegate's source object.
 
-* 如果方法返回其他值（例如查询代理源对象上的属性信息），那么方法名是描述查询属性的**名词**。实参**有标签**
+* 如果方法返回其他值（例如查询代理源对象上的属性信息），那么方法名是描述查询属性的**名词**。实参**标签是介词或后置介词**，用于将名词和代理源对象合适地连接起来。
   
   ~~~ swift
   func numberOfSections(in scrollView: UIScrollView) -> Int
@@ -2040,33 +2040,39 @@ For methods that take **additional** arguments after the delegate's source
 object, the method's base name is the delegate's source type **by itself** and
 the first argument is **unlabeled.** Then:
 
+对于在代理源对象后有**额外**实参的方法，方法名是代理源类型**自身**并且第一个实参**无标签**。并且：
+
 * If the method returns `Void`, the second argument is **labeled with an
   indicative verb phrase** describing the event that has the argument as its
   **direct object or prepositional object,** and any other arguments (if
   present) provide further context.
 
+* 如果方法返回 `void`，第二个实参**标签是指示性动词**，用于描述有**直接宾语或者间接宾语**的实参和其它提供更多上下文的实参（如果有的话）的事件。
+  
   ~~~ swift
   func tableView(
-    _ tableView: UITableView,
+  _ tableView: UITableView,
     willDisplayCell cell: UITableViewCell,
     forRowAt indexPath: IndexPath)
   ~~~
   {:.good}
-
+  
 * If the method returns `Bool`, the second argument is **labeled with an
   indicative or conditional verb phrase** that describes the return value in
   terms of the argument, and any other arguments (if present) provide further
   context.
 
+* 如果方法返回 `Bool`，第二个实参**标签是指示性或者条件性动词**，用于描述
+  
   ~~~ swift
   func tableView(
-    _ tableView: UITableView,
+  _ tableView: UITableView,
     shouldSpringLoadRowAt indexPath: IndexPath,
     with context: UISpringLoadedInteractionContext
   ) -> Bool
   ~~~
   {:.good}
-
+  
 * If the method returns some other value, the second argument is **labeled
   with a noun phrase and trailing preposition** that describes the return
   value in terms of the argument, and any other arguments (if present) provide
