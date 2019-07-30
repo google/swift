@@ -2007,6 +2007,7 @@ For methods that take the delegate's source object as their **only** argument:
   
   ~~~ swift
   func scrollViewDidBeginScrolling(_ scrollView: UIScrollView)
+  ~~~
 ~~~
   {:.good}
   
@@ -2021,7 +2022,7 @@ For methods that take the delegate's source object as their **only** argument:
   func scrollViewShouldScrollToTop(_ scrollView: UIScrollView) -> Bool
 ~~~
   {:.good}
-  
+
 * If the method returns some other value (such as those querying for
   information about a property of the delegate's source object), then the
   method's base name is a **noun phrase** describing the property being
@@ -2062,7 +2063,7 @@ the first argument is **unlabeled.** Then:
   terms of the argument, and any other arguments (if present) provide further
   context.
 
-* 如果方法返回 `Bool`，第二个实参**标签是指示性或者条件性动词**，用于描述
+* 如果方法返回 `Bool`，第二个实参**标签是指示性或者条件性动词**，用于描述对于实参的返回值，其他实参（如果有的话）提供更多上下文。
   
   ~~~ swift
   func tableView(
@@ -2078,9 +2079,11 @@ the first argument is **unlabeled.** Then:
   value in terms of the argument, and any other arguments (if present) provide
   further context.
 
+* 如果方法返回其他值，第二个实参**标签是名词和后置介词**，用于描述对于实参的返回值，其他实参（如果有的话）提供更多上下文。
+  
   ~~~ swift
   func tableView(
-    _ tableView: UITableView,
+  _ tableView: UITableView,
     heightForRowAt indexPath: IndexPath
   ) -> CGFloat
   ~~~
@@ -2090,28 +2093,38 @@ Apple's documentation on
 [delegates and data sources](https://developer.apple.com/library/content/documentation/General/Conceptual/CocoaEncyclopedia/DelegatesandDataSources/DelegatesandDataSources.html)
 also contains some good general guidance about such names.
 
-## Programming Practices
+Apple 的 [代理和数据源](https://developer.apple.com/library/archive/documentation/General/Conceptual/CocoaEncyclopedia/DelegatesandDataSources/DelegatesandDataSources.html) 文档也提供了一些在这些情况下通用的命名指引。
+
+## 编程实践/Programming Practices
 
 Common themes among the rules in this section are: avoid redundancy, avoid
 ambiguity, and prefer implicitness over explicitness unless being explicit
 improves readability and/or reduces ambiguity.
 
-### Compiler Warnings
+本章节中规则的通用主旨是：避免冗余，避免歧义，除了能明显提高可读性和/或减少歧义外尽量使用隐式而不是显式。
+
+### 编译器警告/Compiler Warnings
 
 Code should compile without warnings when feasible. Any warnings that are able
 to be removed easily by the author must be removed.
+
+代码尽可能保持在编译时没有警告。任何作者可以简单就去除的警告都应该去除。
 
 A reasonable exception is deprecation warnings, where it may not be possible to
 immediately migrate to the replacement API, or where an API may be deprecated
 for external users but must still be supported inside a library during a
 deprecation period.
 
-### Initializers
+有理由的废弃警告可以例外，在不可能马上迁移到替代的 API 时候或者在 API 对外部用户废弃但还需要继续对库内部支持的废弃期。
+
+### 构造器/Initializers
 
 For `struct`s, Swift synthesizes a non-public memberwise `init` that takes
 arguments for `var` properties and for any `let` properties that lack default
 values. When that initializer is suitable (that is, a `public` one is not
 needed), it is used and no explicit initializer is written.
+
+对于 `Struct`，Swift 
 
 The initializers declared by the special `ExpressibleBy*Literal` compiler
 protocols are never called directly.
@@ -3222,4 +3235,4 @@ relevant information that a typical reader might need to know. For example, for
 a property named `canonicalName`, don't omit its documentation (with the
 rationale that it would only say `/// The canonical name.`) if a typical reader
 may have no idea what the term "canonical name" means in that context. Use the
-documentation as an opportunity to define the term.
+documentation as an opportunity to define the term. 
