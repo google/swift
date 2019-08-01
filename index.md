@@ -2207,6 +2207,8 @@ long forms `Array<Element>`, `Dictionary<Key, Value>`, and `Optional<Wrapped>`
 are only written when required by the compiler; for example, the Swift parser
 requires `Array<Element>.Index` and does not accept `[Element].Index`.
 
+数组，字典和可选类型尽可能使用简写形式，也就是 `[Element]`，`[Key: Value]` 和 `Wrapped?`。完整形式 `Array<Element>`，`Dictionary<Key, Value>` 和 `Optional<Wrapped>` 只有在编译器需要时才使用，例如 Swift 语法分析程序不接受 `[Element].Index` 而需要 `Array<Element>.Index`。
+
 ~~~ swift
 func enumeratedDictionary<Element>(
   from values: [Element],
@@ -2233,10 +2235,14 @@ closures, or variables holding a function reference), the return type is always
 written as `Void`, never as `()`. In functions declared with the `func` keyword,
 the `Void` return type is omitted entirely.
 
+`Void` 是空元组 `()` 的 `typealias`，所以从实现来说它们是等价的。在函数类型声明中（例如闭包或者持有函数引用变量）的返回类型永远写作 `void`，而不是 `()`。在用 `func` 关键字声明的函数中，完全省略 `void` 返回类型。
+
 Empty argument lists are always written as `()`, never as `Void`. (In fact,
 the function signature `Void -> Result` is an error in Swift because function
 arguments must be surrounded by parentheses, and `(Void)` has a different
 meaning: an argument list with a single empty-tuple argument.)
+
+空的实参列表永远写作 `()`，而不是 `Void`。（事实上，函数签名 `Void -> Result` 在 Swift 会报错因为函数实参必须用括号包围，而 `(void)` 有着另外的含义：单个空元组实参的实参列表。
 
 ~~~ swift
 func doSomething() {
@@ -2260,16 +2266,20 @@ let callback: () -> ()
 ~~~
 {:.bad}
 
-### Optional Types
+### 可选类型/Optional Types
 
 Sentinel values are avoided when designing algorithms (for example, an "index"
 of &minus;1 when an element was not found in a collection). Sentinel values can
 easily and accidentally propagate through other layers of logic because the type
 system cannot distinguish between them and valid outcomes.
 
+在设计算法时避免哨兵值（例如使用 -1 的 “索引” 表示集合里找不到一个元素）。哨兵值会容易和偶然地传递到其它逻辑层，因为类型系统没办法将它们和合法结果进行区分。
+
 `Optional` is used to convey a non-error result that is either a value or the
 absence of a value. For example, when searching a collection for a value, not
 finding the value is still a **valid and expected** outcome, not an error.
+
+`Optional` 用于表达在值和值的缺省其中之一的非错误结果。例如：在集合中查询一个值时，值没有找到是一个**合法并期望**的结果，而不是一个错误。
 
 ~~~ swift
 func index(of thing: Thing, in things: [Thing]) -> Int? {
@@ -2303,6 +2313,8 @@ failure state; that is, when an operation may fail for a single domain-specific
 reason that is clear to the client. (The domain-specific restriction is meant to
 exclude severe errors that are typically out of the user's control to properly
 handle, such as out-of-memory errors.)
+
+`Optional` 也用于当失败状态单一而明确时的错误哨兵。
 
 For example, converting a string to an integer would fail if the
 string does not represent a valid integer that fits into the type's bit width:
