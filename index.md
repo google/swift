@@ -2124,10 +2124,12 @@ arguments for `var` properties and for any `let` properties that lack default
 values. When that initializer is suitable (that is, a `public` one is not
 needed), it is used and no explicit initializer is written.
 
-对于 `Struct`，Swift 
+对于 `Struct`，Swift 会合成非公开的逐一成员 `init`，实参为 `var` 属性和缺少默认值的 `let` 属性。如果该构造器已经够用（也就是说不需要 `public` 的），就直接用它，不需要书写显式的构造器。
 
 The initializers declared by the special `ExpressibleBy*Literal` compiler
 protocols are never called directly.
+
+遵循特殊的 `ExpressibleBy*Literal` 的编译器协议而声明的构造器永远不应该直接调用。
 
 ~~~ swift
 struct Kilometers: ExpressibleByIntegerLiteral {
@@ -2157,6 +2159,8 @@ a metatype variable. In direct calls to the initializer using the literal type
 name, `.init` is omitted. (**Referring** to the initializer directly by using
 `MyType.init` syntax to convert it to a closure is permitted.)
 
+只有当调用者是元类型变量时才允许明确调用  `.init(...)`  。使用字面量类型名字直接调用构造器，省略 `.init`。（构造器使用 `MyType.init` 语法转换为闭包来进行**引用**是允许的。）
+
 ~~~ swift
 let x = MyType(arguments)
 
@@ -2172,10 +2176,12 @@ let x = MyType.init(arguments)
 ~~~
 {:.bad}
 
-### Properties
+### 属性/Properties
 
 The `get` block for a read-only computed property is omitted and its body is
 directly nested inside the property declaration.
+
+只读计算属性的 `get` 块可以省略，并将执行体直接嵌套在属性声明里。
 
 ~~~ swift
 var totalCost: Int {
@@ -2193,7 +2199,7 @@ var totalCost: Int {
 ~~~
 {:.bad}
 
-### Types with Shorthand Names
+### 类型简称/Types with Shorthand Names
 
 Arrays, dictionaries, and optional types are written in their shorthand form
 whenever possible; that is, `[Element]`, `[Key: Value]`, and `Wrapped?`. The
