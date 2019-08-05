@@ -2314,10 +2314,12 @@ reason that is clear to the client. (The domain-specific restriction is meant to
 exclude severe errors that are typically out of the user's control to properly
 handle, such as out-of-memory errors.)
 
-`Optional` 也用于当失败状态单一而明确时的错误哨兵。
+`Optional` 也用于表示单一而明确失败状态的错误哨兵，也就是当操作是因为使用者清楚的单个特定领域原因失败的时候。（限制在特定领域是为了排除那些用户明显无法正确处理的严重错误，例如内存不足错误。）
 
 For example, converting a string to an integer would fail if the
 string does not represent a valid integer that fits into the type's bit width:
+
+例如，如果字符串不能用合适类型位宽的合法整数表达，将字符串转换为整型可能会失败：
 
 ~~~ swift
 struct Int17 {
@@ -2332,6 +2334,8 @@ Conditional statements that test that an `Optional` is non-`nil` but do not
 access the wrapped value are written as comparisons to `nil`. The following
 example is clear about the programmer's intent:
 
+判断一个 `Optional` 是否非 `nil` 但不需要访问解包值的条件语句写作和 `nil` 比较的形式。下面的例子能清晰的表达程序意图：
+
 ~~~ swift
 if value != nil {
   print("value was not nil")
@@ -2343,6 +2347,8 @@ This example, while taking advantage of Swift's pattern matching and binding
 syntax, obfuscates the intent by appearing to unwrap the value and then
 immediately throw it away.
 
+这个例子里，如果利用 Swift 模式匹配和绑定语法，将值解包后马上丢弃，会混淆程序意图。
+
 ~~~ swift
 if let _ = value {
   print("value was not nil")
@@ -2350,15 +2356,19 @@ if let _ = value {
 ~~~
 {:.bad}
 
-### Error Types
+### 错误类型/Error Types
 
 Error types are used when there are multiple possible error states.
+
+错误类型在有多种可能的错误状态的时使用。
 
 Throwing errors instead of merging them with the return type cleanly separates
 concerns in the API. Valid inputs and valid state produce valid outputs in the
 result domain and are handled with standard sequential control flow. Invalid
 inputs and invalid state are treated as errors and are handled using the
 relevant syntactic constructs (`do`-`catch` and `try`). For example:
+
+将错误抛出而不是跟着返回值一起返回可以更清晰地分离 API 里的问题。合法的输入和合法的状态产生合理的输出
 
 ~~~ swift
 struct Document {
