@@ -2368,7 +2368,7 @@ result domain and are handled with standard sequential control flow. Invalid
 inputs and invalid state are treated as errors and are handled using the
 relevant syntactic constructs (`do`-`catch` and `try`). For example:
 
-将错误抛出而不是跟着返回值一起返回可以更清晰地分离 API 里的问题。合法的输入和合法的状态产生合理的输出
+将错误抛出而不是同返回值一起返回可以更清晰地分离 API 里的问题。合法的输入和合法的状态产生结果域下合理的输出，并通过标准的控制流序列进行处理。不合法的输入和不合法的状态视作错误并使用相关的语法结构进行处理（`do`-`catch` 和 `try`）。例如：
 
 ~~~ swift
 struct Document {
@@ -2397,12 +2397,17 @@ do {
 
 Such a design forces the caller to consciously acknowledge the failure case by:
 
+这样的设计迫使调用者有意识地面对错误情况：
+
 * wrapping the calling code in a `do`-`catch` block and handling error cases to
   whichever degree is appropriate,
+* 在 `do`-`catch` 块里调用代码并根据严重程度处理错误，
 * declaring the function in which the call is made as `throws` and letting the
   error propagate out, or
+* 将函数声明为调用时 `throws` 并将错误传递给上层，或者
 * using `try?` when the specific reason for failure is unimportant and only the
   information about whether the call failed is needed.
+* 失败的某些原因不重要并且只需要是否调用失败信息的时候使用 `try?` 。
 
 In general, with exceptions noted below, force-`try!` is forbidden; it is
 equivalent to `try` followed by `fatalError` but without a meaningful message.
@@ -2411,12 +2416,16 @@ state that immediate termination is the only reasonable action, it is better to
 use `do`-`catch` or `try?` and provide more context in the error message to
 assist debugging if the operation does fail.
 
+通常来说，除了下面的说明以外，强制-`try!` 是禁止的；它等同于对 `fatalError` 使用 `try` 但没有有意义的信息。如果某个错误的发生意味着程序处在无法恢复的状态，那么马上终止是唯一合理的动作，这时使用 `do`-`catch` 或者 `try?` 并提供更多的上下文的错误信息可以更好地帮助调试。
+
 > **Exception:** Force-`try!` is allowed in unit tests and test-only code. It is
 > also allowed in non-test code when it is unmistakably clear that an error
 > would only be thrown because of **programmer** error; we specifically define
 > this to mean a single expression that could be evaluated without context in
 > the Swift REPL. For example, consider initializing a regular expression from a
 > a string literal:
+>
+> **例外：**强制-`try!` 在单元测试和只用于测试的代码是允许使用的。当非常清楚错误只可能是由**编程人员**抛出时，非测试代码也允许使用；我们特别地定义这种情况用在 Swift REPL 里没有上下文就无法推测的单个表达式。例如，考虑通过字符串字面量构造正则表达式的情况：
 >
 > ~~~ swift
 > let regex = try! NSRegularExpression(pattern: "a*b+c?")
@@ -2428,11 +2437,15 @@ assist debugging if the operation does fail.
 > occur if the programmer mistyped it. There is no benefit to writing extra
 > error handling logic here.
 >
+> `NSRegularExpression` 构造器会在正则表达式不合法时抛出错误，但当它是字符串字面量时，错误只可能由于编程人员编写错误导致。这时候编写额外的错误处理逻辑没有什么益处。
+>
 > If the pattern above were not a literal but instead were dynamic or derived
 > from user input, `try!` should **not** be used and errors should be handled
 > gracefully.
+>
+> 如果上面的匹配模式不是字面量而是动态生成或者从使用者输入传递的，**不**应该使用 `try!` 而应该更优雅地处理出现的错误。
 
-### Force Unwrapping and Force Casts
+### 强制解包和强制擦除/Force Unwrapping and Force Casts
 
 Force-unwrapping and force-casting are often code smells and are strongly
 discouraged. Unless it is extremely clear from surrounding code why such an
