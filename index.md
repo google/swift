@@ -2425,7 +2425,7 @@ assist debugging if the operation does fail.
 > the Swift REPL. For example, consider initializing a regular expression from a
 > a string literal:
 >
-> **例外：**强制-`try!` 在单元测试和只用于测试的代码是允许使用的。当非常清楚错误只可能是由**编程人员**抛出时，非测试代码也允许使用；我们特别地定义这种情况用在 Swift REPL 里没有上下文就无法推测的单个表达式。例如，考虑通过字符串字面量构造正则表达式的情况：
+> **例外：**强制-`try!` 在单元测试和仅用于测试的代码是允许使用的。当非常清楚错误只可能是由**编程人员**抛出时，非测试代码也允许使用；我们特别地定义这种情况用在 Swift REPL 里没有上下文就无法推测的单个表达式。例如，考虑通过字符串字面量构造正则表达式的情况：
 >
 > ~~~ swift
 > let regex = try! NSRegularExpression(pattern: "a*b+c?")
@@ -2452,6 +2452,8 @@ discouraged. Unless it is extremely clear from surrounding code why such an
 operation is safe, a comment should be present that describes the invariant that
 ensures that the operation is safe. For example,
 
+强制解包和强制擦除通常意味着有代码异味和强迫妥协。除非它能通过周围的代码非常清晰地解释该操作的安全性，并需要有注释来描述这个操作永远是安全的。例如：
+
 ~~~ swift
 let value = getSomeInteger()
 
@@ -2468,12 +2470,16 @@ return SomeEnum(rawValue: value)!
 > without additional documentation. This keeps such code free of unnecessary
 > control flow. In the event that `nil` is unwrapped or a cast operation is to
 > an incompatible type, the test will fail which is the desired result.
+>
+> **例外：**强制解包在单元测试和仅用于测试的代码里允许没有附加注释。这可以令减少代码不必要的控制流。在 `nil` 被解包或者不合适的类型擦除发生时，测试会按预期一样失败。
 
-### Implicitly Unwrapped Optionals
+### 可选值隐式解包/Implicitly Unwrapped Optionals
 
 Implicitly unwrapped optionals are inherently unsafe and should be avoided
 whenever possible in favor of non-optional declarations or regular `Optional`
 types. Exceptions are described below.
+
+可选值隐式解包是潜在不安全的，当可以用非可选值声明或者习惯的 `Optional` 时并应该避免它。除了下面描述的情况以外。
 
 User-interface objects whose lifetimes are based on the UI lifecycle instead of
 being strictly based on the lifetime of the owning object are allowed to use
@@ -2485,6 +2491,8 @@ life cycle, like views in a view controller's `viewDidLoad` method. Making such
 properties regular optionals can put too much burden on the user to unwrap them
 because they are guaranteed to be non-nil and remain that way once the objects
 are ready for use.
+
+存活时间基于 UI 生命周期而不是严格基于持有关系的用户界面元素可以使用可选值显式解包。这种情况的例子包括连接 XIB 文件或 storyboard 中元素的 `@IBOutlet` 属性，显式初始化的属性例如在 `prepareForSegue` 的实现里调用一个 view controller 的属性，还有在类的生命周期其它时间会被初始化的属性，例如在 view controller `viewDidLoad` 方法里的视图。这些属性如果用习惯的可选值会加重使用者解包的负担，因为它们能确保为非空并且一旦已经准备好被使用就会一直保持在这种状态。
 
 ~~~ swift
 class SomeViewController: UIViewController {
@@ -2508,6 +2516,8 @@ APIs are imported cleanly into Swift. If this is not possible, try to keep the
 footprint of those implicitly unwrapped optionals as small as possible in your
 Swift code; that is, do not propagate them through multiple layers of your own
 abstractions.
+
+可选值隐式解包也会在 Swift 代码使用缺少合适判空特性的 Objective-C API 时出现。如果可能的话，和该代码的拥有者协商添加那些注解就会使 API 在 Swift 可以更清晰的引入。如果不可能的话，尝试将这些可选值隐式解包的在 Swift 代码中的影响尽可能减小 ；也就是说，不要将它们在你自己的多层抽象中扩散。
 
 Implicitly unwrapped optionals are also allowed in unit tests. This is for
 reasons similar to the UI object scenario above&mdash;the lifetime of test
