@@ -2650,7 +2650,7 @@ of nesting (the "pyramid of doom"); failure conditions are closely coupled to
 the conditions that trigger them and the main logic remains flush left within
 its scope.
 
-更远了说，`guard` 语句通过减少额外嵌套层级（“金字塔厄运”）来提高可读性；错误情况和触发条件靠近，而主逻辑在作用域里保持向左对齐。
+更远了说，`guard` 语句通过减少额外嵌套层级（“金字塔厄运”）来提高可读性；令错误情况和触发条件靠近，而主逻辑在作用域里保持向左对齐。
 
 This can be seen in the following examples; in the first, there is a clear
 progression that checks for invalid states and exits, then executes the main
@@ -2658,7 +2658,7 @@ logic in the successful case. In the second example without `guard`, the main
 logic is buried at an arbitrary nesting level and the thrown errors are
 separated from their conditions by a great distance.
 
-
+这些可以在下面的例子中体现；第一种例子中，有清晰的流程，检查不合法的状态并退出，然后在成功的情况下执行主逻辑。在没有 `gurad` 的第二个例子中，主逻辑混杂在某个任意嵌套层级里，抛出的错误和它们的触发条件分隔得很开。
 
 ~~~ swift
 func discombobulate(_ values: [Int]) throws -> Int {
@@ -2701,11 +2701,15 @@ A `guard`-`continue` statement can also be useful in a loop to avoid increased
 indentation when the entire body of the loop should only be executed in some
 cases (but see also the `for`-`where` discussion below.)
 
-### `for`-`where` Loops
+`guard`-`continue` 语句也可以避免整个循环体只在某些情况下执行的循环缩进增加。
+
+### `for`-`where` 循环/`for`-`where` Loops
 
 When the entirety of a `for` loop's body would be a single `if` block testing a
 condition of the element, the test is placed in the `where` clause of the `for`
 statement instead.
+
+
 
 ~~~ swift
 for item in collection where item.hasProperty {
