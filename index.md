@@ -1045,9 +1045,8 @@ places **only**:
      // ...
       }
    ~~~
-~~~
       {:.bad}
-      
+   
    1. The ampersand (`&`) in a protocol composition type.
    
       And 符号（`&`）用在协议组合类型时。
@@ -1056,7 +1055,7 @@ places **only**:
       func sayHappyBirthday(to person: NameProviding & AgeProviding) {
         // ...
       }
-~~~
+   ~~~
       {:.good}
 
    ~~~ swift
@@ -1129,16 +1128,15 @@ places **only**:
       
       let substring = string[index..<string.endIndex]
       ~~~
-   ~~~
       {:.good}
       
       ~~~ swift
       for number in 1 ... 5 {
-     // ...
+       // ...
       }
       
       let substring = string[index ..< string.endIndex]
-   ~~~
+      ~~~
       {:.bad}
    
 1. After, but not before, the comma (`,`) in parameter lists and in
@@ -1149,14 +1147,13 @@ places **only**:
    ~~~ swift
    let numbers = [1, 2, 3]
    ~~~
-~~~
    {:.good}
    
    ~~~ swift
    let numbers = [1,2,3]
    let numbers = [1 ,2 ,3]
    let numbers = [1 , 2 , 3]
-~~~
+   ~~~
    {:.bad}
 
 1. After, but not before, the colon (`:`) in
@@ -1253,13 +1250,12 @@ places **only**:
       ~~~ swift
       let nameAgeMap = ["Ed": 40, "Timmy": 9]
       ~~~
-   ~~~
       {:.good}
       
       ~~~ swift
       let nameAgeMap = ["Ed":40, "Timmy":9]
       let nameAgeMap = ["Ed" : 40, "Timmy" : 9]
-   ~~~
+      ~~~
       {:.bad}
 
 1. At least two spaces before and exactly one space after the double slash
@@ -1270,12 +1266,11 @@ places **only**:
    ~~~ swift
    let initialFactor = 2  // Warm up the modulator.
    ~~~
-~~~
    {:.good}
    
    ~~~ swift
    let initialFactor = 2 //    Warm up the modulator.
-~~~
+   ~~~
    {:.bad}
 
 1. Outside, but not inside, the brackets of an array or dictionary literals and
@@ -1286,12 +1281,11 @@ places **only**:
    ~~~ swift
    let numbers = [1, 2, 3]
    ~~~
-~~~
    {:.good}
    
    ~~~ swift
    let numbers = [ 1, 2, 3 ]
-~~~
+   ~~~
    {:.bad}
 
 ### 水平对齐/Horizontal Alignment
@@ -2643,14 +2637,14 @@ A `guard` statement, compared to an `if` statement with an inverted condition,
 provides visual emphasis that the condition being tested is a special case that
 causes early exit from the enclosing scope.
 
-`guard` 语句，比起条件相反的 `if` 语句，会更好地从视觉上强调被检查的条件是导致从外层作用域提前退出的特例。
+`guard` 语句，比起条件相反的 `if` 语句，会更好地从视觉上强调检查的条件是导致从外层作用域提前退出的特例。
 
 Furthermore, `guard` statements improve readability by eliminating extra levels
 of nesting (the "pyramid of doom"); failure conditions are closely coupled to
 the conditions that trigger them and the main logic remains flush left within
 its scope.
 
-更远了说，`guard` 语句通过减少额外嵌套层级（“金字塔厄运”）来提高可读性；令错误情况和触发条件靠近，而主逻辑在作用域里保持向左对齐。
+更远了说，`guard` 语句通过减少额外嵌套层级（“鞭尸金字塔”）来提高可读性；令错误情况和触发条件靠近，而主逻辑在作用域里保持向左对齐。
 
 This can be seen in the following examples; in the first, there is a clear
 progression that checks for invalid states and exits, then executes the main
@@ -2709,7 +2703,7 @@ When the entirety of a `for` loop's body would be a single `if` block testing a
 condition of the element, the test is placed in the `where` clause of the `for`
 statement instead.
 
-
+当整个 `for` 循环体只包含了对元素的条件检查 `if` 块时，可以将该检查可以放在 `for` 语句里 `where` 分句中。
 
 ~~~ swift
 for item in collection where item.hasProperty {
@@ -2727,12 +2721,14 @@ for item in collection {
 ~~~
 {:.bad}
 
-### `fallthrough` in `switch` Statements
+### 在 `switch` 语句里的 `fallthrough`/ `fallthrough` in `switch` Statements
 
 When multiple `case`s of a `switch` would execute the same statements, the
 `case` patterns are combined into ranges or comma-delimited lists. Multiple
 `case` statements that do nothing but `fallthrough` to a `case` below are not
 allowed.
+
+当 `switch` 里的多个 `case	` 执行同样的语句时，这些 `case` 可以合并成一个范围或者逗号分隔的列表。声明多个 `case` 但不做任何事只 `fallthrough` 到下面 `case` 是不允许的。
 
 ~~~ swift
 switch value {
@@ -2761,13 +2757,17 @@ In other words, there is never a `case` whose body contains _only_ the
 `fallthrough` statement. Cases containing _additional_ statements which then
 fallthrough to the next case are permitted.
 
-### Pattern Matching
+也就是说，不能有_只_执行 `fallthrough` 语句的 `case` 。包含_额外_语句然后贯穿到下一个 case 的 case 是允许的。
+
+### 模式匹配/Pattern Matching
 
 The `let` and `var` keywords are placed individually in front of _each_ element
 in a pattern that is being matched. The shorthand version of `let`/`var` that
 precedes and distributes across the entire pattern is forbidden because it can
 introduce unexpected behavior if a value being matched in a pattern is itself a
 variable.
+
+_每个_模式匹配元素前面都有单独的 `let` 和 `var` 关键字。适用于整个匹配模式的前置简写 `let`/`var` 是禁止的，因为当匹配模式的值本身是个变量时，会引入非预期行为。
 
 ~~~ swift
 enum DataPoint {
@@ -2800,6 +2800,8 @@ the `label` variable above, that has been lost because `let` distributes across
 the entire pattern and thus shadows the variable with a binding that applies to
 any string value:
 
+在下面的例子中，如果作者意图是使用上面的 `label` 变量进行匹配，那么就会因为 `let` 适用于整个模式匹配，因此会该值会被任何绑定的字符串覆盖。
+
 ~~~ swift
 switch DataPoint.labeled("hello", 100) {
 case let .labeled(label, value):
@@ -2810,6 +2812,8 @@ case let .labeled(label, value):
 
 Labels of tuple arguments and `enum` associated values are omitted when binding
 a value to a variable with the same name as the label.
+
+元组的实参标签和 `enum` 的关联值当用相同标签名字的变量来绑定值时可以省略。
 
 ~~~ swift
 enum BinaryTree<Element> {
@@ -2829,6 +2833,8 @@ case .leaf(let element):
 Including the labels adds noise that is redundant and lacking useful
 information:
 
+包含多余并缺乏有用信息的标签只会造成混淆：
+
 ~~~ swift
 switch treeNode {
 case .subtree(left: let left, right: let right):
@@ -2839,11 +2845,13 @@ case .leaf(element: let element):
 ~~~
 {:.bad}
 
-### Tuple Patterns
+### 元组模式/Tuple Patterns
 
 Assigning variables through a tuple pattern (sometimes referred to as a _tuple
 shuffle_) is only permitted if the left-hand side of the assignment is
 unlabeled.
+
+通过元组模式（有时候用_乱序元组_）赋值变量只在赋值表达式左侧没有标签时允许。
 
 ~~~ swift
 let (a, b) = (y: 4, x: 5.0)
@@ -2858,6 +2866,8 @@ let (x: a, y: b) = (y: 4, x: 5.0)
 Labels on the left-hand side closely resemble type annotations, and can lead to
 confusing code.
 
+左侧的标签标签与类型注解很类似，会导致代码难以理解。
+
 ~~~ swift
 // This declares two variables, `Int`, which is a `Double` with value 5.0, and
 // `Double`, which is an `Int` with value 4.
@@ -2866,7 +2876,7 @@ let (x: Int, y: Double) = (y: 4, x: 5.0)
 ~~~
 {:.bad}
 
-### Numeric and String Literals
+### 数字和字符串字面量/Numeric and String Literals
 
 Integer and string literals in Swift do not have an intrinsic type. For example,
 `5` by itself is not an `Int`; it is a special literal value that can express
@@ -2875,6 +2885,8 @@ any type that conforms to `ExpressibleByIntegerLiteral` and only becomes an
 literal `"x"` is neither `String` nor `Character` nor `UnicodeScalar`, but it
 can become any of those types depending on its context, falling back to `String`
 as a default.
+
+Swift 里的整型和字符串字面量没有固定类型。例如，`5` 本身不是一个 `Int`；它是可以通过遵循 `ExpressibleByIntegerLiteral` 解释成任意类型的特殊字面量值，并且如果类型推断没将它转换为更具体的类型，它只会变成 `Int` 。类似的，
 
 Thus, when a literal is used to initialize a value of a type other than its
 default, and when that type cannot be inferred otherwise by context, specify the
