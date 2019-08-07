@@ -2524,16 +2524,22 @@ reasons similar to the UI object scenario above&mdash;the lifetime of test
 fixtures often begins not in the test's initializer but in the `setUp()` method
 of a test so that they can be reset before the execution of each test.
 
-### Access Levels
+可选值隐式解包在单元测试也被允许。因为这和上面的 UI 元素情况差不多——测试里对象的生命周期通常不从测试构造器开始，而是从测试的 `setUp()` 方法开始，以便在每次测试执行前重置。
+
+### 访问等级/Access Levels
 
 Omitting an explicit access level is permitted on declarations. For top-level
 declarations, the default access level is `internal`. For nested declarations,
 the default access level is the lesser of `internal` and the access level of the
 enclosing declaration.
 
+在声明里省略显式的访问等级是允许的。顶层声明的默认访问等级是 `internal`。嵌套声明的默认访问等级是其外层声明访问等级但不高于 `internal` 。
+
 Specifying an explicit access level at the file level on an extension is
 forbidden. Each member of the extension has its access level specified if it is
 different than the default.
+
+在扩展进行文件级别的显式访问等级指定是不允许的。拓展里每一个成员如果不使用默认的话应该单独指定访问等级。
 
 ~~~ swift
 extension String {
@@ -2561,12 +2567,14 @@ public extension String {
 ~~~
 {:.bad}
 
-### Nesting and Namespacing
+### 嵌套和命名空间/Nesting and Namespacing
 
 Swift allows `enum`s, `struct`s, and `class`es to be nested, so nesting is
 preferred (instead of naming conventions) to express scoped and hierarchical
 relationships among types when possible. For example, flag `enum`s or error
 types that are associated with a specific type are nested in that type.
+
+Swift 里允许嵌套 `enum`，`struct` 和 `class`，所以可能的话，嵌套更适合（比起命名约定）表示作用域和类型之间的分级关系。例如，在类型里嵌套特定类型的标志 `enum` 或者错误类型。
 
 ~~~ swift
 class Parser {
@@ -2600,10 +2608,14 @@ Swift does not currently allow protocols to be nested in other types or vice
 versa, so this rule does not apply to situations such as the relationship
 between a controller class and its delegate protocol.
 
+Swift 目前还不支持嵌套协议在其它类型中，反之亦然，所以该规则不适用于解决例如控制器类型和它的代理协议直接的关系。
+
 Declaring an `enum` without cases is the canonical way to define a "namespace"
 to group a set of related declarations, such as constants or helper functions.
 This `enum` automatically has no instances and does not require that extra
 boilerplate code be written to prevent instantiation.
+
+声明一个没有 case 的 `enum` 是定义用于分组相关声明的“命名空间”的公认方案，例如常量或者帮助方法。该 `enum` 自然而然不存在实例并且不需要避免实例化的额外样板代码。
 
 ~~~ swift
 enum Dimensions {
@@ -2625,22 +2637,28 @@ struct Dimensions {
 ~~~
 {:.bad}
 
-### `guard`s for Early Exits
+### 提前退出的 `guard`/`guard`s for Early Exits
 
 A `guard` statement, compared to an `if` statement with an inverted condition,
 provides visual emphasis that the condition being tested is a special case that
 causes early exit from the enclosing scope.
+
+`guard` 语句，比起条件相反的 `if` 语句，会更好地从视觉上强调被检查的条件是导致从外层作用域提前退出的特例。
 
 Furthermore, `guard` statements improve readability by eliminating extra levels
 of nesting (the "pyramid of doom"); failure conditions are closely coupled to
 the conditions that trigger them and the main logic remains flush left within
 its scope.
 
+更远了说，`guard` 语句通过减少额外嵌套层级（“金字塔厄运”）来提高可读性；错误情况和触发条件靠近，而主逻辑在作用域里保持向左对齐。
+
 This can be seen in the following examples; in the first, there is a clear
 progression that checks for invalid states and exits, then executes the main
 logic in the successful case. In the second example without `guard`, the main
 logic is buried at an arbitrary nesting level and the thrown errors are
 separated from their conditions by a great distance.
+
+
 
 ~~~ swift
 func discombobulate(_ values: [Int]) throws -> Int {
