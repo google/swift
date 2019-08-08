@@ -2886,11 +2886,13 @@ literal `"x"` is neither `String` nor `Character` nor `UnicodeScalar`, but it
 can become any of those types depending on its context, falling back to `String`
 as a default.
 
-Swift 里的整型和字符串字面量没有固定类型。例如，`5` 本身不是一个 `Int`；它是可以通过遵循 `ExpressibleByIntegerLiteral` 解释成任意类型的特殊字面量值，并且如果类型推断没将它转换为更具体的类型，它只会变成 `Int` 。类似的，
+Swift 里的整型和字符串字面量没有固定类型。例如，`5` 本身不是一个 `Int`；它是可以通过遵循 `ExpressibleByIntegerLiteral` 解释成任意类型的特殊字面量值，并且如果类型推断没将它转换为更具体的类型，它只会变成 `Int` 。类似的，字面量`"x"`不是 `String`，不是 `Character`，也不是 `UnicodeScalar`，不过它可以根据上下文变成这些类型，默认情况是作为 `String`。
 
 Thus, when a literal is used to initialize a value of a type other than its
 default, and when that type cannot be inferred otherwise by context, specify the
 type explicitly in the declaration or use an `as` expression to coerce it.
+
+因此在类型使用默认以外的字面量方式构造值，并且该类型不能通过上下文推断更多信息时，在声明里用显式类型或者用 `as` 表达式来进行强制转换。
 
 ~~~ swift
 // Without a more explicit type, x1 will be inferred as type Int.
@@ -2926,6 +2928,8 @@ string is coerced to a character. So while the following examples emit errors,
 they are "good" because the errors are caught at compile-time and for the right
 reasons.
 
+如果字面量的强制转换不合理，编译器会抛出合适的错误，例如，不属于整型类型的数字或者强制转换为字符的多字符的字符串。所以当下面例子抛出错误时，这是“好”事因为这些错误在编译期就以正确的错因被找到了。
+
 ~~~ swift
 // error: integer literal '9223372036854775808' overflows when stored into 'Int64'
 let a = 0x8000_0000_0000_0000 as Int64
@@ -2937,6 +2941,8 @@ let b = "ab" as Character
 
 Using initializer syntax for these types of coercions can lead to misleading
 compiler errors, or worse, hard-to-debug runtime errors.
+
+这些类型使用构造器语法进行强制转换会产生容易误导的编译器错误，或者更糟糕难以调试的运行时错误。
 
 ~~~ swift
 // This first tries to create an `Int` (signed) from the literal and then
@@ -2957,11 +2963,13 @@ let c = Character("ab")
 ~~~
 {:.bad}
 
-### Playground Literals
+### Playground 字面量/Playground Literals
 
 The graphically-rendered playground literals `#colorLiteral(...)`,
 `#imageLiteral(...)`, and `#fileLiteral(...)` are forbidden in non-playground
 production code. They are permitted in playground sources.
+
+图形渲染的 playground 字面量 `#colorLiteral(...)`，`#imageLiteral(...)` 和 `#fileLiteral(...)` 在非 playground 上的代码里是禁止的。它们只在 playground 源码里是允许的。
 
 ~~~ swift
 let color = UIColor(red: 1.0, green: 1.0, blue: 1.0, alpha: 1.0)
@@ -2973,12 +2981,14 @@ let color = #colorLiteral(red: 1.0, green: 1.0, blue: 1.0, alpha: 1.0)
 ~~~
 {:.bad}
 
-### Trapping vs. Overflowing Arithmetic
+### 捕获溢出运算/Trapping vs. Overflowing Arithmetic
 
 The standard (trapping-on-overflow) arithmetic and bitwise operators (`+`, `-`,
 `*`, `<<`, and `>>`) are used for most normal operations, rather than the
 masking operations (preceded by `&`). Trapping on overflow is safer because it
 prevents bad data from propagating through other layers of the system.
+
+标准（捕获溢出）运算和二元运算符（`+`，`-`，`*`，`<<` 和 `>>`）适用于大部分普通的操作，而不需要掩码操作（前置 `&`）。捕获溢出会更加安全因为它防止错误数据传递到系统的其他层级。
 
 ~~~ swift
 // GOOD. Overflow will not cause the balance to go negative.
@@ -2996,6 +3006,8 @@ let newBankBalance = oldBankBalance &+ recentHugeProfit
 Masking operations are comparatively rare but are permitted (and in fact
 necessary for correctness) in problem domains that use modular arithmetic, such
 as cryptography, big-integer implementations, hash functions, and so forth.
+
+掩码操作比较少见但在模数运算的领域问题是允许的（事实上为了正确性是必须的），例如加密，大整型实现，哈希函数等等。
 
 ~~~ swift
 var hashValue: Int {
@@ -3022,11 +3034,15 @@ masking operations is important. Additionally, consider adding debug
 preconditions to check these assumptions without affecting performance of
 optimized builds.
 
-### Defining New Operators
+掩码操作在确保值不会导致溢出（或者不需要担心溢出）的性能敏感代码里也是允许的。在这种情况下，需要使用注释来注明为使用掩码操作的重要性。更进一步，在没有影响性能优化的情况下，考虑增加先决调试条件来检查这些假设。
+
+### 定义新运算符/Defining New Operators
 
 When used unwisely, custom-defined operators can significantly reduce the
 readability of code because such operators often lack the historical context of
 the more common ones built into the standard library.
+
+不明智地使用自定义运算符会显著影响代码可读性，因为这样的运算符比起标准库中更常用的运算符，通常缺乏历史背景。
 
 In general, defining custom operators should be avoided. However, it is allowed
 when an operator has a clear and well-defined meaning in the problem domain
@@ -3035,6 +3051,8 @@ when compared to function calls. For example, since `*` is the only
 multiplication operator defined by Swift (not including the masking version), a
 numeric matrix library may define additional operators to support other
 operations like cross product and dot product.
+
+通常来说，应该避免定义自定义运算符。然而，当一个运算符在领域问题中有清晰和良好含义定义，并且使用它会比函数调用显著提高代码的可读性时，是允许的。例如，
 
 An example of a prohibited use case is defining custom `<~~` and `~~>` operators
 to decode and encode JSON data. Such operators are not native to the problem
