@@ -3052,7 +3052,7 @@ multiplication operator defined by Swift (not including the masking version), a
 numeric matrix library may define additional operators to support other
 operations like cross product and dot product.
 
-通常来说，应该避免定义自定义运算符。然而，当一个运算符在领域问题中有清晰和良好含义定义，并且使用它会比函数调用显著提高代码的可读性时，是允许的。例如，
+通常来说，应该避免定义自定义运算符。然而，当一个运算符在领域问题中有清晰和良好含义定义，并且使用它会比函数调用显著提高代码的可读性时，是允许的。例如，`*` 在 Swift 里只定义为乘法运算符（不包含掩码版本）， 数学矩阵库可能会定义额外的运算符来支持其他运算比如叉乘和点乘。
 
 An example of a prohibited use case is defining custom `<~~` and `~~>` operators
 to decode and encode JSON data. Such operators are not native to the problem
@@ -3060,18 +3060,24 @@ domain of processing JSON and even an experienced Swift engineer would have
 difficulty understanding the purpose of the code without seeking out
 documentation of those operators.
 
+其中一种禁止用法的例子是定义自定义 `<~~` 和 `~~>` 运算符来解码和编码 JSON 数据。这样的运算符不是 JSON 领域问题的原生处理，甚至有经验的 Swift 工程师在没找到这些运算符文档的情况下可能会对这种处理的代码有着不同的理解。
+
 If you must use third-party code of unquestionable value that provides an API
 only available through custom operators, you are **strongly encouraged** to
 consider writing a wrapper that defines more readable methods that delegate to
 the custom operators. This will significantly reduce the learning curve required
 to understand how such code works for new teammates and other code reviewers.
 
-### Overloading Existing Operators
+如果你一定要对毫无疑问的值使用第三方代码中只提供自定义运算符的 API，**强烈建议**你编写一个包装器定义可读性更高的方法来代理到自定义运算符。这会显著降低团队新成员或者其他代码审查者理解这样的代码是如何工作时的学习曲线。
+
+### 重载已存在运算符/Overloading Existing Operators
 
 Overloading operators is permitted when your use of the operator is semantically
 equivalent to the existing uses in the standard library. Examples of permitted
 use cases are implementing the operator requirements for `Equatable` and
 `Hashable`, or defining a new `Matrix` type that supports arithmetic operations.
+
+当你用的运算符语义上和标准库中已存在的等同时，重载运算符是允许的。允许用法的例子是为 `Equatable` 和 `Hashable` 实现运算符要求，或者定义新的 `Matrix` 类型来支持算数运算。
 
 If you wish to overload an existing operator with a meaning other than its
 natural meaning, follow the guidance in
@@ -3079,6 +3085,8 @@ natural meaning, follow the guidance in
 permitted. In other words, if the new meaning is well-established in the problem
 domain and the use of the operator is a readability improvement over other
 syntactic constructs, then it is permitted.
+
+
 
 An example of a prohibited case of operator repurposing would be to overload `*`
 and `+` to build an ad hoc regular expression API. Such an API would not provide
