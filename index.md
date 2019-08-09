@@ -3007,7 +3007,7 @@ Masking operations are comparatively rare but are permitted (and in fact
 necessary for correctness) in problem domains that use modular arithmetic, such
 as cryptography, big-integer implementations, hash functions, and so forth.
 
-掩码操作比较少见但在模数运算的领域问题是允许的（事实上为了正确性是必须的），例如加密，大整型实现，哈希函数等等。
+掩码操作比较少见但在模数运算的问题领域是允许的（事实上为了正确性是必须的），例如加密，大整型实现，哈希函数等等。
 
 ~~~ swift
 var hashValue: Int {
@@ -3052,7 +3052,7 @@ multiplication operator defined by Swift (not including the masking version), a
 numeric matrix library may define additional operators to support other
 operations like cross product and dot product.
 
-通常来说，应该避免定义自定义运算符。然而，当一个运算符在领域问题中有清晰和良好含义定义，并且使用它会比函数调用显著提高代码的可读性时，是允许的。例如，`*` 在 Swift 里只定义为乘法运算符（不包含掩码版本）， 数学矩阵库可能会定义额外的运算符来支持其他运算比如叉乘和点乘。
+通常来说，应该避免定义自定义运算符。然而，当一个运算符在问题领域中有清晰和良好含义定义，并且使用它会比函数调用显著提高代码的可读性时，是允许的。例如，`*` 在 Swift 里只定义为乘法运算符（不包含掩码版本）， 数学矩阵库可能会定义额外的运算符来支持其他运算比如叉乘和点乘。
 
 An example of a prohibited use case is defining custom `<~~` and `~~>` operators
 to decode and encode JSON data. Such operators are not native to the problem
@@ -3060,7 +3060,7 @@ domain of processing JSON and even an experienced Swift engineer would have
 difficulty understanding the purpose of the code without seeking out
 documentation of those operators.
 
-其中一种禁止用法的例子是定义自定义 `<~~` 和 `~~>` 运算符来解码和编码 JSON 数据。这样的运算符不是 JSON 领域问题的原生处理，甚至有经验的 Swift 工程师在没找到这些运算符文档的情况下可能会对这种处理的代码有着不同的理解。
+一种禁止用法的例子是定义自定义 `<~~` 和 `~~>` 运算符来解码和编码 JSON 数据。这样的运算符不是 JSON 领域问题的原生处理，甚至有经验的 Swift 工程师在没找到这些运算符文档的情况下可能会对这种处理的代码有着不同的理解。
 
 If you must use third-party code of unquestionable value that provides an API
 only available through custom operators, you are **strongly encouraged** to
@@ -3086,20 +3086,24 @@ permitted. In other words, if the new meaning is well-established in the problem
 domain and the use of the operator is a readability improvement over other
 syntactic constructs, then it is permitted.
 
-
+如果你希望用和原本不同的含义重载已存在的运算符，根据 [定义新运算符](#defining-new-operators) 指引来确定是否允许。也就是说，如果新的含义在问题领域是确定已久的并且使用该运算符会比其他语法结构提高可读性，那么就是允许的。
 
 An example of a prohibited case of operator repurposing would be to overload `*`
 and `+` to build an ad hoc regular expression API. Such an API would not provide
 strong enough readability benefits compared to simply representing the entire
 regular expression as a string.
 
-## Documentation Comments
+一种禁止更改运算符含义情况的例子是重载 `*` 和 `+` 来构建特定正则表达式 API。这样的 API 没有比简单用字符串表示整个正则表达式的方式可读性强很多。
 
-### General Format
+## 文档注释/Documentation Comments
+
+### 通常格式/General Format
 
 Documentation comments are written using the format where each line is preceded
 by a triple slash (`///`). Javadoc-style block comments (`/** ... */`) are not
 permitted.
+
+文档注释使用每行前面三个斜杠（`///`）的格式。Java 文档风格的块状注释（`/** ...*/`）是不允许的。
 
 ~~~ swift
 /// Returns the numeric value of the given digit represented as a Unicode scalar.
@@ -3141,15 +3145,19 @@ func numericValue(of digit: UnicodeScalar, radix: Int = 10) -> Int {
 ~~~
 {:.bad}
 
-### Single-Sentence Summary
+### 一句话概括/Single-Sentence Summary
 
 Documentation comments begin with a brief **single-sentence** summary that
 describes the declaration. (This sentence may span multiple lines, but if it
 spans too many lines, the author should consider whether the summary can be
 simplified and details moved to a new paragraph.)
 
+文档注释的开始使用简短的**一句话**概括来描述声明。（这句话可以跨行，但如果跨了很多行，作者应该考虑是否可以将概况简化并将细节移到新的段落中。）
+
 If more detail is needed than can be stated in the summary, additional
 paragraphs (each separated by a blank line) are added after it.
+
+如果在概括中陈述更多细节，在后面添加额外的段落（每个段落用空行分隔）。
 
 The single-sentence summary is not necessarily a complete sentence; for example,
 method summaries are generally written as verb phrases **without** "this method
@@ -3157,6 +3165,8 @@ method summaries are generally written as verb phrases **without** "this method
 redundant. Likewise, properties are often written as noun phrases **without**
 "this property is [...]". In any case, however, they are still terminated with a
 period.
+
+一句话概括不需要是完整的句子；例如，方法的概括通常写作动词短语，**不需要**加上“这个方法 [...]”，因为这就是要表达的，写出来是多余的。类似，属性通常习作名词短语，**不需要**加上“这个属性是 [...]”。然而无论如何，它们还是要以句号结尾。
 
 ~~~ swift
 /// The background color of the view.
@@ -3186,7 +3196,7 @@ func sum(_ numbers: [Int]) -> Int {
 ~~~
 {:.bad}
 
-### Parameter, Returns, and Throws Tags
+### 形参，返回值和抛出标签/Parameter, Returns, and Throws Tags
 
 Clearly document the parameters, return value, and thrown errors of functions
 using the `Parameter(s)`, `Returns`, and `Throws` tags, in that order. None ever
