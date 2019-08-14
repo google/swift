@@ -3387,7 +3387,7 @@ In general, if you find yourself writing documentation that simply repeats
 information that is obvious from the source and sugaring it with words like
 "a representation of," then leave the comment out entirely.
 
-通常来说，
+通常来说，如果你发现你写的注释只是简单地重复源码中显而易见的事并用类似"用于表示"的词语进行美化，那么将该注释完全去除。
 
 However, it is _not_ appropriate to cite this exception to justify omitting
 relevant information that a typical reader might need to know. For example, for
@@ -3395,3 +3395,6 @@ a property named `canonicalName`, don't omit its documentation (with the
 rationale that it would only say `/// The canonical name.`) if a typical reader
 may have no idea what the term "canonical name" means in that context. Use the
 documentation as an opportunity to define the term. 
+
+但是，引用这个例外来证明省略某些典型读者可能需要知道相关信息是_不_合适的。例如，对于 `canonicalName` 名字的属性，不要省略注释（只有合理的时候才可以只写 `/// The canonical name.`），因为典型读者可能不知道术语“规范名字”在上下文中的含义。 使用注释是定义该术语的好机会。
+
