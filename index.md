@@ -17,7 +17,7 @@ also incorporates feedback from usage across multiple Swift projects within
 Google. It is a living document and the basis upon which the formatter is
 implemented.
 
-这份代码风格指南基于 Apple Swift 标准库优秀的代码风格，并吸取了多个 Google 内部的 Swift 项目的使用反馈而成。本文档会保持更新，基于本文档的格式化工具已经实现。
+这份代码风格指南是基于优秀的 Apple Swift 标准库代码风格，并吸取了多个 Google 内部 Swift 项目的使用反馈而成。本文档会保持更新，并且已经基于本文档实现了格式化工具。
 
 ## 目录/Table of Contents
 {:.no_toc}
@@ -38,11 +38,11 @@ type. A file that extends an existing type with protocol conformance is named
 with a combination of the type name and the protocol name, joined with a plus
 (`+`) sign. For more complex situations, exercise your best judgment.
 
-通常来说，源文件的名字最好描述它包含的主要内容。主要包含单个类型的文件命名为该类类名。包含为已存在的类型添加遵循协议的拓展的文件命名为类名和协议名的组合，通过加号（+）连接。对于更复杂的情况，由你自己来判断是最合适的。
+通常来说，源文件的名字最好描述包含的主要内容。文件主要包含单个类型命名为该类类名。文件包含为已存在类型添加协议遵循的拓展命名为类名和协议名的组合，通过加号（+）连接。对于更复杂的情况，最好由你自己来判断。
 
 For example,
 
-例如：
+例如，
 
 * A file containing a single type `MyType` is named `MyType.swift`.
 * 文件中包含单个类型 `MyType` ，命名为 `MyType.swift`。
@@ -51,16 +51,16 @@ For example,
 * 文件中包含类型 `MyType` 和一些顶层的工具函数，也命名为 `MyType.swift`。（顶层的工具函数不是主要的内容。）
 * A file containing a single extension to a type `MyType` that adds conformance
   to a protocol `MyProtocol` is named `MyType+MyProtocol.swift`.
-* 文件中包含单个为类型 `MyType` 添加遵循 `MyProtocol` 协议的拓展，命名为 `MyType+MyProtocol.swift`。
+* 文件中包含单个为类型 `MyType` 添加 `MyProtocol` 协议遵循的拓展，命名为 `MyType+MyProtocol.swift`。
 * A file containing multiple extensions to a type `MyType` that add
   conformances, nested types, or other functionality to a type can be named more
   generally, as long as it is prefixed with `MyType+`; for example,
   `MyType+Additions.swift`.
-* 文件中包含多个为类型 `MyType` 添加遵循协议，嵌套类型或者其他功能的拓展，可以命名得更通用化，只要它的前缀是 `MyType+`。例如：`MyType+Additions.swift`。
+* 文件中包含多个为类型 `MyType` 添加协议遵循，嵌套类型或者其他功能的拓展，可以命名得更通用化，只要它的前缀是 `MyType+`；例如，`MyType+Additions.swift`。
 * A file containing related declarations that are not otherwise scoped under a
   common type or namespace (such as a collection of global mathematical
   functions) can be named descriptively; for example, `Math.swift`.
-* 文件中包含多个在公共的类型或者命名空间下没有作用域限制的相关声明（比如一系列全局的数学函数），可以命名得更描述性。例如：`Math.swift`。
+* 文件中包含多个在公共类型或者命名空间下没有作用域限制的相关声明（比如一系列全局的数学函数），可以命名得更有描述性。例如：`Math.swift`。
 
 ### 文件编码/File Encoding
 
@@ -80,7 +80,7 @@ file. The implications are:
   represented by their corresponding escape sequence.
 * 所有其他在字符串或者字符字面量里的空白符都用对应的转义字符表示。
 * Tab characters are not used for indentation.
-* 制表符不用作缩进。
+* 制表符不用于缩进。
 
 ### 特殊转义字符/Special Escape Sequences
 
@@ -88,7 +88,7 @@ For any character that has a special escape sequence (`\t`, `\n`, `\r`, `\"`,
 `\'`, `\\`, and `\0`), that sequence is used rather than the equivalent Unicode
 (e.g., `\u{000a}`) escape sequence.
 
-任何字符中如果包含了特殊转义字符（`\t`, `\n`, `\r`, `\"`, `\'`, `\\` 和 `\0`），该转义字符会被使用而不是其等价的 Unicode 转义字符（例如：`\u{000a}`）。
+任何字符中如果包含了特殊转义字符（`\t`, `\n`, `\r`, `\"`, `\'`, `\\` 和 `\0`），该转义字符会被直接使用，而不是其等价的 Unicode 转义字符（例如：`\u{000a}`）。
 
 ### 不可见字符和修饰符/Invisible Characters and Modifiers
 
@@ -104,14 +104,14 @@ attached to a character or characters that they modify. If such a Unicode scalar
 is present in isolation or is otherwise not modifying another character in the
 same string, it is written as a Unicode escape sequence.
 
-控制字符，组合字符，字符串里*会*影响可视化表达的变量选择符当跟在它们修改的字符后面则不转义。如果这个 Unicode 标量单独使用或者没有修改同字符串中其他的字符，则用 Unicode 转移字符表示。
+控制字符，组合字符，字符串里*会*影响可视化表达的变量选择符跟在其修改的字符后面则不转义。如果该 Unicode 标量单独使用或者没有修改同字符串中其他的字符，则用 Unicode 转义字符表示。
 
 The strings below are well-formed because the umlauts and variation selectors
 associate with neighboring characters in the string. The second example is in
 fact composed of _five_ Unicode scalars, but they are unescaped because the
 specific combination is rendered as a single character.
 
-下面的字符串符合要求，因为元音和变量选择符都和临近的字符关联。第二个例子实际上由 *5* 个 Unicode 标量组成，不过它们没有被转义，因为它们在特定组合后作为单一的字符进行渲染。
+下面的字符串是符合要求的，因为元音和变量选择符都和临近的字符关联。第二个例子实际上由 *5* 个 Unicode 标量组成，不过它们没有被转义，因为特定组合后会作为单一字符进行渲染。
 
 ~~~ swift
 let size = "Übergröße"
@@ -136,7 +136,7 @@ systems may render a standalone skin tone modifier as a block graphic, the
 example below is still forbidden because it is a modifier that is not modifying
 a character in the same string.
 
-如果元音以字面量方式出现在字符串里，它会和前面的引号组合起来，影响可读性。同样的，尽管大部分系统会将单独的皮肤着色修饰符作为一个图形块渲染，但下面例子依旧是不允许的，因为这个修饰符并没有修改相同字符串里任何一个字符。
+如果元音以字面量方式出现在字符串里，它会和前面的引号组合起来，影响可读性。同样的，尽管大部分系统会将单独的皮肤着色修饰符作为单独图形块渲染，但下面例子依旧是不允许的，因为该修饰符并没有修改同一字符串里任何字符。
 
 ~~~ swift
 let diaeresis = "̈"
@@ -153,7 +153,7 @@ outside the 7-bit ASCII range are never mixed in the same string.
 
 More specifically, string literals are either:
 
-更具体的，字符串字面量是下面两者之一:
+更具体来说，字符串字面量只能是下面两者之一:
 
 * composed of a combination of Unicode code points written literally and/or
   single character escape sequences (such as `\t`, but _not_ `\u{????}`), or
@@ -186,7 +186,7 @@ let size = "\u{00DC}bergr\u{00F6}\u{00DF}e\n"
 The example below is forbidden because it mixes code points outside the 7-bit
 ASCII range in both literal form and in escaped form.
 
-下面的例子是被禁止的，因为它混合了 7 位 ASCII 码范围以外的字面量形式和转义形式代码点。
+下面的例子是被禁止的，因为它混合了 7 位 ASCII 码范围以外的字面量形式和转义形式的代码点。
 
 ~~~ swift
 let size = "Übergr\u{00F6}\u{00DF}e\n"
@@ -197,7 +197,7 @@ let size = "Übergr\u{00F6}\u{00DF}e\n"
 > that some programs might not handle non-ASCII characters properly. If that
 > should happen, those programs are broken and must be fixed.
 >
-> **题外话**：永远不要只因为担心某些程序可能无法正确地处理非 ASCII 码字符而降低代码的可读性。如果这种事发生了，那些程序是无法使用的而且应该被修复。
+> **题外话**：永远别因为担心某些程序可能无法正确处理非 ASCII 码字符而降低代码的可读性。如果发生了，那些程序是不能使用的，而且应该被修复。
 
 ## 源文件结构/Source File Structure
 
@@ -3397,4 +3397,3 @@ may have no idea what the term "canonical name" means in that context. Use the
 documentation as an opportunity to define the term. 
 
 但是，引用这个例外来证明省略某些典型读者可能需要知道相关信息是_不_合适的。例如，对于 `canonicalName` 名字的属性，不要省略注释（只有合理的时候才可以只写 `/// The canonical name.`），因为典型读者可能不知道术语“规范名字”在上下文中的含义。 使用注释是定义该术语的好机会。
-
