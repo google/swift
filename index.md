@@ -210,7 +210,7 @@ itself is sufficient and a file comment is only present if it provides
 additional useful information. File comments are allowed for files that contain
 multiple abstractions in order to document that grouping as a whole.
 
-描述源文件的内容的注释是可选的。对那些只包含了单一抽象（例如一个类的声明）的文件来说并不建议用这种注释 — 这种情况下，抽象本身的文档注释就足够了，文件注释只有当提供了额外的有用信息时才需要。文件注释在文件中包含多个抽象时是允许的，为了作为整个分组记录下来。
+描述源文件的内容的注释是可选的。对只包含了单一抽象（例如一个类的声明）的文件并不建议用这种注释 — 这种情况下，抽象本身的文档注释就足够了，文件注释只有当提供了额外的有用信息时才需要。文件注释在文件中包含多个抽象时是允许的，为了作为完整的分组进行注释。
 
 ### 导入语句/Import Statements
 
@@ -219,12 +219,12 @@ and nothing less. If a source file uses definitions from both `UIKit` and
 `Foundation`, it imports both explicitly; it does not rely on the fact that some
 Apple frameworks transitively import others as an implementation detail.
 
-源文件中应该显式导入需要的顶层模块；不要多也不要少。如果源文件中同时使用了 `UIKit` 中的定义和 `Foundation` 中的定义，那么都进行显式导入；这不取决于有些苹果的框架已经导入了其他框架用于它的实现细节。
+源文件中应该显式导入需要的顶层模块；不要多也不要少。如果源文件中同时使用了 `UIKit` 中的定义和 `Foundation` 中的定义，那么都进行显式导入；这和有些 Apple 框架已经在实现细节中导入其他框架并不冲突。
 
 Imports of whole modules are preferred to imports of individual declarations or
 submodules.
 
-导入整个模块优先于导入单个声明或者子模块。
+优先考虑导入整个模块而非导入单个声明或者子模块。
 
 > There are a number of reasons to avoid importing individual members:
 >
@@ -235,7 +235,7 @@ submodules.
 > * Existing automated tooling (such as Xcode's migrator) are less likely to
 > work well on code that imports individual members because they are
 > considered corner cases.
-> * 现存地自动化工具（例如 Xcode 迁移器）不能很好地工作于导入单个成员的代码因为它们是边界情况。
+> * 现存地自动化工具（例如 Xcode 迁移器）不能很好地在导入单个成员的代码时工作，因为它们是边界情况。
 > * The prevailing style in Swift (based on official examples and community
 > code) is to import entire modules.
 > * 目前流行的 Swift 代码风格（基于官方例子和社区代码）都是导入整个模块。
@@ -244,7 +244,7 @@ Imports of individual declarations are permitted when importing the whole module
 would otherwise pollute the global namespace with top-level definitions (such as
 C interfaces). Use your best judgment in these situations.
 
-当导入的完整模块的顶层定义（例如 C 接口）会污染全局命名空间时，导入单个声明是允许的。在这些情况下，取决你的自己判断。
+当导入完整模块的顶层定义（例如 C 接口）会污染全局命名空间时，导入单个声明是允许的。在这些情况下，取决你自己的判断。
 
 Imports of submodules are permitted if the submodule exports functionality that
 is not available when importing the top-level module. For example,
@@ -252,7 +252,7 @@ is not available when importing the top-level module. For example,
 methods that allow client code to subclass `UIGestureRecognizer`&mdash;those are
 not visible by importing `UIKit` alone.
 
-如果子模块导出的功能当导入顶层模块时不可用，导入子模块是允许的。例如：`UIKit.UIGestureRecognizerSubclass` 必须要显式导入，来暴露代码继承自 `UIGestureRecognizer` 时允许重写的方法  - 在只导入 `UIKit` 时这并不可见。
+如果子模块导出的功能在导入顶层模块时不可用，导入子模块是允许的。例如：`UIKit.UIGestureRecognizerSubclass` 必须要显式导入，来暴露继承 `UIGestureRecognizer` 时代码允许重写的方法  - 这在只导入 `UIKit` 时并不可见。
 
 Import statements are not line-wrapped.
 
@@ -262,7 +262,7 @@ Import statements are the first non-comment tokens in a source file. They are
 grouped in the following fashion, with the imports in each group ordered
 lexicographically and with exactly one blank line between each group:
 
-导入语句是除了注释以外最前面的元素。按以下方式分组，每组中的导入按照字母顺序排序，每组直接只有一个空行：
+导入语句放在除了注释以外最前面。按以下方式分组，每组中的导入按照字母顺序排序，每组之间只有一个空行：
 
 1. Module/submodule imports not under test
 
@@ -274,7 +274,7 @@ lexicographically and with exactly one blank line between each group:
 
 1. Modules imported with `@testable` (only present in test sources)
 
-   @testable` 模块导入（只存在测试源码中）
+   `@testable` 模块导入（只存在测试源码中）
 
 ~~~ swift
 import CoreLocation
@@ -294,7 +294,7 @@ In general, most source files contain only one top-level type, especially when
 the type declaration is large. Exceptions are allowed when it makes sense to
 include multiple related types in a single file. For example,
 
-通常情况下，大部分源文件只包含一个顶层类型，特别是当类型声明很庞大时。除非包含多个相关的类型在同一文件里是有意义的。例如：
+通常情况下，大部分源文件只包含一个顶层类型，特别是当类型声明很庞大时。除非同一文件里包含了多个相关类型是有意义的。例如，
 
 * A class and its delegate protocol may be defined in the same file.
 
@@ -307,21 +307,21 @@ include multiple related types in a single file. For example,
   
 * 类型和它相关的轻量帮助类型可以定义在同一文件中。这种时候 
 
-  `fileprivate` 是很有用的，可以将类型和/或它的帮助类的某些功能限制在那个文件中而不是在模块的其他地方。
+  `fileprivate` 是很有用的，可以将类型和/或它的帮助类的某些功能限制在那个文件中而非暴露给模块的其他地方。
 
 The order of types, variables, and functions in a source file, and the order of
 the members of those types, can have a great effect on readability. However,
 there is no single correct recipe for how to do it; different files and
 different types may order their contents in different ways.
 
-在源文件中类型，变量和函数之间的顺序，和该类型成员的顺序，都会大大影响可读性。然而，如何组织它们并没有单一正确的法则；不同的文件和不同的类型可以用不同的方式组织它们的内容排序。
+在源文件中类型，变量和函数之间的顺序，和该类型成员的顺序，都会大大影响可读性。然而，如何组织它们并没有单一正确的法则；不同的文件和不同的类型可以用不同的方式组织它们内容的排序。
 
 What is important is that each file and type uses _**some** logical order,_
 which its maintainer could explain if asked. For example, new methods are not
 just habitually added to the end of the type, as that would yield "chronological
 by date added" ordering, which is not a logical ordering.
 
-重要的是，每一个文件和类型使用***相同**的排序逻辑*，它在维护者被询问时可以解释清楚。例如：新的方法不能习惯性地加在类型的最后面，这只是屈服于“日期递增地时间排序”，而不是一个逻辑性排序。
+重要的是，每一个文件和类型使用_**同一**排序逻辑_，维护者在被询问时可以解释清楚。例如，新的方法不能习惯性地加在类型的最后面，这只是顺从“日期递增地时间排序”，而不是一个逻辑性排序。
 
 When deciding on the logical order of members, it can be helpful for readers and
 future writers (including yourself) to use `// MARK:` comments to provide
@@ -330,7 +330,7 @@ provide bookmarks in the source window's navigation bar. (Likewise,
 `// MARK: - `, written with a hyphen before the description, causes Xcode to
 insert a divider before the menu item.) For example,
 
-当决定成员的排序逻辑后，使用 `// MARK:` 注释提供该分组的描述，对阅读者和将来的编码者（包括你自己）是很有帮助的。这种注释也会被 Xcode 理解并在源码窗口的导航栏中提供书签。（类似的还有 `// MARK: -`，在描述之前使用一个连字符的话， Xcode 会在菜单元素前插入一条分隔线。）例如：
+当决定成员的排序逻辑后，使用 `// MARK:` 注释对该分组提供描述，对阅读者和将来的编码者（包括你自己）是很有帮助的。这种注释也会被 Xcode 理解并在源码窗口的导航栏中提供书签。（类似的还有 `// MARK: -`，在描述之前使用一个连字符的话， Xcode 会在菜单元素前插入一条分隔线。）例如：
 
 ~~~ swift
 class MovieRatingViewController: UITableViewController {
@@ -365,7 +365,7 @@ functions with the same base name (though perhaps with different argument
 labels), _and_ when these overloads appear in the same type or extension scope,
 they appear sequentially with no other code in between.
 
-当一个类型有多个构造器或者下标，或者一个文件/类型内有多个相同名字的函数（尽管可能有不同的实参标签）*并且*当这些重载在同一类型或者扩展作用域内时，它们会按顺序地执行，中间不会执行其他代码。
+当一个类型有多个构造器或者下标，或者一个文件/类型内有多个相同名字的函数（尽管可能有不同的实参标签），*并且*当这些重载在同一类型或者扩展作用域内时，它们应该按顺序排列，不在中间插入其他代码。
 
 ### 扩展/Extensions
 
@@ -374,7 +374,7 @@ Extensions can be used to organize functionality of a type across multiple
 can have a great effect on readability; you must use _**some** logical
 organizational structure_ that you could explain to a reviewer if asked.
 
-扩展可以将一个类型的功能组织到多个“单元”中。再加上成员排序和所选择的组织结构/分组会对代码可读性有很大的帮助；你需要使用能解释给审查者的***某个**逻辑结构进行组织*。
+扩展可以将一个类型的功能组织到多个“单元”中。配合成员排序和选择的组织结构/分组会对代码可读性有很大的帮助；你必须使用_**某种**_能给审查者解释的_逻辑结构_进行组织。
 
 ## 常规格式/General Formatting
 
@@ -384,7 +384,7 @@ Swift code has a column limit of 100 characters. Except as noted below, any line
 that would exceed this limit must be line-wrapped as described in
 [Line-Wrapping](#line-wrapping).
 
-Swift 代码单行限制在 100 字符。除了下面的说明之外，任何超过该限制的行都需要换行，详情见 [换行](#line-wrapping)。
+Swift 代码有 100 字符单行限制。除了下面的说明之外，任何超过该限制的行都需要换行，详情见 [换行](#line-wrapping)。
 
 **Exceptions:**
 
@@ -394,7 +394,7 @@ Swift 代码单行限制在 100 字符。除了下面的说明之外，任何超
    meaningful unit of text that should not be broken (for example, a long URL in
    a comment).
    
-   即使遵循单行字符限制的行也不应该破坏文本的有意义的部分（例如：注释里的长 URL ）。
+   即便是遵循单行字符限制的行也不应该破坏文本的有意义的部分（例如：注释里的长 URL ）。
    
 1. `import` statements.
 
@@ -423,9 +423,7 @@ blocks with exceptions for Swift-specific constructs and rules:
   * in closures, where the signature of the closure is placed on the same line
     as the curly brace, if it fits, and a line break follows the `in` keyword.
     
-  * 闭包中，闭包的签名和花括号在同一行的情况下， 
-    
-    `in` 关键字后面换行。
+  * 闭包中，闭包的签名和花括号在同一行的情况下，如果合适，在 `in` 关键字后面换行。
     
   * where it may be omitted as described in
     [One Statement Per Line](#one-statement-per-line).
@@ -446,7 +444,7 @@ blocks with exceptions for Swift-specific constructs and rules:
   that brace terminates a statement or the body of a declaration. For example,
   an `else` block is written `} else {` with both braces on the same line.
   
-* 在闭边花括号（`}`）之后**需要**换行的情况，**有且仅当**该花括号终止语句或者作为声明体。例如：`else` 块写成 `} else {` 时两个花括号在同一行。
+* 闭边花括号（`}`）之后**需要**换行的情况，**有且仅当**该花括号用作终止语句或者作为声明体。例如，`else` 块写成 `} else {` 时两个花括号在同一行。
 
 ### 分号/Semicolons
 
@@ -481,7 +479,7 @@ There is **at most** one statement per line, and each statement is followed by a
 line break, except when the line ends with a block that also contains zero
 or one statements.
 
-每行**最多**一个语句，每个语句后换行，除非该行以只包含了 0 或 1 个语句的块结束。
+每行**最多**一个语句，每个语句后换行，除非该行以只包含了 0 或 1 个语句的块结尾。
 
 ~~~ swift
 guard let value = value else { return 0 }
@@ -514,14 +512,14 @@ work well for early-return and basic cleanup tasks, but less so when the body
 contains a function call with significant logic. When in doubt, write it as a
 multi-line statement.
 
-将块里包含的单个语句和块放在同一行总是允许的。根据自己的判断来决定是否将条件语句和它的执行体放在同一行中。例如：单行条件可以合适地跟提前返回和基础收尾任务放在一行，但是当执行体里包含了函数调用或者重要的逻辑就不太合适了。当纠结的时候，使用多行语句。
+将块里包含的单个语句和块放在同一行总是允许的。由你自己判断是否将条件语句和它的执行体放在同一行中。例如，单行条件适合跟提前返回并进行简单收尾的代码放在一行，但是当执行体里包含了函数调用或者重要的逻辑就不太合适了。如果纠结，使用多行语句。
 
 ### 换行/Line-Wrapping
 
 > Terminology note: **Line-wrapping** is the activity of dividing code into
 > multiple lines that might otherwise legally occupy a single line.
 >
-> 术语说明：**换行**是将代码分割到多个行的行为，否则都会堆积到同一行。
+> 术语说明：**换行**是将代码分割到多个行的行为，否则它们都会堆积到同一行。
 
 For the purposes of Google Swift style, many declarations (such as type
 declarations and function declarations) and other expressions (like function
@@ -557,25 +555,25 @@ breakable sequences are indicated in blue.
 1. The **unbreakable** token sequence up through the open angle bracket (`<`)
    that begins the generic argument list.
    
-   不可破坏**标记符开边的尖括号（`<`）标志着范型实参列表的开始。
+   **不可破坏**标记符从开始直到标志范型实参列表开始的开边尖括号（`<`）。
    
 1. The **breakable** list of generic arguments.
 
-   范型实参是**可破坏**列表。
+   范型实参的**可破坏**列表。
 
 1. The **unbreakable** token sequence (`>(`) that separates the generic
    arguments from the formal arguments.
    
-   不可破坏**标记符（`>（`）将范型实参和主要实参进行分割。
+   **不可破坏**标记符（`>（`）将范型实参和正式实参进行分割。
    
 1. The **breakable** comma-delimited list of formal arguments.
 
-   可破坏**的逗号分隔主要实参列表。
+   正式实参的**可破坏**逗号分隔列表。
 
 1. The **unbreakable** token-sequence from the closing parenthesis (`)`) up
    through the arrow (`->`) that precedes the return type.
    
-   不可破坏**标记符从闭边括号（`)`）到返回类型之前的箭头（`->`）。
+   **不可破坏**标记符从闭边括号（`)`）到返回类型之前的箭头（`->`）。
    
 1. The **breakable** return type.
 
@@ -583,16 +581,16 @@ breakable sequences are indicated in blue.
 
 1. The **unbreakable** `where` keyword that begins the generic constraints list.
 
-   标记范型约束列表的**不可破坏** `where` 关键字。
+   在范型约束列表开始的**不可破坏** `where` 关键字。
 
 1. The **breakable** comma-delimited list of generic constraints.
 
-   **可破坏**逗号分隔的范型约束列表。
+   范型约束的**可破坏**逗号分隔列表。
 
 Using these concepts, the cardinal rules of Google Swift style for line-wrapping
 are:
 
-参考这些思想，Google Swift 代码风格的基本换行规则如下：
+通过这些概念，Google Swift 代码风格的基本换行规则如下：
 
 1. If the entire declaration, statement, or expression fits on one line, then do
    that.
@@ -606,7 +604,7 @@ are:
    element. Except in control flow statements, a vertically-oriented list
    contains a line break before the first element and after each element.
    
-   逗号分隔列表只能一个方向展示：水平或者垂直。换句话说，所有元素必须在同一行上，或者每个元素必须在单独的行上。水平向的列表不包含任何换行，即使在第一个元素之前或者最后一个元素之后。控制流语句除外，垂直向的列表在第一个元素之前和每个元素之后需要换行。
+   逗号分隔列表只能一个方向展示：水平或者垂直。换句话说，所有元素必须在同一行上，或者每个元素必须在单独的行上。水平向的列表不包含任何换行，即使在第一个元素之前或者最后一个元素之后。除控制流语句外，垂直向的列表在第一个元素之前和每个元素之后需要换行。
    
 1. A continuation line starting with an unbreakable token sequence is indented
    at the same level as the original line.
@@ -624,7 +622,7 @@ are:
    placed on its own line, to avoid the continuation lines from blending
    visually with the body of the subsequent block.
 
-   在换行的声明或者表达式后的开边花括号（`{`），和最后的后续行在同一行，除非该行的缩进是在原始行的基础上+2。这种情况下，花括号另起一行，避免该行和随后块里的内容视觉上有混淆。
+   在换行的声明或者表达式后的开边花括号（`{`），除非该行的缩进是在原始行的基础上+2，都和最后的后续行在同一行。那种情况下，花括号另起一行，避免该行和随后块里的内容在视觉上有混淆。
    
    ~~~ swift
    public func index<Elements: Collection, Element>(
@@ -640,7 +638,6 @@ are:
      }
    }
    ~~~
-~~~
    {:.good}
    
    ~~~ swift
@@ -655,7 +652,7 @@ are:
        // ...
      }
    }
-~~~
+   ~~~
    {:.bad}
 
 For declarations that contain a `where` clause followed by generic constraints,
@@ -679,7 +676,7 @@ additional rules apply:
 
 Concrete examples of this are shown in the relevant subsections below.
 
-具体例子见下面相关的分段。
+具体例子见下面相关分段的内容。
 
 This line-wrapping style ensures that the different parts of a declaration are
 _quickly and easily identifiable to the reader_ by using indentation and line
@@ -688,7 +685,7 @@ throughout the file. Specifically, it prevents the zig-zag effect that would be
 present if the arguments are indented based on opening parentheses, as is common
 in other languages:
 
-换行风格确保声明的不同部分通过缩进和换行让_读者_可以_快速容易地被识别_，而且在文件中这些部分的缩进风格应该保持相同。具体来说，这可以防止实参是基于开边括号缩进而出现的锯齿效应，这在其他语言里是很常见的：
+这个换行风格确保声明的不同部分通过缩进和换行会让_读者_可以_快速容易地被识别_，并且在文件中的这些部分缩进风格应该保持一致。具体来说，这能避免实参基于开边括号缩进而出现的锯齿效应，这在其他语言里很常见：
 
 ~~~ swift
 public func index<Elements: Collection, Element>(of element: Element,  // AVOID.
@@ -731,7 +728,7 @@ Function declarations in protocols that are terminated with a closing
 parenthesis (`)`) may place the parenthesis on the same line as the final
 argument **or** on its own line.
 
-协议里的函数声明以闭边括号（`)`）结束可以将括号和最后的实参放在同一行**或者**另起一行。
+协议里以闭边括号（`)`）结束的函数声明可以将括号和最后的实参放在同一行**或者**另起一行。
 
 ~~~ swift
 public protocol ContrivedExampleDelegate {
@@ -754,7 +751,7 @@ arguments/constraints lists and/or the return type may also need to be wrapped.
 In these rare cases, the same line-wrapping rules apply to those parts as apply
 to the declaration itself.
 
-如果类型很复杂和/或有着深层的嵌套，在实参/约束列表和/或返回类型的单个元素可能也需要覆盖。在这些罕见的情况下，相同的换行规则像声明一样应用到这些部分。
+如果类型很复杂和/或有深层嵌套，在作为实参/约束列表和/或返回类型的单个元素时也可能需要换行。在这些罕见情况下，应用和声明一致的换行规则。
 
 ~~~ swift
 public func performanceTrackingIndex<Elements: Collection, Element>(
@@ -773,7 +770,7 @@ public func performanceTrackingIndex<Elements: Collection, Element>(
 However, `typealias`es or some other means are often a better way to simplify
 complex declarations whenever possible.
 
-然而，如果可以的话用 `typealias` 或其他手段来简化复杂的声明通常是更好的解决方法。
+然而，如果可以用 `typealias` 或其他手段简化复杂声明通常是更好的解决方法。
 
 #### 类型和拓展声明/Type and Extension Declarations
 
@@ -867,7 +864,7 @@ If the function call ends with a trailing closure and the closure's signature
 must be wrapped, then place it on its own line and wrap the argument list in
 parentheses to distinguish it from the body of the closure below it.
 
-如果函数调用以尾随闭包结束，并且闭包签名需要换行的话，另起一行并将实参列表包在括号中和下面的闭包体区分。
+如果函数调用以尾随闭包结束，并且闭包签名需要换行的话，另起一行并将实参列表包在括号中以便和下面的闭包体区分。
 
 ~~~ swift
 someAsynchronousAction.execute(withDelay: howManySeconds, context: actionContext) {
@@ -893,6 +890,8 @@ be placed on the same line as the last continuation line or on the next line,
 at the same indentation level as the beginning of the statement. For `guard`
 statements, the `else {` must be kept together, either on the same line or on
 the next line.
+
+控制流语句执行体前面开边花括号（`{`）既可以和最后的条件同一行也可以另起一行，并和该语句缩进保持一致。对于 `guard` 语句， `else {` 必须连在一起，不管是在同一行中还是另起一行。
 
 ~~~ swift
 if aBooleanValueReturnedByAVeryLongOptionalThing() &&
@@ -943,7 +942,7 @@ When line-wrapping other expressions that are not function calls (as described
 above), the second line (the one immediately following the first break) is
 indented exactly +2 from the original line.
 
-不是函数调用（上面提到的）的其他表达式换行时，第二行（跟着第一个换行的行）的缩进在原始行的基础上+2。
+非函数调用（上面提到的）的其他表达式换行时，第二行（跟着第一个换行的行）的缩进在原始行的基础上+2。
 
 When there are multiple continuation lines, indentation may be varied in
 increments of +2 as needed. In general, two continuation lines use the same
@@ -952,7 +951,7 @@ elements. However, if there are many continuation lines caused by long wrapped
 expressions, consider splitting them into multiple statements using temporary
 variables when possible.
 
-当有多个后续行时，缩进会根据需要在原来的基础上 +2 递增变化。通常来说，有且仅当两个后续行以语法上平级的元素开始的时候使用相同的缩进。然而，如果因为很长的表达式产生了很多个后续行，可以考虑在可能的时候将它分隔成多个语句，然后使用临时变量。
+当有多个后续行时，缩进会根据需要在原来的基础上 +2 递增变化。通常来说，有且仅当两个后续行以语法上平级的元素开始的时候才使用相同的缩进。然而，如果因为很长的表达式产生了很多个后续行，考虑将它分隔成多个语句的可能性，并使用临时变量。
 
 ~~~ swift
 let result = anExpression + thatIsMadeUpOf * aLargeNumber +
@@ -980,7 +979,7 @@ Beyond where required by the language or other style rules, and apart from
 literals and comments, a single Unicode space also appears in the following
 places **only**:
 
-参考其他的语言和其他代码风格，除了字面量和注释外的单个 Unicode 空格**只能**在下面这些情况下出现：
+根据语言要求或其他代码风格的规则，除了字面量和注释外的单个 Unicode 空格**只能**在下面这些情况下出现：
 
 1. Separating any reserved word starting a conditional or switch statement (such
    as `if`, `guard`, `while`, or `switch`) from the expression that follows it
@@ -1022,100 +1021,100 @@ places **only**:
 1. _On both sides_ of any binary or ternary operator, including the
    "operator-like" symbols described below, with exceptions noted at the end:
 
-   在二元或者三元运算符的每一侧，包括下面描述的“类运算符”，除了最后的说明：
-   
-1. The `=` sign used in assignment, initialization of variables/properties,
+   在二元或者三元运算符的每一侧，包括下面描述的“类运算符”，除了后续的说明：
+
+   1. The `=` sign used in assignment, initialization of variables/properties,
       and default arguments in functions.
-   
-   `=` 运算符用在赋值，变量/属性的构造过程以及函数里的默认实参时。
-   
-   ~~~ swift
+
+      `=` 运算符用在赋值，变量/属性的构造过程以及函数里的默认实参时。
+
+      ~~~ swift
       var x = 5
       
       func sum(_ numbers: [Int], initialValue: Int = 0) {
-     // ...
+       // ...
       }
-   ~~~
-   {:.good}
-   
-   ~~~ swift
+      ~~~
+      {:.good}
+
+      ~~~ swift
       var x=5
       
       func sum(_ numbers: [Int], initialValue: Int=0) {
-     // ...
+       // ...
       }
-   ~~~
+      ~~~
       {:.bad}
-   
+
    1. The ampersand (`&`) in a protocol composition type.
    
       And 符号（`&`）用在协议组合类型时。
-   
-   ~~~ swift
+
+      ~~~ swift
       func sayHappyBirthday(to person: NameProviding & AgeProviding) {
         // ...
       }
-   ~~~
+      ~~~
       {:.good}
 
-   ~~~ swift
+      ~~~ swift
       func sayHappyBirthday(to person: NameProviding&AgeProviding) {
-     // ...
+       // ...
       }
-   ~~~
+      ~~~
       {:.bad}
 
    1. The operator symbol in a function declaring/implementing that operator.
 
-   运算符用在函数声明/实现时。
+      运算符用在函数声明/实现时。
 
       ~~~ swift
       static func == (lhs: MyType, rhs: MyType) -> Bool {
         // ...
       }
       ~~~
-   {:.good}
+       {:.good}
 
-   ~~~ swift
+      ~~~ swift
       static func ==(lhs: MyType, rhs: MyType) -> Bool {
         // ...
       }
-   ~~~
+      ~~~
       {:.bad}
 
-1. The arrow (`->`) preceding the return type of a function.
-  
+   1. The arrow (`->`) preceding the return type of a function.
+   
       箭头（`->`）用在函数的返回类型之前。
    
       ~~~ swift
       func sum(_ numbers: [Int]) -> Int {
         // ...
-   }
-   ~~~
+      }
+      ~~~
       {:.good}
-
+      
       ~~~ swift
       func sum(_ numbers: [Int])->Int {
         // ...
       }
       ~~~
       {:.bad}
-   
+
    1. **Exception:** There is no space on either side of the dot (`.`) used to
       reference value and type members.
 
       **例外：**点（`.`）用在引用值和类型成员时两侧都没有空格。
       
-   ~~~ swift
+      ~~~ swift
       let width = view.bounds.width
-   ~~~
+      ~~~
       {:.good}
-   
-   ~~~ swift
+
+      ~~~ swift
       let width = view . bounds . width
-   ~~~
+      ~~~
       {:.bad}
-   
+
    1. **Exception:** There is no space on either side of the `..<` or `...`
       operators used in range expressions.
    
@@ -1124,7 +1123,7 @@ places **only**:
       ~~~ swift
       for number in 1...5 {
        // ...
-   }
+      }
       
       let substring = string[index..<string.endIndex]
       ~~~
@@ -1142,7 +1141,7 @@ places **only**:
 1. After, but not before, the comma (`,`) in parameter lists and in
    tuple/array/dictionary literals.
 
-   逗号（`,`）用在形参列表和元组/数组/字典字面量时，逗号后面而不是前面。
+   逗号（`,`）用在形参列表和元组/数组/字典字面量时，在逗号后面而不是前面。
    
    ~~~ swift
    let numbers = [1, 2, 3]
@@ -1245,7 +1244,7 @@ places **only**:
 
    1. Dictionary literals.
 
-      字典字面量。
+      字典字面量时。
       
       ~~~ swift
       let nameAgeMap = ["Ed": 40, "Timmy": 9]
@@ -1261,7 +1260,7 @@ places **only**:
 1. At least two spaces before and exactly one space after the double slash
    (`//`) that begins an end-of-line comment.
 
-   双斜杠（`//`）用于开始行结束的注释时，双斜杠之前最少两个空格，之后是一个空格。
+   双斜杠（`//`）用于开始行结束的注释时，双斜杠之前最少两个空格，之后正好一个空格。
    
    ~~~ swift
    let initialFactor = 2  // Warm up the modulator.
@@ -1302,7 +1301,7 @@ where omitting the alignment would be harmful to readability. In other cases
 or `class`), horizontal alignment is an invitation for maintenance problems if a
 new member is introduced that requires every other member to be realigned.
 
-水平对齐是禁止的，除了在明显的表格数据时省略会不利于可读性之外。其他情况下（例如：对 `struct` 或  `class` 里的存储属性声明的类型进行对齐），水平对齐会引起维护问题，因为在新的成员引入时其余所有的成员都需要重新对齐。
+水平对齐是禁止的，除了在明显的表格数据时省略会不利于可读性之外。其他情况下（例如，对 `struct` 或  `class` 里的存储属性声明的类型进行对齐），水平对齐会引起维护问题，因为在新的成员引入时其余所有的成员都需要重新对齐。
 
 ~~~ swift
 struct DataPoint {
@@ -1341,7 +1340,7 @@ A single blank line appears in the following locations:
    that do not otherwise meet the criterion above; for example, a private
       stored property and a related public computed property.
      
-      两个不适用于前面规则的非常相关的属性之间的空白行是可选的。例如：一个私有的存储属性和它相关的公开计算属性。
+      两个不适用于前面规则的非常相关的属性之间的空白行是可选的。例如，一个私有的存储属性和它相关的公开计算属性。
    
 1. _Only as needed_ between statements to organize code into logical
    subsections.
@@ -1398,7 +1397,7 @@ without them, nor that they would have made the code easier to read. It is _not_
 reasonable to assume that every reader has the entire Swift operator precedence
 table memorized.
 
-分组括号是可选的，只有当作者和审查者觉得没有它们时代码也不会被误解，或者会让代码更容易阅读时才可以被省略。**不**要认为每个阅读者都能记得完整的 Swift 操作符优先级表格。
+分组括号是可选的，只有当作者和审查者觉得没有也不会误解代码，或者会让代码更容易阅读时才可以被省略。**不**要认为每个阅读者都能记得完整的 Swift 操作符优先级表格。
 
 ## 特定结构格式化/Formatting Specific Constructs
 
