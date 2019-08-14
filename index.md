@@ -1084,7 +1084,7 @@ places **only**:
       {:.bad}
 
 1. The arrow (`->`) preceding the return type of a function.
-   
+  
       箭头（`->`）用在函数的返回类型之前。
    
       ~~~ swift
@@ -1340,7 +1340,7 @@ A single blank line appears in the following locations:
    1. A blank line is optional between two extremely closely related properties
    that do not otherwise meet the criterion above; for example, a private
       stored property and a related public computed property.
-      
+     
       两个不适用于前面规则的非常相关的属性之间的空白行是可选的。例如：一个私有的存储属性和它相关的公开计算属性。
    
 1. _Only as needed_ between statements to organize code into logical
@@ -3298,26 +3298,33 @@ generation tools. Some examples of frequently used directives are listed below.
 
 * Paragraphs are separated using a single line that starts with `///` and is
   otherwise blank.
-* 段落使用以 `///` 开始的单一空白行分隔。
+* 段落以 `///` 开始的单一空白行分隔。
 * *\*Single asterisks\** and _\_single underscores\__ surround text that should
   be rendered in italic/oblique type.
-* 
+* 以*\*单星号\**和_\_单下划线\__包围的文本会被渲染成斜体/斜型。
 * **\*\*Double asterisks\*\*** and __\_\_double underscores\_\___ surround text
   that should be rendered in boldface.
+* 以**\*\*双星号\*\***和__\_\_双下划线\_\___包围的文本会被渲染成粗体。
 * Names of symbols or inline code are surrounded in `` `backticks` ``.
+* 符号名或者内联代码以 `` `反引号` ``包围。
 * Multi-line code (such as example usage) is denoted by placing three backticks
   (` ``` `) on the lines before and after the code block.
+* 多行代码（例如作为用例）以三个反引号（` ``` `）的行开头和结束。
 
-### Where to Document
+### 注释的位置/Where to Document
 
 At a minimum, documentation comments are present for every open or public
 declaration, and every open or public member of such a declaration, with
 specific exceptions noted below:
 
+最起码，每个 open 或 public 声明和这种声明里每个 open 或 public 成员都应该有文档注释，除了下面说明的例外：
+
 * Individual cases of an `enum` often are not documented if their meaning is
   self-explanatory from their name. Cases with associated values, however,
   should document what those values mean if it is not obvious.
 
+* `enum` 里单个的 case 如果名字可以自解释含义则通常不需要注释。有关联值的 Case 如果值的含义不明确不管怎样都应该注释。
+  
 * A documentation comment is not always present on a declaration that overrides
   a supertype declaration or implements a protocol requirement, or on a
   declaration that provides the default implementation of a protocol requirement
@@ -3328,10 +3335,16 @@ specific exceptions noted below:
   documentation for the override be a mere copy of the base declaration's
   documentation.
 
+* 继承父类的声明，协议要求的实现或者提供协议要求的默认实现的扩展声明并不总需要文档注释。
+
+  继承声明注释继承的新表现描述是可被接受的。任何情况下都不应该出现单纯拷贝父声明文档的注释。
+
 * A documentation comment is not always present on test classes and test
   methods. However, they can be useful for functional test classes and for
   helper classes/methods shared by multiple tests.
 
+* 测试类和测试方法不总是需要文档注释。然而，它们对于在多个测试里复用的函数式测试类和帮助类/方法是有用的。
+  
 * A documentation comment is not always present on an extension declaration
   (that is, the `extension` itself). You may choose to add one if it help
   clarify the purpose of the extension, but avoid meaningless or misleading
@@ -3340,6 +3353,10 @@ specific exceptions noted below:
   In the following example, the comment is just repetition of what is already
   obvious from the source code:
 
+* 扩展声明（也就是自身的 `extension`）不总是需要文档注释。如果能帮助明确拓展的用途，你可以选择添加，但避免无意义或者误导的注释。
+  
+  在下面的例子中，注释仅仅重复了源码显而易见的事：
+  
   ~~~ swift
   /// Add `Equatable` conformance.
   extension MyType: Equatable {
@@ -3347,25 +3364,30 @@ specific exceptions noted below:
   }
   ~~~
   {:.bad}
-
+  
   The next example is more subtle, but it is an example of documentation that is
-  not scalable because the extension or the conformance could be updated in the
+not scalable because the extension or the conformance could be updated in the
   future. Consider that the type may be made `Comparable` at the time of that
   writing in order to sort the values, but that is not the only possible use of
   that conformance and client code could use it for other purposes in the
   future.
-
+  
+  下面的例子则更微妙一些，但这是一个不可拓展注释的例子，因为将来这个拓展或者或者这里的一致性可能更新。这个 `Comparable` 可能是在编写对该类型值的排序代码时加上的，但这不是一致性唯一可能的用途，并且使用者可能在将来的其他用途代码中依赖它。
+  
   ~~~ swift
   /// Make `Candidate` comparable so that they can be sorted.
   extension Candidate: Comparable {
     // ...
-  }
+}
   ~~~
+  
   {:.bad}
 
 In general, if you find yourself writing documentation that simply repeats
 information that is obvious from the source and sugaring it with words like
 "a representation of," then leave the comment out entirely.
+
+通常来说，
 
 However, it is _not_ appropriate to cite this exception to justify omitting
 relevant information that a typical reader might need to know. For example, for
