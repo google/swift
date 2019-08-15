@@ -1854,7 +1854,7 @@ are allowed if they have a clear and legitimate meaning in the problem domain
 of the code base (for example, Greek letters that represent mathematical
 concepts) and are well understood by the team who owns the code.
 
-通常来说，标识符只包含 7 位 ASCII 码字符。Unicode 标识符只有在代码需要解决的问题领域有明确且合理的含义（例如：希腊字母用于表达数学上的概念）并且可以被团队成员理解的情况下才可以使用。
+通常来说，标识符只能包含 7 位 ASCII 码字符。Unicode 标识符只有在代码所需要解决的问题领域有明确且合理的含义（例如：希腊字母用于表达数学上的概念）并且能被团队成员理解的情况下才可以使用。
 
 ~~~ swift
 let smile = "😊"
@@ -1874,7 +1874,7 @@ For clarity, initializer arguments that correspond directly to a stored property
 have the same name as the property. Explicit `self.` is used during assignment
 to disambiguate them.
 
-为了表达明确，构造器实参和直接对应的存储属性同名。在赋值的时候使用显式 `self.` 消除歧义。
+为了更明确地表达，构造器实参和直接对应的存储属性同名。在赋值的时候使用显式 `self.` 来消除歧义。
 
 ~~~ swift
 public struct Person {
@@ -2121,7 +2121,7 @@ needed), it is used and no explicit initializer is written.
 The initializers declared by the special `ExpressibleBy*Literal` compiler
 protocols are never called directly.
 
-遵循特殊的 `ExpressibleBy*Literal` 的编译器协议而声明的构造器永远不应该直接调用。
+遵循特殊的 `ExpressibleBy*Literal` 编译器协议而声明的构造器永远不应该直接调用。
 
 ~~~ swift
 struct Kilometers: ExpressibleByIntegerLiteral {
@@ -2227,14 +2227,14 @@ closures, or variables holding a function reference), the return type is always
 written as `Void`, never as `()`. In functions declared with the `func` keyword,
 the `Void` return type is omitted entirely.
 
-`Void` 是空元组 `()` 的 `typealias`，所以从实现来说它们是等价的。在函数类型声明中（例如闭包或者持有函数引用变量）的返回类型永远写作 `void`，而不是 `()`。在用 `func` 关键字声明的函数中，完全省略 `void` 返回类型。
+`Void` 是空元组 `()` 的 `typealias`，所以从实现来说它们是等价的。在函数类型声明中（例如闭包或者持有函数引用变量）的返回类型永远写作 `void`，而不是 `()`。在用 `func` 关键字声明的函数中，全都省略 `void` 返回类型。
 
 Empty argument lists are always written as `()`, never as `Void`. (In fact,
 the function signature `Void -> Result` is an error in Swift because function
 arguments must be surrounded by parentheses, and `(Void)` has a different
 meaning: an argument list with a single empty-tuple argument.)
 
-空的实参列表永远写作 `()`，而不是 `Void`。（事实上，函数签名 `Void -> Result` 在 Swift 会报错因为函数实参必须用括号包围，而 `(void)` 有着另外的含义：单个空元组实参的实参列表。
+空的实参列表永远写作 `()`，而不是 `Void`。（事实上， `Void -> Result` 的函数签名在 Swift 会报错，因为函数实参必须用括号包围，而 `(void)` 有着另外的含义：单个空元组实参的实参列表。
 
 ~~~ swift
 func doSomething() {
@@ -2265,13 +2265,13 @@ of &minus;1 when an element was not found in a collection). Sentinel values can
 easily and accidentally propagate through other layers of logic because the type
 system cannot distinguish between them and valid outcomes.
 
-在设计算法时避免哨兵值（例如使用 -1 的 “索引” 表示集合里找不到一个元素）。哨兵值会容易和偶然地传递到其它逻辑层，因为类型系统没办法将它们和合法结果进行区分。
+在设计算法时避免哨兵值（例如使用 -1 的 “索引” 表示集合里找不到某个元素）。哨兵值容易偶然传递到其它逻辑层，因为类型系统没办法将它们和合法结果进行区分。
 
 `Optional` is used to convey a non-error result that is either a value or the
 absence of a value. For example, when searching a collection for a value, not
 finding the value is still a **valid and expected** outcome, not an error.
 
-`Optional` 用于表达在值和值的缺省其中之一的非错误结果。例如：在集合中查询一个值时，值没有找到是一个**合法并期望**的结果，而不是一个错误。
+`Optional` 用于表达值和缺省值其中一个非错误结果。例如：在集合中查询一个值时，值没有找到是一个**合法并期望**的结果，而不是一个错误。
 
 ~~~ swift
 func index(of thing: Thing, in things: [Thing]) -> Int? {
@@ -2306,12 +2306,12 @@ reason that is clear to the client. (The domain-specific restriction is meant to
 exclude severe errors that are typically out of the user's control to properly
 handle, such as out-of-memory errors.)
 
-`Optional` 也用于表示单一而明确失败状态的错误哨兵，也就是当操作是因为使用者清楚的单个特定领域原因失败的时候。（限制在特定领域是为了排除那些用户明显无法正确处理的严重错误，例如内存不足错误。）
+`Optional` 也用于表示单一而明确失败状态的错误哨兵，也就是当操作是因为使用者明确的单个特定领域原因失败时。（限制在特定领域是为了排除那些用户明显无法正确处理的严重错误，例如内存不足错误。）
 
 For example, converting a string to an integer would fail if the
 string does not represent a valid integer that fits into the type's bit width:
 
-例如，如果字符串不能用合适类型位宽的合法整数表达，将字符串转换为整型可能会失败：
+例如，如果字符串不能用适合类型位宽的合法整数表达，将字符串转换为整型可能会失败：
 
 ~~~ swift
 struct Int17 {
@@ -2326,7 +2326,7 @@ Conditional statements that test that an `Optional` is non-`nil` but do not
 access the wrapped value are written as comparisons to `nil`. The following
 example is clear about the programmer's intent:
 
-判断一个 `Optional` 是否非 `nil` 但不需要访问解包值的条件语句写作和 `nil` 比较的形式。下面的例子能清晰的表达程序意图：
+判断一个 `Optional` 是否非 `nil` 但不需要访问解包值时，条件语句用和 `nil` 比较的形式。下面的例子能清晰地表达程序意图：
 
 ~~~ swift
 if value != nil {
@@ -2352,7 +2352,7 @@ if let _ = value {
 
 Error types are used when there are multiple possible error states.
 
-错误类型在有多种可能的错误状态的时使用。
+错误类型在有多种可能的错误状态时使用。
 
 Throwing errors instead of merging them with the return type cleanly separates
 concerns in the API. Valid inputs and valid state produce valid outputs in the
@@ -2360,7 +2360,7 @@ result domain and are handled with standard sequential control flow. Invalid
 inputs and invalid state are treated as errors and are handled using the
 relevant syntactic constructs (`do`-`catch` and `try`). For example:
 
-将错误抛出而不是同返回值一起返回可以更清晰地分离 API 里的问题。合法的输入和合法的状态产生结果域下合理的输出，并通过标准的控制流序列进行处理。不合法的输入和不合法的状态视作错误并使用相关的语法结构进行处理（`do`-`catch` 和 `try`）。例如：
+将错误抛出而不是同返回值一起返回可以更清晰地分离 API 里的问题。合法输入和合法状态产生结果域里合法输出，并通过标准的控制流序列进行处理。非法输入和非法状态应视作错误并使用相关的语法结构进行处理（`do`-`catch` 和 `try`）。例如：
 
 ~~~ swift
 struct Document {
@@ -2393,13 +2393,13 @@ Such a design forces the caller to consciously acknowledge the failure case by:
 
 * wrapping the calling code in a `do`-`catch` block and handling error cases to
   whichever degree is appropriate,
-* 在 `do`-`catch` 块里调用代码并根据严重程度处理错误，
+* 将代码包在 `do`-`catch` 块里调用并根据严重程度处理错误，
 * declaring the function in which the call is made as `throws` and letting the
   error propagate out, or
 * 将函数声明为调用时 `throws` 并将错误传递给上层，或者
 * using `try?` when the specific reason for failure is unimportant and only the
   information about whether the call failed is needed.
-* 失败的某些原因不重要并且只需要是否调用失败信息的时候使用 `try?` 。
+* 当失败原因某些不重要并且只需要是否调失败的信息时使用 `try?` 。
 
 In general, with exceptions noted below, force-`try!` is forbidden; it is
 equivalent to `try` followed by `fatalError` but without a meaningful message.
@@ -2408,7 +2408,7 @@ state that immediate termination is the only reasonable action, it is better to
 use `do`-`catch` or `try?` and provide more context in the error message to
 assist debugging if the operation does fail.
 
-通常来说，除了下面的说明以外，强制-`try!` 是禁止的；它等同于对 `fatalError` 使用 `try` 但没有有意义的信息。如果某个错误的发生意味着程序处在无法恢复的状态，那么马上终止是唯一合理的动作，这时使用 `do`-`catch` 或者 `try?` 并提供更多的上下文的错误信息可以更好地帮助调试。
+通常来说，除了下面的说明以外，强制-`try!` 是禁止的；它等同于对 `fatalError` 使用 `try` 但却没有有意义的信息。如果某个错误的发生意味着程序处在无法恢复的状态，那么马上终止是唯一合理的动作，这时使用 `do`-`catch` 或者 `try?` 并提供错误信息的更多上下文可以更好地帮助调试。
 
 > **Exception:** Force-`try!` is allowed in unit tests and test-only code. It is
 > also allowed in non-test code when it is unmistakably clear that an error
@@ -2417,7 +2417,7 @@ assist debugging if the operation does fail.
 > the Swift REPL. For example, consider initializing a regular expression from a
 > a string literal:
 >
-> **例外：**强制-`try!` 在单元测试和仅用于测试的代码是允许使用的。当非常清楚错误只可能是由**编程人员**抛出时，非测试代码也允许使用；我们特别地定义这种情况用在 Swift REPL 里没有上下文就无法推测的单个表达式。例如，考虑通过字符串字面量构造正则表达式的情况：
+> **例外：**强制-`try!` 在单元测试和仅用于测试的代码是允许使用的。当非常明确错误只可能是由**编程人员**抛出时，非测试代码也允许使用；我们特别定义这种情况，为了用在 Swift REPL 里没有上下文就无法推测的单个表达式时。例如，考虑通过字符串字面量构造正则表达式的情况：
 >
 > ~~~ swift
 > let regex = try! NSRegularExpression(pattern: "a*b+c?")
@@ -2435,7 +2435,7 @@ assist debugging if the operation does fail.
 > from user input, `try!` should **not** be used and errors should be handled
 > gracefully.
 >
-> 如果上面的匹配模式不是字面量而是动态生成或者从使用者输入传递的，**不**应该使用 `try!` 而应该更优雅地处理出现的错误。
+> 如果上面的匹配模式不是字面量而是动态生成或者从使用者输入传递的，**不**应该使用 `try!` ，而应该更优雅地处理出现的错误。
 
 ### 强制解包和强制擦除/Force Unwrapping and Force Casts
 
@@ -2444,7 +2444,7 @@ discouraged. Unless it is extremely clear from surrounding code why such an
 operation is safe, a comment should be present that describes the invariant that
 ensures that the operation is safe. For example,
 
-强制解包和强制擦除通常意味着有代码异味和强迫妥协。除非它能通过周围的代码非常清晰地解释该操作的安全性，并需要有注释来描述这个操作永远是安全的。例如：
+强制解包和强制擦除通常意味着有代码异味和被强迫妥协。除非它能通过周围的代码非常清晰地解释该操作的安全性，并需要有注释来描述这个操作永远是安全的。例如：
 
 ~~~ swift
 let value = getSomeInteger()
@@ -2463,7 +2463,7 @@ return SomeEnum(rawValue: value)!
 > control flow. In the event that `nil` is unwrapped or a cast operation is to
 > an incompatible type, the test will fail which is the desired result.
 >
-> **例外：**强制解包在单元测试和仅用于测试的代码里允许没有附加注释。这可以令减少代码不必要的控制流。在 `nil` 被解包或者不合适的类型擦除发生时，测试会按预期一样失败。
+> **例外：**在单元测试和仅用于测试的代码里允许没有附加注释的强制解包。这可以令减少代码不必要的控制流。在 `nil` 被解包或者不合适的类型擦除发生时，测试也会按照预期而失败。
 
 ### 可选值隐式解包/Implicitly Unwrapped Optionals
 
@@ -2471,7 +2471,7 @@ Implicitly unwrapped optionals are inherently unsafe and should be avoided
 whenever possible in favor of non-optional declarations or regular `Optional`
 types. Exceptions are described below.
 
-可选值隐式解包是潜在不安全的，当可以用非可选值声明或者习惯的 `Optional` 时并应该避免它。除了下面描述的情况以外。
+可选值隐式解包有潜在的不安全之处，当可以用非可选值声明或者习惯的 `Optional` 类型时就应该避免它。除了下面描述的情况外。
 
 User-interface objects whose lifetimes are based on the UI lifecycle instead of
 being strictly based on the lifetime of the owning object are allowed to use
@@ -2484,7 +2484,7 @@ properties regular optionals can put too much burden on the user to unwrap them
 because they are guaranteed to be non-nil and remain that way once the objects
 are ready for use.
 
-存活时间基于 UI 生命周期而不是严格基于持有关系的用户界面元素可以使用可选值显式解包。这种情况的例子包括连接 XIB 文件或 storyboard 中元素的 `@IBOutlet` 属性，显式初始化的属性例如在 `prepareForSegue` 的实现里调用一个 view controller 的属性，还有在类的生命周期其它时间会被初始化的属性，例如在 view controller `viewDidLoad` 方法里的视图。这些属性如果用习惯的可选值会加重使用者解包的负担，因为它们能确保为非空并且一旦已经准备好被使用就会一直保持在这种状态。
+存活时间基于 UI 生命周期而不是严格基于持有关系的用户界面元素可以使用可选值显式解包。这种情况的例子包括连接 XIB 文件或 storyboard 中元素的 `@IBOutlet` 属性，显式初始化的属性，例如在 `prepareForSegue` 实现里调用的 view controller，还有在类的生命周期其它时间会被初始化的属性，例如在 view controller `viewDidLoad` 方法里的视图。这些属性如果用习惯的可选值会加重使用者解包的负担，因为它们能确保为非空并且一旦已经准备好被使用就会一直保持在这种状态。
 
 ~~~ swift
 class SomeViewController: UIViewController {
@@ -2509,7 +2509,7 @@ footprint of those implicitly unwrapped optionals as small as possible in your
 Swift code; that is, do not propagate them through multiple layers of your own
 abstractions.
 
-可选值隐式解包也会在 Swift 代码使用缺少合适判空特性的 Objective-C API 时出现。如果可能的话，和该代码的拥有者协商添加那些注解就会使 API 在 Swift 可以更清晰的引入。如果不可能的话，尝试将这些可选值隐式解包的在 Swift 代码中的影响尽可能减小 ；也就是说，不要将它们在你自己的多层抽象中扩散。
+可选值隐式解包也会在 Swift 代码使用缺少恰当判空特性的 Objective-C API 时出现。如果可能，和该代码的拥有者协商添加那些注解就会使该 API 在 Swift 可以更清晰的引入。如果没有可能，尝试尽可能将这些可选值隐式解包在 Swift 代码中的影响缩小 ；也就是说，不要将它们扩散到你自己的多个抽象层。
 
 Implicitly unwrapped optionals are also allowed in unit tests. This is for
 reasons similar to the UI object scenario above&mdash;the lifetime of test
@@ -2531,7 +2531,7 @@ Specifying an explicit access level at the file level on an extension is
 forbidden. Each member of the extension has its access level specified if it is
 different than the default.
 
-在扩展进行文件级别的显式访问等级指定是不允许的。拓展里每一个成员如果不使用默认的话应该单独指定访问等级。
+在扩展指定文件级别的显式访问等级是不允许的。拓展里每一个成员如果不采用默认的则应该单独指定访问等级。
 
 ~~~ swift
 extension String {
@@ -2566,7 +2566,7 @@ preferred (instead of naming conventions) to express scoped and hierarchical
 relationships among types when possible. For example, flag `enum`s or error
 types that are associated with a specific type are nested in that type.
 
-Swift 里允许嵌套 `enum`，`struct` 和 `class`，所以可能的话，嵌套更适合（比起命名约定）表示作用域和类型之间的分级关系。例如，在类型里嵌套特定类型的标志 `enum` 或者错误类型。
+Swift 里允许嵌套 `enum`，`struct` 和 `class`，所以在可能的时候，嵌套更适合（比起命名约定）表示作用域和类型之间的分级关系。例如，在类型里嵌套特定类型的标志 `enum` 或者错误类型。
 
 ~~~ swift
 class Parser {
@@ -2600,14 +2600,14 @@ Swift does not currently allow protocols to be nested in other types or vice
 versa, so this rule does not apply to situations such as the relationship
 between a controller class and its delegate protocol.
 
-Swift 目前还不支持嵌套协议在其它类型中，反之亦然，所以该规则不适用于解决例如控制器类型和它的代理协议直接的关系。
+Swift 目前还不支持嵌套协议在其它类型中，反之亦然，所以该规则不适用于解决例如控制器类型和它代理协议之间的关系。
 
 Declaring an `enum` without cases is the canonical way to define a "namespace"
 to group a set of related declarations, such as constants or helper functions.
 This `enum` automatically has no instances and does not require that extra
 boilerplate code be written to prevent instantiation.
 
-声明一个没有 case 的 `enum` 是定义用于分组相关声明的“命名空间”的公认方案，例如常量或者帮助方法。该 `enum` 自然而然不存在实例并且不需要避免实例化的额外样板代码。
+声明一个没有 case 的 `enum` 是定义用于分组相关声明的“命名空间”的公认方案，例如常量或者帮助方法。该 `enum` 自然而然就会不存在实例并且不需要额外样板代码来避免可被实例化。
 
 ~~~ swift
 enum Dimensions {
@@ -2635,7 +2635,7 @@ A `guard` statement, compared to an `if` statement with an inverted condition,
 provides visual emphasis that the condition being tested is a special case that
 causes early exit from the enclosing scope.
 
-`guard` 语句，比起条件相反的 `if` 语句，会更好地从视觉上强调检查的条件是导致从外层作用域提前退出的特例。
+`guard` 语句，比起条件相反的 `if` 语句，会更好地从视觉上强调该检查条件是导致从外层作用域提前退出的特例。
 
 Furthermore, `guard` statements improve readability by eliminating extra levels
 of nesting (the "pyramid of doom"); failure conditions are closely coupled to
@@ -2650,7 +2650,7 @@ logic in the successful case. In the second example without `guard`, the main
 logic is buried at an arbitrary nesting level and the thrown errors are
 separated from their conditions by a great distance.
 
-这些可以在下面的例子中体现；第一种例子中，有清晰的流程，检查不合法的状态并退出，然后在成功的情况下执行主逻辑。在没有 `gurad` 的第二个例子中，主逻辑混杂在某个任意嵌套层级里，抛出的错误和它们的触发条件分隔得很开。
+可以在下面的例子中体现这些理论；第一种例子里，有清晰的流程，检查不合法的状态并退出，然后在成功的情况下执行主逻辑。在没有 `guard` 的第二个例子里，主逻辑混杂在某个任意嵌套层级里，抛出的错误和它们的触发条件分隔得很开。
 
 ~~~ swift
 func discombobulate(_ values: [Int]) throws -> Int {
@@ -2693,7 +2693,7 @@ A `guard`-`continue` statement can also be useful in a loop to avoid increased
 indentation when the entire body of the loop should only be executed in some
 cases (but see also the `for`-`where` discussion below.)
 
-`guard`-`continue` 语句也可以避免整个循环体只在某些情况下执行的循环缩进增加。
+`guard`-`continue` 语句也可以避免整个循环体只在某些情况下执行的循环的缩进增加。
 
 ### `for`-`where` 循环/`for`-`where` Loops
 
@@ -2726,7 +2726,7 @@ When multiple `case`s of a `switch` would execute the same statements, the
 `case` statements that do nothing but `fallthrough` to a `case` below are not
 allowed.
 
-当 `switch` 里的多个 `case	` 执行同样的语句时，这些 `case` 可以合并成一个范围或者逗号分隔的列表。声明多个 `case` 但不做任何事只 `fallthrough` 到下面 `case` 是不允许的。
+当 `switch` 里的多个 `case	` 执行同样的语句时，这些 `case` 可以合并成一个范围或者逗号分隔的列表。声明多个 `case` 却不做任何事只 `fallthrough` 到下面 `case` 是不允许的。
 
 ~~~ swift
 switch value {
@@ -2755,7 +2755,7 @@ In other words, there is never a `case` whose body contains _only_ the
 `fallthrough` statement. Cases containing _additional_ statements which then
 fallthrough to the next case are permitted.
 
-也就是说，不能有_只_执行 `fallthrough` 语句的 `case` 。包含_额外_语句然后贯穿到下一个 case 的 case 是允许的。
+也就是说，不能有_只_执行 `fallthrough` 语句的 `case` 。包含_额外_语句然后贯穿到下一个的 case 是允许的。
 
 ### 模式匹配/Pattern Matching
 
@@ -2798,7 +2798,7 @@ the `label` variable above, that has been lost because `let` distributes across
 the entire pattern and thus shadows the variable with a binding that applies to
 any string value:
 
-在下面的例子中，如果作者意图是使用上面的 `label` 变量进行匹配，那么就会因为 `let` 适用于整个模式匹配，因此会该值会被任何绑定的字符串覆盖。
+在下面的例子中，如果作者意图是使用上面的 `label` 变量进行匹配，那么就会因为 `let` 适用于整个模式匹配，从而该值会被任何绑定的字符串覆盖。
 
 ~~~ swift
 switch DataPoint.labeled("hello", 100) {
@@ -2811,7 +2811,7 @@ case let .labeled(label, value):
 Labels of tuple arguments and `enum` associated values are omitted when binding
 a value to a variable with the same name as the label.
 
-元组的实参标签和 `enum` 的关联值当用相同标签名字的变量来绑定值时可以省略。
+元组的实参标签和 `enum` 的关联值在用相同标签名字的变量来绑定值时可以被省略。
 
 ~~~ swift
 enum BinaryTree<Element> {
