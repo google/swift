@@ -38,7 +38,7 @@ type. A file that extends an existing type with protocol conformance is named
 with a combination of the type name and the protocol name, joined with a plus
 (`+`) sign. For more complex situations, exercise your best judgment.
 
-通常来说，源文件的名字最好描述包含的主要内容。文件主要包含单个类型命名为该类类名。文件包含为已存在类型添加协议遵循的拓展命名为类名和协议名的组合，通过加号（+）连接。对于更复杂的情况，最好由你自己来判断。
+通常来说，源文件的名字最好描述包含的主要内容。文件主要包含单个类型命名为该类类名。文件包含为已存在类型添加协议遵循的拓展命名为类名和协议名的组合，通过加号（+）连接。对于更复杂的情况，最好由你自己判断。
 
 For example,
 
@@ -244,7 +244,7 @@ Imports of individual declarations are permitted when importing the whole module
 would otherwise pollute the global namespace with top-level definitions (such as
 C interfaces). Use your best judgment in these situations.
 
-当导入完整模块的顶层定义（例如 C 接口）会污染全局命名空间时，导入单个声明是允许的。在这些情况下，取决你自己的判断。
+当导入完整模块的顶层定义（例如 C 接口）会污染全局命名空间时，导入单个声明是允许的。在这些情况下，由你自己判断。
 
 Imports of submodules are permitted if the submodule exports functionality that
 is not available when importing the top-level module. For example,
@@ -512,7 +512,7 @@ work well for early-return and basic cleanup tasks, but less so when the body
 contains a function call with significant logic. When in doubt, write it as a
 multi-line statement.
 
-将块里包含的单个语句和块放在同一行总是允许的。由你自己判断是否将条件语句和它的执行体放在同一行中。例如，单行条件适合跟提前返回并进行简单收尾的代码放在一行，但是当执行体里包含了函数调用或者重要的逻辑就不太合适了。如果纠结，使用多行语句。
+将块里包含的单个语句和块放在同一行总是允许的。由你自己判断是否将条件语句和它的执行体放在同一行中。例如，单行条件适合跟提前返回并进行简单收尾的代码放在一行，但是当执行体里包含了函数调用或者重要的逻辑就不太合适了。一旦纠结，使用多行语句。
 
 ### 换行/Line-Wrapping
 
@@ -1413,7 +1413,7 @@ C-style block format (`/* ... */`).
 Local variables are declared close to the point at which they are first used
 (within reason) to minimize their scope.
 
-局部变量声明在尽可能接近第一次使用它们的地方，（在合理的情况下）最小化作用域。
+局部变量声明在尽量接近首次使用的地方，（在合理的情况下）最小化作用域。
 
 With the exception of tuple destructuring, every `let` or `var` statement
 (whether a property or a local variable) declares exactly one variable.
@@ -1439,7 +1439,7 @@ Case statements are indented at the _same_ level as the switch statement to
 which they belong; the statements inside the case blocks are then indented +2
 spaces from that level.
 
-Case 语句的缩进和它们的 switch 语句保持_一致_;case 块里的语句在该缩进基础上+2 空格。
+Case 语句的缩进和它们的 switch 语句保持_一致_;case 块里的语句在该缩进基础上+2空格。
 
 ~~~ swift
 switch order {
@@ -1484,7 +1484,7 @@ form may be used only when none of the cases have associated values or raw
 values, all cases fit on a single line, and the cases do not need further
 documentation because their meanings are obvious from their names.
 
-通常来说，在一个 `enum` 里每行只有一个 `case`。逗号分隔形式只能在 case 都没有关联值或者原始值时使用，所有 case 在写在单行里，并且 case 都能从名字明确其含义而不需要额外的文档。
+通常来说，在一个 `enum` 里每行只有一个 `case`。逗号分隔形式只能在 case 都没有关联值或者原始值时使用，所有 case 在写在同一行，并且 case 都能从名字明确其含义而不需要额外的注释。
 
 ~~~ swift
 public enum Token {
@@ -1558,12 +1558,12 @@ The cases of an enum must follow a logical ordering that the author could
 explain if asked. If there is no obviously logical ordering, use a
 lexicographical ordering based on the cases' names.
 
-枚举的 case 必须遵循一定的可以解释的排序逻辑。如果没有明显的排序逻辑，按照 case 名字的首字母排序。
+枚举的 case 必须遵循一定的可解释排序逻辑。如果没有明显的排序逻辑，按照 case 名字的首字母排序。
 
 In the following example, the cases are arranged in numerical order based on the
 underlying HTTP status code and blank lines are used to separate groups.
 
-在下面的例子中，case 根据其表示的 HTTP 状态码的数字进行排序，并通过空行进行分组之间的分隔。
+在下面的例子中，case 根据其表示的 HTTP 状态码数字进行排序，并通过空行进行分组之间的分隔。
 
 ~~~ swift
 public enum HTTPStatus: Int {
@@ -1584,7 +1584,7 @@ The following version of the same enum is less readable. Although the cases are
 ordered lexicographically, the meaningful groupings of related values has been
 lost.
 
-相同的枚举，下面这个版本写法可读性就差一些。尽管 case 根据字母排序，但是却失去了对关联值的含义的表达。
+同样的枚举，下面这个版本写法可读性就差一些。尽管 case 根据字母排序，但是却失去了对关联值的含义的表达。
 
 ~~~ swift
 public enum HTTPStatus: Int {
@@ -1606,12 +1606,12 @@ name of their trailing closure argument. Doing so prevents using trailing
 closure syntax&mdash;when the label is not present, a call to the function with
 a trailing closure is ambiguous.
 
-函数重载不能出现两个重载_只有_尾随闭包的实参名字的区别的情况。
+函数重载时，不能出现两个重载_只是_尾随闭包的实参名字有区别的情况。
 
 Consider the following example, which prohibits using trailing closure syntax to
 call `greet`:
 
-考虑下面的例子，这样将会不允许用尾随闭包语法来调用 `greet`：
+考虑下面的例子，这样会不允许用尾随闭包语法来调用 `greet`：
 
 ~~~ swift
 func greet(enthusiastically nameProvider: () -> String) {
@@ -1629,7 +1629,7 @@ greet { "John" }  // error: ambiguous use of 'greet'
 This example is fixed by differentiating some part of the function name other
 than the closure argument&mdash;in this case, the base name:
 
-这个例子可以用除了闭包实参之外函数名的一部分差异来区分——这个例子中，是函数的基础名字：
+这个例子可以用除闭包实参外函数名的一部分差异来区分——具体这种情况下，可以用函数的基础名字：
 
 ~~~ swift
 func greetEnthusiastically(_ nameProvider: () -> String) {
@@ -1717,7 +1717,7 @@ if let firstActive = list.first { $0.isActive } {
 When a function called with trailing closure syntax takes no other arguments,
 empty parentheses (`()`) after the function name are _never_ present.
 
-如果函数调用使用尾随闭包语法时没有其他的实参，函数名后面的空括号（`()`）_永远不_需要出现。
+如果函数调用使用的是尾随闭包语法且没有其他实参，函数名后面的空括号（`()`）_永远不_需要出现。
 
 ~~~ swift
 let squares = [1, 2, 3].map { $0 * $0 }
@@ -1736,7 +1736,7 @@ Trailing commas in array and dictionary literals are _required_ when each
 element is placed on its own line. Doing so produces cleaner diffs when items
 are added to those literals later.
 
-当数组和字典里字面量里每个元素独占一行时_需要_加上末尾逗号。这样做在这些字面量后续加入新的元素时会有更明显的区分。
+当数组和字典里字面量里每个元素独占一行时_需要_加上末尾逗号。这样做在这些字面量后续加入新的元素时会区分得更明显。
 
 ~~~ swift
 let configurationKeys = [
@@ -1784,7 +1784,7 @@ written on their own line immediately before the declaration to which they
 apply, are lexicographically ordered, and are indented at the same level as the
 declaration.
 
-每个带参数的注解（例如 `@availability(…)` 或 `@objc(…)`）写在它们适用的声明前面单独一行，并且按照首字母排序，缩进和声明保持一致。
+每个带参数的注解（例如 `@availability(…)` 或 `@objc(…)`）写在其适用声明的前面单独一行，并且按照首字母排序，缩进和声明保持一致。
 
 ~~~ swift
 @available(iOS 9.0, *)
@@ -1809,7 +1809,7 @@ line as the declaration would require a declaration to be wrapped that
 previously did not need to be wrapped, then the attribute is placed on its own
 line.
 
-不带参数的注解（例如不带参数的 `@objc` ，`@IBOutlet` 或者 `@NSManaged`）当且仅当不需要换行时_可以_按首字母排序与声明写在同一行。如果增加了该注解到声明的同一行导致需要换行的话，则将注解另起一行。
+不带参数的注解（例如不带参数的 `@objc` ，`@IBOutlet` 或者 `@NSManaged`）当且仅当不需要换行时_可以_按首字母排序与声明写在同一行。如果在声明的同一行增加该注解后导致需要换行的话，则将注解另起一行。
 
 ~~~ swift
 public class MyViewController: UIViewController {
@@ -1828,7 +1828,7 @@ Apple's
 hosted on swift.org are considered part of this style guide and are followed as
 if they were repeated here in their entirety.
 
-这里面部分代码风格指南是参考 Apple 官方的 Swift 命名和 API 代码风格指南而成的，并且遵循了那些在这里重复的部分。
+这部分代码风格指南是参考 Apple 官方的 Swift 命名和 API 代码风格指南而成的，并且应该遵循那些在这里重复的部分。
 
 ### 命名约定不涉及访问控制/Naming Conventions Are Not Access Control
 
@@ -1845,7 +1845,7 @@ example, a type that has a method that is only intended to be called by other
 parts of a library implementation that crosses module boundaries and must
 therefore be declared `public`.
 
-命名约定（例如下划线前缀）只有在声明必须使用比其他更高的可见性来解决语言的限制的罕见情况下使用——例如：类型有一个方法，只打算被另一个跨模块的库里的实现调用，导致必须被声明为 `public` 的情况下。
+命名约定（例如下划线前缀）只有在声明必须用到更高的可见性来解决语言限制的罕见情况下使用——例如，类型有一个方法，只打算被另一个跨模块库的实现调用，导致必须被声明为 `public` 的情况。
 
 ### 标识符/Identifiers
 
@@ -1874,7 +1874,7 @@ For clarity, initializer arguments that correspond directly to a stored property
 have the same name as the property. Explicit `self.` is used during assignment
 to disambiguate them.
 
-为了表达明确，构造器实参和直接对应的存储属性同名。使用显式 `self.` 在赋值的时候消除歧义。
+为了表达明确，构造器实参和直接对应的存储属性同名。在赋值的时候使用显式 `self.` 消除歧义。
 
 ~~~ swift
 public struct Person {
@@ -1909,7 +1909,7 @@ public struct Person {
 Static and class properties that return instances of the declaring type are
 _not_ suffixed with the name of the type.
 
-返回声明类型实例的静态属性和类属性**不需要**加上该类型名字的后缀。
+静态属性和类属性返回的是声明类型实例时**不需要**加上该类型名字的后缀。
 
 ~~~ swift
 public class UIColor {
@@ -1974,7 +1974,7 @@ Methods on delegate protocols and delegate-like protocols (such as data sources)
 are named using the linguistic syntax described below, which is inspired by
 Cocoa's protocols.
 
-代理协议和类似代理的协议（例如数据源协议）里的方法命名使用下面描述的口语化语法，受 Cocoa 框架里协议的命名启发而来。
+代理协议和类似代理的协议（例如数据源协议）里的方法命名使用下面描述的口语化语法，这是受 Cocoa 框架里协议的命名启发而来。
 
 > The term "delegate's source object" refers to the object that invokes methods
 > on the delegate. For example, a `UITableView` is the source object that
@@ -2001,7 +2001,6 @@ For methods that take the delegate's source object as their **only** argument:
   ~~~ swift
   func scrollViewDidBeginScrolling(_ scrollView: UIScrollView)
   ~~~
-~~~
   {:.good}
   
 * If the method returns `Bool` (such as those that make an assertion about the
@@ -2009,11 +2008,11 @@ For methods that take the delegate's source object as their **only** argument:
   source type** followed by an **indicative or conditional verb phrase**
   describing the assertion. The argument is **unlabeled.**
 
-* 如果方法返回 `Bool`(例如对代理源对象本身做断言)，那么方法名为**代理源类型**接上描述断言的**指示性或条件性动词**。实参**无标签**。
+* 如果方法返回 `Bool`（例如对代理源对象本身做断言），那么方法名为**代理源类型**接上描述断言的**指示性或条件性动词**。实参**无标签**。
   
   ~~~ swift
   func scrollViewShouldScrollToTop(_ scrollView: UIScrollView) -> Bool
-~~~
+  ~~~
   {:.good}
 
 * If the method returns some other value (such as those querying for
@@ -2034,14 +2033,14 @@ For methods that take **additional** arguments after the delegate's source
 object, the method's base name is the delegate's source type **by itself** and
 the first argument is **unlabeled.** Then:
 
-对于在代理源对象后有**额外**实参的方法，方法名是代理源类型**自身**并且第一个实参**无标签**。并且：
+对于在代理源对象后有**额外**实参的方法，方法名是代理源类型**自身**并且第一个实参**无标签**。然后：
 
 * If the method returns `Void`, the second argument is **labeled with an
   indicative verb phrase** describing the event that has the argument as its
   **direct object or prepositional object,** and any other arguments (if
   present) provide further context.
 
-* 如果方法返回 `void`，第二个实参**标签是指示性动词**，用于描述有**直接宾语或者间接宾语**的实参和其它提供更多上下文的实参（如果有的话）的事件。
+* 如果方法返回 `void`，第二个实参**标签是指示性动词**，用于描述实参是**直接宾语或者间接宾语**的事件，并给其它实参（如果有的话）提供更多上下文。
   
   ~~~ swift
   func tableView(
@@ -2056,7 +2055,7 @@ the first argument is **unlabeled.** Then:
   terms of the argument, and any other arguments (if present) provide further
   context.
 
-* 如果方法返回 `Bool`，第二个实参**标签是指示性或者条件性动词**，用于描述对于实参的返回值，其他实参（如果有的话）提供更多上下文。
+* 如果方法返回 `Bool`，第二个实参**标签是指示性或者条件性动词**，用于描述对于实参的返回值，并给其他实参（如果有的话）提供更多上下文。
   
   ~~~ swift
   func tableView(
@@ -2072,7 +2071,7 @@ the first argument is **unlabeled.** Then:
   value in terms of the argument, and any other arguments (if present) provide
   further context.
 
-* 如果方法返回其他值，第二个实参**标签是名词和后置介词**，用于描述对于实参的返回值，其他实参（如果有的话）提供更多上下文。
+* 如果方法返回其他值，第二个实参**标签是名词和后置介词**，用于描述对于实参的返回值，并给其他实参（如果有的话）提供更多上下文。
   
   ~~~ swift
   func tableView(
@@ -2086,7 +2085,7 @@ Apple's documentation on
 [delegates and data sources](https://developer.apple.com/library/content/documentation/General/Conceptual/CocoaEncyclopedia/DelegatesandDataSources/DelegatesandDataSources.html)
 also contains some good general guidance about such names.
 
-Apple 的 [代理和数据源](https://developer.apple.com/library/archive/documentation/General/Conceptual/CocoaEncyclopedia/DelegatesandDataSources/DelegatesandDataSources.html) 文档也提供了一些在这些情况下通用的命名指引。
+Apple 的 [代理和数据源](https://developer.apple.com/library/archive/documentation/General/Conceptual/CocoaEncyclopedia/DelegatesandDataSources/DelegatesandDataSources.html) 文档也提供了一些在这些情况下的通用命名指引。
 
 ## 编程实践/Programming Practices
 
