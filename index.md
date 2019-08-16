@@ -2849,7 +2849,7 @@ Assigning variables through a tuple pattern (sometimes referred to as a _tuple
 shuffle_) is only permitted if the left-hand side of the assignment is
 unlabeled.
 
-通过元组模式（有时候用_乱序元组_）赋值变量只在赋值表达式左侧没有标签时允许。
+只有赋值表达式左侧没有标签的元组模式（有时候用_乱序元组_）变量赋值才被允许。
 
 ~~~ swift
 let (a, b) = (y: 4, x: 5.0)
@@ -2864,7 +2864,7 @@ let (x: a, y: b) = (y: 4, x: 5.0)
 Labels on the left-hand side closely resemble type annotations, and can lead to
 confusing code.
 
-左侧的标签标签与类型注解很类似，会导致代码难以理解。
+左侧的标签与类型注解很类似，会导致代码难以理解。
 
 ~~~ swift
 // This declares two variables, `Int`, which is a `Double` with value 5.0, and
@@ -2884,13 +2884,13 @@ literal `"x"` is neither `String` nor `Character` nor `UnicodeScalar`, but it
 can become any of those types depending on its context, falling back to `String`
 as a default.
 
-Swift 里的整型和字符串字面量没有固定类型。例如，`5` 本身不是一个 `Int`；它是可以通过遵循 `ExpressibleByIntegerLiteral` 解释成任意类型的特殊字面量值，并且如果类型推断没将它转换为更具体的类型，它只会变成 `Int` 。类似的，字面量`"x"`不是 `String`，不是 `Character`，也不是 `UnicodeScalar`，不过它可以根据上下文变成这些类型，默认情况是作为 `String`。
+Swift 里的整型和字符串字面量没有固定类型。例如，`5` 本身不是一个 `Int`；它是能被 `ExpressibleByIntegerLiteral` 解释成任意类型的特殊字面量值，并且如果类型推断没有把它转换为更具体的类型，就会变成 `Int` 值。类似的，字面量`"x"`并不是 `String`， `Character` 或  `UnicodeScalar`，不过它可以根据上下文变成这些类型，默认情况是 `String`。
 
 Thus, when a literal is used to initialize a value of a type other than its
 default, and when that type cannot be inferred otherwise by context, specify the
 type explicitly in the declaration or use an `as` expression to coerce it.
 
-因此在类型使用默认以外的字面量方式构造值，并且该类型不能通过上下文推断更多信息时，在声明里用显式类型或者用 `as` 表达式来进行强制转换。
+因此类型在使用默认以外的字面量方式构造值，并且该类型不能通过上下文推断更多信息时，需要在声明里用显式类型或者用 `as` 表达式来进行强制转换。
 
 ~~~ swift
 // Without a more explicit type, x1 will be inferred as type Int.
@@ -2926,7 +2926,7 @@ string is coerced to a character. So while the following examples emit errors,
 they are "good" because the errors are caught at compile-time and for the right
 reasons.
 
-如果字面量的强制转换不合理，编译器会抛出合适的错误，例如，不属于整型类型的数字或者强制转换为字符的多字符的字符串。所以当下面例子抛出错误时，这是“好”事因为这些错误在编译期就以正确的错因被找到了。
+如果字面量的强制转换不合理，编译器会抛出合适的错误，例如，不属于整型类型的数字或者强制转换为字符的多字符的字符串。所以下面例子抛出错误是“好”事，因为这些错误在编译期就找到了正确的错因。
 
 ~~~ swift
 // error: integer literal '9223372036854775808' overflows when stored into 'Int64'
@@ -2940,7 +2940,7 @@ let b = "ab" as Character
 Using initializer syntax for these types of coercions can lead to misleading
 compiler errors, or worse, hard-to-debug runtime errors.
 
-这些类型使用构造器语法进行强制转换会产生容易误导的编译器错误，或者更糟糕难以调试的运行时错误。
+这些类型使用构造器语法进行强制转换的话会产生易误导的编译器错误，或者可能更糟糕，产生难调试的运行时错误。
 
 ~~~ swift
 // This first tries to create an `Int` (signed) from the literal and then
@@ -2967,7 +2967,7 @@ The graphically-rendered playground literals `#colorLiteral(...)`,
 `#imageLiteral(...)`, and `#fileLiteral(...)` are forbidden in non-playground
 production code. They are permitted in playground sources.
 
-图形渲染的 playground 字面量 `#colorLiteral(...)`，`#imageLiteral(...)` 和 `#fileLiteral(...)` 在非 playground 上的代码里是禁止的。它们只在 playground 源码里是允许的。
+会图形渲染的 playground 字面量 `#colorLiteral(...)`，`#imageLiteral(...)` 和 `#fileLiteral(...)` 在非 playground 的代码里是禁止的。它们只允许在 playground 源码里。
 
 ~~~ swift
 let color = UIColor(red: 1.0, green: 1.0, blue: 1.0, alpha: 1.0)
@@ -2986,7 +2986,7 @@ The standard (trapping-on-overflow) arithmetic and bitwise operators (`+`, `-`,
 masking operations (preceded by `&`). Trapping on overflow is safer because it
 prevents bad data from propagating through other layers of the system.
 
-标准（捕获溢出）运算和二元运算符（`+`，`-`，`*`，`<<` 和 `>>`）适用于大部分普通的操作，而不需要掩码操作（前置 `&`）。捕获溢出会更加安全因为它防止错误数据传递到系统的其他层级。
+标准（捕获溢出）运算和二元运算符（`+`，`-`，`*`，`<<` 和 `>>`）大部分用于普通操作，而非掩码操作（前置 `&`）。捕获溢出会更加安全，因为它防止错误数据被传递到系统的其他层级。
 
 ~~~ swift
 // GOOD. Overflow will not cause the balance to go negative.
@@ -3005,7 +3005,7 @@ Masking operations are comparatively rare but are permitted (and in fact
 necessary for correctness) in problem domains that use modular arithmetic, such
 as cryptography, big-integer implementations, hash functions, and so forth.
 
-掩码操作比较少见但在模数运算的问题领域是允许的（事实上为了正确性是必须的），例如加密，大整型实现，哈希函数等等。
+掩码操作比较少见，但在模数运算的问题领域是允许的（事实上为了正确性是必须的），例如加密，大整型实现，哈希函数等等。
 
 ~~~ swift
 var hashValue: Int {
@@ -3032,7 +3032,7 @@ masking operations is important. Additionally, consider adding debug
 preconditions to check these assumptions without affecting performance of
 optimized builds.
 
-掩码操作在确保值不会导致溢出（或者不需要担心溢出）的性能敏感代码里也是允许的。在这种情况下，需要使用注释来注明为使用掩码操作的重要性。更进一步，在没有影响性能优化的情况下，考虑增加先决调试条件来检查这些假设。
+掩码操作在确保值不会导致溢出（或者不需要担心溢出）的性能敏感代码里也是允许的。在这种情况下，需要使用注释来注明使用掩码操作的重要性。更进一步，在不影响性能优化的情况下，考虑增加先决调试条件来检查这些假设。
 
 ### 定义新运算符/Defining New Operators
 
@@ -3040,7 +3040,7 @@ When used unwisely, custom-defined operators can significantly reduce the
 readability of code because such operators often lack the historical context of
 the more common ones built into the standard library.
 
-不明智地使用自定义运算符会显著影响代码可读性，因为这样的运算符比起标准库中更常用的运算符，通常缺乏历史背景。
+不理智地使用自定义运算符会显著影响代码可读性，因为这样的运算符比起标准库中更常用的运算符，通常缺乏历史背景。
 
 In general, defining custom operators should be avoided. However, it is allowed
 when an operator has a clear and well-defined meaning in the problem domain
@@ -3058,7 +3058,7 @@ domain of processing JSON and even an experienced Swift engineer would have
 difficulty understanding the purpose of the code without seeking out
 documentation of those operators.
 
-一种禁止用法的例子是定义自定义 `<~~` 和 `~~>` 运算符来解码和编码 JSON 数据。这样的运算符不是 JSON 领域问题的原生处理，甚至有经验的 Swift 工程师在没找到这些运算符文档的情况下可能会对这种处理的代码有着不同的理解。
+禁止用法其中一种例子是定义自定义 `<~~` 和 `~~>` 运算符来解码和编码 JSON 数据。这样的运算符不是 JSON 领域问题的原生处理，甚至连有经验的 Swift 工程师在没有这些运算符文档的情况下也可能会对处理代码有着不同的理解。
 
 If you must use third-party code of unquestionable value that provides an API
 only available through custom operators, you are **strongly encouraged** to
@@ -3066,7 +3066,7 @@ consider writing a wrapper that defines more readable methods that delegate to
 the custom operators. This will significantly reduce the learning curve required
 to understand how such code works for new teammates and other code reviewers.
 
-如果你一定要对毫无疑问的值使用第三方代码中只提供自定义运算符的 API，**强烈建议**你编写一个包装器定义可读性更高的方法来代理到自定义运算符。这会显著降低团队新成员或者其他代码审查者理解这样的代码是如何工作时的学习曲线。
+如果你一定要让没问题的值使用第三方代码里只提供了自定义运算符形式的 API，**强烈建议**你编写一个包装器，定义更高可读性方法来代理到该自定义运算符。对团队新成员或者其他代码审查者来说，这会显著降低理解这样的代码是如何工作的学习曲线。
 
 ### 重载已存在运算符/Overloading Existing Operators
 
@@ -3084,14 +3084,14 @@ permitted. In other words, if the new meaning is well-established in the problem
 domain and the use of the operator is a readability improvement over other
 syntactic constructs, then it is permitted.
 
-如果你希望用和原本不同的含义重载已存在的运算符，根据 [定义新运算符](#defining-new-operators) 指引来确定是否允许。也就是说，如果新的含义在问题领域是确定已久的并且使用该运算符会比其他语法结构提高可读性，那么就是允许的。
+如果你希望用和原本不同的含义重载已存在的运算符，参考 [定义新运算符](#defining-new-operators) 指引来确定是否允许。也就是说，如果新的含义在问题领域是确定已久的，并且使用该运算符会比其他语法结构提高可读性，那么就是允许的。
 
 An example of a prohibited case of operator repurposing would be to overload `*`
 and `+` to build an ad hoc regular expression API. Such an API would not provide
 strong enough readability benefits compared to simply representing the entire
 regular expression as a string.
 
-一种禁止更改运算符含义情况的例子是重载 `*` 和 `+` 来构建特定正则表达式 API。这样的 API 没有比简单用字符串表示整个正则表达式的方式可读性强很多。
+禁止更改运算符含义的一种例子是重载 `*` 和 `+` 来构建特定正则表达式的 API。这样的 API 没有比简单用字符串表示整个正则表达式的方式可读性强很多。
 
 ## 文档注释/Documentation Comments
 
@@ -3155,7 +3155,7 @@ simplified and details moved to a new paragraph.)
 If more detail is needed than can be stated in the summary, additional
 paragraphs (each separated by a blank line) are added after it.
 
-如果在概括中陈述更多细节，在后面添加额外的段落（每个段落用空行分隔）。
+如果概括需要陈述更多细节，在后面添加额外的段落（每个段落用空行分隔）。
 
 The single-sentence summary is not necessarily a complete sentence; for example,
 method summaries are generally written as verb phrases **without** "this method
@@ -3164,7 +3164,7 @@ redundant. Likewise, properties are often written as noun phrases **without**
 "this property is [...]". In any case, however, they are still terminated with a
 period.
 
-一句话概括不需要是完整的句子；例如，方法的概括通常写作动词短语，**不需要**加上“这个方法 [...]”，因为这就是要表达的，写出来是多余的。类似，属性通常习作名词短语，**不需要**加上“这个属性是 [...]”。然而无论如何，它们还是要以句号结尾。
+一句话概括不需要是完整的句子；例如，方法的概括通常写作动词短语，**不需要**加上“这个方法 [...]”，因为这就是要表达的，写出来是多余的。类似，属性通常写作名词短语，**不需要**加上“这个属性是 [...]”。然而无论如何，它们还是要以句号结尾。
 
 ~~~ swift
 /// The background color of the view.
@@ -3208,26 +3208,26 @@ The recommended way to write documentation comments in Xcode is to place the
 text cursor on the declaration and press **Command + Option + /**. This will
 automatically generate the correct format with placeholders to be filled in.
 
-Xcode 里推荐的编写文档注释方式是将文字光标放在声明上并且按 **Command + Option + /**。这会自动创建带待填充占位符的正确格式注释。
+Xcode 里编写文档注释的推荐方式是将文字光标放在声明上并且按 **Command + Option + /**。这会自动创建带待填充占位符的正确格式注释。
 
 `Parameter(s)` and `Returns` tags may be omitted only if the single-sentence
 brief summary fully describes the meaning of those items and including the tags
 would only repeat what has already been said.
 
-`Parameter(s)` 和 `Returns` 标签当一句话简短概括中有它们含义的完整描述时会被省略，包括它们只会重复已经说过的内容。
+`Parameter(s)` 和 `Returns` 标签只有当一句话简短概括中已经有完整描述时可以省略，如果还包括它们只是重复已经说过的内容。
 
 The content following the `Parameter(s)`, `Returns`, and `Throws` tags should be
 terminated with a period, even when they are phrases instead of complete
 sentences.
 
-`Parameter(s)`，`Returns` 和 `Throws` 标签后面跟着的内容需要以句号结尾，即便它们只是短语而不是完整的句子。
+`Parameter(s)`，`Returns` 和 `Throws` 标签后面跟着的内容需要以句号结尾，即使它们只是短语而不是完整的句子。
 
 When a method takes a single argument, the singular inline form of the
 `Parameter` tag is used. When a method takes multiple arguments, the grouped
 plural form `Parameters` is used and each argument is written as an item in a
 nested list with only its name as the tag.
 
-当方法只有单一的实参时，使用内联单数形式的 `Parameter` 标签。当方法有多个实参时，使用分组复数形式 `Parameters`，嵌套列表里每个实参写作只有名字的标签。
+当方法只有单一的实参时，使用内联单数形式的 `Parameter` 标签。当方法有多个实参时，使用分组复数形式 `Parameters`，嵌套列表里用每个实参的名字作标签。
 
 ~~~ swift
 /// Returns the output generated by executing a command.
@@ -3292,7 +3292,7 @@ helps to differentiate symbolic references (like parameter names) from
 descriptive text in comments and is rendered by Xcode and other documentation
 generation tools. Some examples of frequently used directives are listed below.
 
-强烈建议使用 [Apple 标记格式](https://developer.apple.com/library/content/documentation/Xcode/Reference/xcode_markup_formatting_ref/) 来添加富文本格式到文档中。这种标记有助于区分注释里的特征引用（例如形参名字）和描述性文本，并且可以被 Xcode 和其他文档生成工具进行渲染。下面列出一些常用指令的示例。
+强烈建议使用 [Apple 标记格式](https://developer.apple.com/library/content/documentation/Xcode/Reference/xcode_markup_formatting_ref/) 来添加富文本到文档中。这种标记有助于区分注释里的特征引用（例如形参名字）和描述性文本，并且可以被 Xcode 和其他文档生成工具渲染。下面列出一些常用指令的示例。
 
 * Paragraphs are separated using a single line that starts with `///` and is
   otherwise blank.
@@ -3315,13 +3315,13 @@ At a minimum, documentation comments are present for every open or public
 declaration, and every open or public member of such a declaration, with
 specific exceptions noted below:
 
-最起码，每个 open 或 public 声明和这种声明里每个 open 或 public 成员都应该有文档注释，除了下面说明的例外：
+最起码，每个 open 或 public 声明和里面每个 open 或 public 成员都应该有文档注释，除了下面的说明以外：
 
 * Individual cases of an `enum` often are not documented if their meaning is
   self-explanatory from their name. Cases with associated values, however,
   should document what those values mean if it is not obvious.
 
-* `enum` 里单个的 case 如果名字可以自解释含义则通常不需要注释。有关联值的 Case 如果值的含义不明确不管怎样都应该注释。
+* `enum` 里单个的 case 的名字如果可以自解释则通常不需要注释。有关联值的 Case 如果值的含义不明确，那么不管怎样都应该注释。
   
 * A documentation comment is not always present on a declaration that overrides
   a supertype declaration or implements a protocol requirement, or on a
@@ -3333,15 +3333,15 @@ specific exceptions noted below:
   documentation for the override be a mere copy of the base declaration's
   documentation.
 
-* 继承父类的声明，协议要求的实现或者提供协议要求的默认实现的扩展声明并不总需要文档注释。
+* 继承父类的声明，协议要求的实现或者提供协议要求的默认实现的扩展声明可以不需要文档注释。
 
-  继承声明注释继承的新表现描述是可被接受的。任何情况下都不应该出现单纯拷贝父声明文档的注释。
+  继承声明里用来描述继承后的新表现的注释是可以接受的。任何情况下都不应该出现单纯拷贝父声明文档的注释。
 
 * A documentation comment is not always present on test classes and test
   methods. However, they can be useful for functional test classes and for
   helper classes/methods shared by multiple tests.
 
-* 测试类和测试方法不总是需要文档注释。然而，它们对于在多个测试里复用的函数式测试类和帮助类/方法是有用的。
+* 测试类和测试方法可以不需要文档注释。然而，注释对于在多个测试里复用的函数式测试类和帮助类/方法时是有帮助的。
   
 * A documentation comment is not always present on an extension declaration
   (that is, the `extension` itself). You may choose to add one if it help
@@ -3351,7 +3351,7 @@ specific exceptions noted below:
   In the following example, the comment is just repetition of what is already
   obvious from the source code:
 
-* 扩展声明（也就是自身的 `extension`）不总是需要文档注释。如果能帮助明确拓展的用途，你可以选择添加，但避免无意义或者误导的注释。
+* 扩展声明（也就是自身的 `extension`）可以不需要文档注释。如果能帮助明确拓展的用途，你可以选择添加，但避免无意义或者误导的注释。
   
   在下面的例子中，注释仅仅重复了源码显而易见的事：
   
@@ -3370,7 +3370,7 @@ not scalable because the extension or the conformance could be updated in the
   that conformance and client code could use it for other purposes in the
   future.
   
-  下面的例子则更微妙一些，但这是一个不可拓展注释的例子，因为将来这个拓展或者或者这里的一致性可能更新。这个 `Comparable` 可能是在编写对该类型值的排序代码时加上的，但这不是一致性唯一可能的用途，并且使用者可能在将来的其他用途代码中依赖它。
+  下面的例子则更微妙一些，但这是一个注释无法拓展的例子，因为这个拓展或者类型一致性以后可能会变化。这个 `Comparable` 可能是在编写对该类型值的排序代码时加上的，但这不是一致性唯一可能的用途，并且使用者可能在以后其他用途代码中依赖它。
   
   ~~~ swift
   /// Make `Candidate` comparable so that they can be sorted.
@@ -3385,7 +3385,7 @@ In general, if you find yourself writing documentation that simply repeats
 information that is obvious from the source and sugaring it with words like
 "a representation of," then leave the comment out entirely.
 
-通常来说，如果你发现你写的注释只是简单地重复源码中显而易见的事并用类似"用于表示"的词语进行美化，那么将该注释完全去除。
+通常来说，如果你发现你写的注释只是简单地重复源码中显而易见的事，并用类似"用于表示"的词语进行美化，那么将这些注释完全去掉。
 
 However, it is _not_ appropriate to cite this exception to justify omitting
 relevant information that a typical reader might need to know. For example, for
@@ -3394,4 +3394,4 @@ rationale that it would only say `/// The canonical name.`) if a typical reader
 may have no idea what the term "canonical name" means in that context. Use the
 documentation as an opportunity to define the term. 
 
-但是，引用这个例外来证明省略某些典型读者可能需要知道相关信息是_不_合适的。例如，对于 `canonicalName` 名字的属性，不要省略注释（只有合理的时候才可以只写 `/// The canonical name.`），因为典型读者可能不知道术语“规范名字”在上下文中的含义。 使用注释是定义该术语的好机会。
+但是，_不_要用这个例外来证明可以省略某些正常读者可能需要的相关信息。例如，对于 `canonicalName` 名字的属性，不要省略注释（只有合理的时候才可以只写 `/// The canonical name.`），因为正常读者可能不知道术语“规范名字”在上下文中的含义。 使用注释是定义该术语的好机会。
