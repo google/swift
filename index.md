@@ -38,7 +38,7 @@ type. A file that extends an existing type with protocol conformance is named
 with a combination of the type name and the protocol name, joined with a plus
 (`+`) sign. For more complex situations, exercise your best judgment.
 
-通常来说，源文件的名字最好描述包含的主要内容。文件主要包含单个类型命名为该类类名。文件包含为已存在类型添加协议遵循的拓展命名为类名和协议名的组合，通过加号（+）连接。对于更复杂的情况，最好由你自己判断。
+通常来说，源文件的名字最好描述的是包含的主要内容。文件主要包含单个类型则命名为该类型名字。文件包含为已存在类型添加协议遵循的拓展则命名为类名和协议名的组合，通过加号（+）连接。对于更复杂的情况，最好由你自己判断。
 
 For example,
 
@@ -60,7 +60,7 @@ For example,
 * A file containing related declarations that are not otherwise scoped under a
   common type or namespace (such as a collection of global mathematical
   functions) can be named descriptively; for example, `Math.swift`.
-* 文件中包含多个在公共类型或者命名空间下没有作用域限制的相关声明（比如一系列全局的数学函数），可以命名得更有描述性。例如：`Math.swift`。
+* 文件中包含多个在公共类型或命名空间下没有作用域限制的相关声明（比如一系列全局的数学函数），可以命名得更有描述性。例如：`Math.swift`。
 
 ### 文件编码/File Encoding
 
@@ -78,7 +78,7 @@ file. The implications are:
 
 * All other whitespace characters in string and character literals are
   represented by their corresponding escape sequence.
-* 所有其他在字符串或者字符字面量里的空白符都用对应的转义字符表示。
+* 所有其他在字符串或者字符字面量里的空白符都要用对应的转义字符表示。
 * Tab characters are not used for indentation.
 * 制表符不用于缩进。
 
@@ -88,7 +88,7 @@ For any character that has a special escape sequence (`\t`, `\n`, `\r`, `\"`,
 `\'`, `\\`, and `\0`), that sequence is used rather than the equivalent Unicode
 (e.g., `\u{000a}`) escape sequence.
 
-任何字符中如果包含了特殊转义字符（`\t`, `\n`, `\r`, `\"`, `\'`, `\\` 和 `\0`），该转义字符会被直接使用，而不是其等价的 Unicode 转义字符（例如：`\u{000a}`）。
+任何字符中如果包含了特殊转义字符（`\t`, `\n`, `\r`, `\"`, `\'`, `\\` 和 `\0`），该转义字符会被直接使用，而不会是其等价的 Unicode 转义字符（例如：`\u{000a}`）。
 
 ### 不可见字符和修饰符/Invisible Characters and Modifiers
 
@@ -104,14 +104,14 @@ attached to a character or characters that they modify. If such a Unicode scalar
 is present in isolation or is otherwise not modifying another character in the
 same string, it is written as a Unicode escape sequence.
 
-控制字符，组合字符，字符串里*会*影响可视化表达的变量选择符跟在其修改的字符后面则不转义。如果该 Unicode 标量单独使用或者没有修改同字符串中其他的字符，则用 Unicode 转义字符表示。
+控制字符，组合字符，以及字符串里*会*影响可视化表达的异体字选择器当跟在其修改的字符后面则不转义。如果该 Unicode 标量单独使用或者没有修改同字符串中其他的字符，则用 Unicode 转义字符表示。
 
 The strings below are well-formed because the umlauts and variation selectors
 associate with neighboring characters in the string. The second example is in
 fact composed of _five_ Unicode scalars, but they are unescaped because the
 specific combination is rendered as a single character.
 
-下面的字符串是符合要求的，因为元音和变量选择符都和临近的字符关联。第二个例子实际上由 *5* 个 Unicode 标量组成，不过它们没有被转义，因为特定组合后会作为单一字符进行渲染。
+下面的字符串是符合要求的，因为元音和异体字选择器都和临近的字符关联。第二个例子实际上由 *5* 个 Unicode 标量组成，不过它们没有被转义，因为在特定组合后作为单一字符进行渲染。
 
 ~~~ swift
 let size = "Übergröße"
@@ -122,7 +122,7 @@ let shrug = "🤷🏿‍️"
 In the example below, the umlaut and variation selector are in strings by
 themselves, so they are escaped.
 
-下面的例子中，字符串里元音和变量选择符只有它们自己，所以要被转义。
+下面的例子中，字符串里元音和异体字选择器只有它们自身，所以要被转义。
 
 ~~~ swift
 let diaeresis = "\u{0308}"
@@ -197,7 +197,7 @@ let size = "Übergr\u{00F6}\u{00DF}e\n"
 > that some programs might not handle non-ASCII characters properly. If that
 > should happen, those programs are broken and must be fixed.
 >
-> **题外话**：永远别因为担心某些程序可能无法正确处理非 ASCII 码字符而降低代码的可读性。如果发生了，那些程序是不能使用的，而且应该被修复。
+> **题外话**：永远别因为担心某些程序可能无法正确处理非 ASCII 码字符而降低代码的可读性。如果发生了，那些程序是无法被使用的，而且应该被修复。
 
 ## 源文件结构/Source File Structure
 
@@ -210,7 +210,7 @@ itself is sufficient and a file comment is only present if it provides
 additional useful information. File comments are allowed for files that contain
 multiple abstractions in order to document that grouping as a whole.
 
-描述源文件的内容的注释是可选的。对只包含了单一抽象（例如一个类的声明）的文件并不建议用这种注释 — 这种情况下，抽象本身的文档注释就足够了，文件注释只有当提供了额外的有用信息时才需要。文件注释在文件中包含多个抽象时是允许的，为了作为完整的分组进行注释。
+描述源文件内容的注释是可选的。对只包含了单一抽象（例如一个类的声明）的文件并不建议用这种注释 — 这种情况下，抽象本身的文档注释就足够了，文件注释只有当提供了额外的有用信息时才需要。文件注释在文件中包含多个抽象时是允许的，为了对完整的分组进行注释。
 
 ### 导入语句/Import Statements
 
@@ -235,10 +235,10 @@ submodules.
 > * Existing automated tooling (such as Xcode's migrator) are less likely to
 > work well on code that imports individual members because they are
 > considered corner cases.
-> * 现存地自动化工具（例如 Xcode 迁移器）不能很好地在导入单个成员的代码时工作，因为它们是边界情况。
+> * 现存地自动化工具（例如 Xcode 迁移器）不能很好地工作在导入单个成员的代码里，因为它们是边界情况。
 > * The prevailing style in Swift (based on official examples and community
 > code) is to import entire modules.
-> * 目前流行的 Swift 代码风格（基于官方例子和社区代码）都是导入整个模块。
+> * 目前流行的 Swift 代码风格（基于官方例子和社区代码）都是导入整个模块的。
 
 Imports of individual declarations are permitted when importing the whole module
 would otherwise pollute the global namespace with top-level definitions (such as
@@ -252,7 +252,7 @@ is not available when importing the top-level module. For example,
 methods that allow client code to subclass `UIGestureRecognizer`&mdash;those are
 not visible by importing `UIKit` alone.
 
-如果子模块导出的功能在导入顶层模块时不可用，导入子模块是允许的。例如：`UIKit.UIGestureRecognizerSubclass` 必须要显式导入，来暴露继承 `UIGestureRecognizer` 时代码允许重写的方法  - 这在只导入 `UIKit` 时并不可见。
+如果子模块的导出功能在只导入顶层模块时不可用，那么允许导入子模块。例如：`UIKit.UIGestureRecognizerSubclass` 必须要显式导入，以暴露继承 `UIGestureRecognizer` 时代码允许重写的方法  - 这在只导入 `UIKit` 时并不可见。
 
 Import statements are not line-wrapped.
 
@@ -262,11 +262,11 @@ Import statements are the first non-comment tokens in a source file. They are
 grouped in the following fashion, with the imports in each group ordered
 lexicographically and with exactly one blank line between each group:
 
-导入语句放在除了注释以外最前面。按以下方式分组，每组中的导入按照字母顺序排序，每组之间只有一个空行：
+导入语句放在除了注释以外的最前面。按以下方式分组，每组中的导入按照字母顺序排序，每组之间只有一个空行：
 
 1. Module/submodule imports not under test
 
-   不可测试的模块/子模块导入
+   无测试模块/子模块的导入
 
 1. Individual declaration imports (`class`, `enum`, `func`, `struct`, `var`)
 
@@ -274,7 +274,7 @@ lexicographically and with exactly one blank line between each group:
 
 1. Modules imported with `@testable` (only present in test sources)
 
-   `@testable` 模块导入（只存在测试源码中）
+   `@testable` 模块的导入（只存在测试源码中）
 
 ~~~ swift
 import CoreLocation
@@ -294,7 +294,7 @@ In general, most source files contain only one top-level type, especially when
 the type declaration is large. Exceptions are allowed when it makes sense to
 include multiple related types in a single file. For example,
 
-通常情况下，大部分源文件只包含一个顶层类型，特别是当类型声明很庞大时。除非同一文件里包含了多个相关类型是有意义的。例如，
+通常情况下，大部分源文件只包含一个顶层类型，特别是当类型声明很庞大时。除非在同一文件里包含多个相关类型是有意义的。例如，
 
 * A class and its delegate protocol may be defined in the same file.
 
@@ -307,7 +307,7 @@ include multiple related types in a single file. For example,
   
 * 类型和它相关的轻量帮助类型可以定义在同一文件中。这种时候 
 
-  `fileprivate` 是很有用的，可以将类型和/或它的帮助类的某些功能限制在那个文件中而非暴露给模块的其他地方。
+  `fileprivate` 是很有用的，可以将类型和/或它帮助类的某些功能限制在那个文件中而非暴露给模块的其他地方。
 
 The order of types, variables, and functions in a source file, and the order of
 the members of those types, can have a great effect on readability. However,
@@ -321,7 +321,7 @@ which its maintainer could explain if asked. For example, new methods are not
 just habitually added to the end of the type, as that would yield "chronological
 by date added" ordering, which is not a logical ordering.
 
-重要的是，每一个文件和类型使用_**同一**排序逻辑_，维护者在被询问时可以解释清楚。例如，新的方法不能习惯性地加在类型的最后面，这只是顺从“日期递增地时间排序”，而不是一个逻辑性排序。
+而重要的是，每一个文件和类型使用_**同一**排序逻辑_，以便维护者在被询问时可以解释清楚。例如，新的方法不能习惯性地加在类型的最后面，因为这只是顺从“日期递增地时间排序”，而不是有逻辑性的排序。
 
 When deciding on the logical order of members, it can be helpful for readers and
 future writers (including yourself) to use `// MARK:` comments to provide
@@ -330,7 +330,7 @@ provide bookmarks in the source window's navigation bar. (Likewise,
 `// MARK: - `, written with a hyphen before the description, causes Xcode to
 insert a divider before the menu item.) For example,
 
-当决定成员的排序逻辑后，使用 `// MARK:` 注释对该分组提供描述，对阅读者和将来的编码者（包括你自己）是很有帮助的。这种注释也会被 Xcode 理解并在源码窗口的导航栏中提供书签。（类似的还有 `// MARK: -`，在描述之前使用一个连字符的话， Xcode 会在菜单元素前插入一条分隔线。）例如：
+当决定成员的排序逻辑后，使用 `// MARK:` 注释对该分组提供描述，对阅读者和将来的编码者（包括你自己）是很有帮助的。这种注释也会被 Xcode 理解并在源码窗口的导航栏中提供书签。（类似的还有 `// MARK: -`，在描述之前使用一个连字符的话， Xcode 会在菜单元素前插入一条分隔线。）例如，
 
 ~~~ swift
 class MovieRatingViewController: UITableViewController {
@@ -365,7 +365,7 @@ functions with the same base name (though perhaps with different argument
 labels), _and_ when these overloads appear in the same type or extension scope,
 they appear sequentially with no other code in between.
 
-当一个类型有多个构造器或者下标，或者一个文件/类型内有多个相同名字的函数（尽管可能有不同的实参标签），*并且*当这些重载在同一类型或者扩展作用域内时，它们应该按顺序排列，不在中间插入其他代码。
+当一个类型有多个构造器或者下标，或者一个文件/类型内有多个相同名字的函数（尽管可能有不同的实参标签），*并且*当这些重载在同一类型或者扩展作用域内时，它们应该按顺序排列，不应该在中间插入其他代码。
 
 ### 扩展/Extensions
 
@@ -374,7 +374,7 @@ Extensions can be used to organize functionality of a type across multiple
 can have a great effect on readability; you must use _**some** logical
 organizational structure_ that you could explain to a reviewer if asked.
 
-扩展可以将一个类型的功能组织到多个“单元”中。配合成员排序和选择的组织结构/分组会对代码可读性有很大的帮助；你必须使用_**某种**_能给审查者解释的_逻辑结构_进行组织。
+扩展可以将一个类型的功能组织到多个“单元”中。配合成员排序和所选择的组织结构/分组会对代码可读性有很大的帮助；你必须使用_**某种**_能给审查者解释的_逻辑结构_进行组织。
 
 ## 常规格式/General Formatting
 
@@ -394,7 +394,7 @@ Swift 代码有 100 字符单行限制。除了下面的说明之外，任何超
    meaningful unit of text that should not be broken (for example, a long URL in
    a comment).
    
-   即便是遵循单行字符限制的行也不应该破坏文本的有意义的部分（例如：注释里的长 URL ）。
+   即便是遵循单行字符限制的行也不应该破坏文本中有意义的部分（例如，注释里的长 URL ）。
    
 1. `import` statements.
 
@@ -409,12 +409,12 @@ Swift 代码有 100 字符单行限制。除了下面的说明之外，任何超
 In general, braces follow Kernighan and Ritchie (K&R) style for non-empty
 blocks with exceptions for Swift-specific constructs and rules:
 
-通常来说，非空块的花括号遵循 Kernighan 和 Ritchie（K&R）代码风格，除了 Swift 特殊结构和规则之外：
+通常来说，非空块的花括号遵循 Kernighan 和 Ritchie（K&R）代码风格，除了 Swift 特殊结构和规则以外：
 
 * There **is no** line break before the opening brace (`{`), **unless** required
   by application of the rules in [Line-Wrapping](#line-wrapping).
   
-* 在开边花括号（`{`）之前**不需要**换行，**除非**是因为 App 的 [换行](#line-wrapping) 规则。
+* 在开边花括号（`{`）之前**不需要**换行，**除非**是因为应用了 [换行](#line-wrapping) 规则。
 
 * There **is a** line break after the opening brace (`{`), except
 
@@ -423,12 +423,12 @@ blocks with exceptions for Swift-specific constructs and rules:
   * in closures, where the signature of the closure is placed on the same line
     as the curly brace, if it fits, and a line break follows the `in` keyword.
     
-  * 闭包中，闭包的签名和花括号在同一行的情况下，如果合适，在 `in` 关键字后面换行。
+  * 在闭包中，闭包的签名和花括号在同一行的情况下，如果合适，在 `in` 关键字后面换行。
     
   * where it may be omitted as described in
     [One Statement Per Line](#one-statement-per-line).
     
-  * 可以省略成 [单行语句](#one-statement-per-line)。
+  * 当可以省略成 [单行语句](#one-statement-per-line)。
     
   * empty blocks may be written as `{}`.
   
@@ -526,7 +526,7 @@ declarations and function declarations) and other expressions (like function
 calls) can be partitioned into **breakable** units that are separated by
 **unbreakable** delimiting token sequences.
 
-根据 Google Swift 代码风格的思想，大多声明（例如类型声明和函数声明）和其他表达式（例如函数调用）可以被划分成**可破坏**单元，由定义的**不可破坏**标记符进行分割。
+根据 Google Swift 代码风格的思想，大多声明（例如类型声明和函数声明）和其他表达式（例如函数调用）可以被划分成**可破坏**单元，被定义的**不可破坏**标记符进行分割。
 
 As an example, consider the following complex function declaration, which needs
 to be line-wrapped:
@@ -544,7 +544,7 @@ This declaration is split as follows (scroll horizontally if necessary to see
 the full example). Unbreakable token sequences are indicated in orange;
 breakable sequences are indicated in blue.
 
-这个声明可以像下面这样进行分割（要看完整例子可能需要水平滑动）。不可破坏标记符标记为橙色；可破坏符标记为蓝色。
+这个声明可以像下面这样进行分割（要看完整例子可能需要水平滑动）。不可破坏标记符标记为橙色；可破坏符号标记为蓝色。
 
 <pre class="lw-container lw-container-numbered">
 <span class="lw-ub">public func index&lt;</span><span class="lw-br">Elements: Collection, Element</span><span class="lw-ub">&gt;(</span><span class="lw-br">of element: Element, in collection: Elements</span><span class="lw-ub">) -&gt;</span><span class="lw-br">Elements.Index?</span><span class="lw-ub">where</span><span class="lw-br">Elements.Element == Element, Element: Equatable</span>{
@@ -590,12 +590,12 @@ breakable sequences are indicated in blue.
 Using these concepts, the cardinal rules of Google Swift style for line-wrapping
 are:
 
-通过这些概念，Google Swift 代码风格的基本换行规则如下：
+用上这些概念，Google Swift 代码风格的基本换行规则如下：
 
 1. If the entire declaration, statement, or expression fits on one line, then do
    that.
    
-   如果整个声明，语句或者表达式使用一行合适的话，就使用一行。
+   如果整个声明，语句或者表达式适合使用一行，就使用一行。
    
 1. Comma-delimited lists are only laid out in one direction: horizontally or
    vertically. In other words, all elements must fit on the same line, or each
@@ -676,7 +676,7 @@ additional rules apply:
 
 Concrete examples of this are shown in the relevant subsections below.
 
-具体例子见下面相关分段的内容。
+具体例子见下面相关段落的内容。
 
 This line-wrapping style ensures that the different parts of a declaration are
 _quickly and easily identifiable to the reader_ by using indentation and line
@@ -685,7 +685,7 @@ throughout the file. Specifically, it prevents the zig-zag effect that would be
 present if the arguments are indented based on opening parentheses, as is common
 in other languages:
 
-这个换行风格确保声明的不同部分通过缩进和换行会让_读者_可以_快速容易地被识别_，并且在文件中的这些部分缩进风格应该保持一致。具体来说，这能避免实参基于开边括号缩进而出现的锯齿效应，这在其他语言里很常见：
+这个换行风格能确保通过缩进和换行让_读者_可以_快速容易地识别_声明的不同部分，并且在文件中的这些部分缩进风格应该保持一致。具体来说，这能避免实参基于开边括号缩进而出现的锯齿效应，这在其他语言里很常见：
 
 ~~~ swift
 public func index<Elements: Collection, Element>(of element: Element,  // AVOID.
@@ -751,7 +751,7 @@ arguments/constraints lists and/or the return type may also need to be wrapped.
 In these rare cases, the same line-wrapping rules apply to those parts as apply
 to the declaration itself.
 
-如果类型很复杂和/或有深层嵌套，在作为实参/约束列表和/或返回类型的单个元素时也可能需要换行。在这些罕见情况下，应用和声明一致的换行规则。
+如果类型很复杂和/或有深层嵌套，在作为实参/约束列表和/或返回类型的单个元素时也可能需要换行。在这种罕见情况下，使用和声明一致的换行规则。
 
 ~~~ swift
 public func performanceTrackingIndex<Elements: Collection, Element>(
@@ -942,7 +942,7 @@ When line-wrapping other expressions that are not function calls (as described
 above), the second line (the one immediately following the first break) is
 indented exactly +2 from the original line.
 
-非函数调用（上面提到的）的其他表达式换行时，第二行（跟着第一个换行的行）的缩进在原始行的基础上+2。
+非函数调用（上面提到的）的其他表达式换行时，第二行（在第一个换行后的行）的缩进在原始行的基础上+2。
 
 When there are multiple continuation lines, indentation may be varied in
 increments of +2 as needed. In general, two continuation lines use the same
@@ -951,7 +951,7 @@ elements. However, if there are many continuation lines caused by long wrapped
 expressions, consider splitting them into multiple statements using temporary
 variables when possible.
 
-当有多个后续行时，缩进会根据需要在原来的基础上 +2 递增变化。通常来说，有且仅当两个后续行以语法上平级的元素开始的时候才使用相同的缩进。然而，如果因为很长的表达式产生了很多个后续行，考虑将它分隔成多个语句的可能性，并使用临时变量。
+当有多个后续行时，缩进会根据需要在原来的基础上 +2 递增变化。通常来说，有且仅当两个后续行以语法上平级的元素开始时才使用相同的缩进。然而，如果因为很长的表达式产生了很多个后续行，考虑将它分隔成多个语句的可能性，并使用临时变量。
 
 ~~~ swift
 let result = anExpression + thatIsMadeUpOf * aLargeNumber +
