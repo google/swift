@@ -1339,7 +1339,7 @@ A single blank line appears in the following locations:
    1. A blank line is optional between two extremely closely related properties
    that do not otherwise meet the criterion above; for example, a private
       stored property and a related public computed property.
-     
+   
      不适用于前面规则，但两个属性非常相关，之间的空白行也是可选的。例如，一个私有的存储属性和它相关的公开计算属性。
    
 1. _Only as needed_ between statements to organize code into logical
@@ -2352,7 +2352,7 @@ if let _ = value {
 
 Error types are used when there are multiple possible error states.
 
-错误类型在有多种可能的错误状态时使用。
+错误类型在错误有多种可能得状态时使用。
 
 Throwing errors instead of merging them with the return type cleanly separates
 concerns in the API. Valid inputs and valid state produce valid outputs in the
@@ -2360,7 +2360,7 @@ result domain and are handled with standard sequential control flow. Invalid
 inputs and invalid state are treated as errors and are handled using the
 relevant syntactic constructs (`do`-`catch` and `try`). For example:
 
-将错误抛出而不是同返回值一起返回可以更清晰地分离 API 里的问题。合法输入和合法状态产生结果域里合法输出，并通过标准的控制流序列进行处理。非法输入和非法状态应视作错误并使用相关的语法结构进行处理（`do`-`catch` 和 `try`）。例如：
+将错误抛出而不是随着返回值返回可以更清晰地将问题从 API 里分离。合法输入和合法状态在结果域里产生合法输出，并通过标准的控制流进行处理。非法输入和非法状态应视作错误，并使用相关语法结构进行处理（`do`-`catch` 和 `try`）。例如：
 
 ~~~ swift
 struct Document {
@@ -2389,17 +2389,17 @@ do {
 
 Such a design forces the caller to consciously acknowledge the failure case by:
 
-这样的设计迫使调用者有意识地面对错误情况：
+下面这样的设计能迫使调用者有意识地面对错误：
 
 * wrapping the calling code in a `do`-`catch` block and handling error cases to
   whichever degree is appropriate,
-* 将代码包在 `do`-`catch` 块里调用并根据严重程度处理错误，
+* 将代码包在 `do`-`catch` 块里调用，并根据错误严重程度进行处理，
 * declaring the function in which the call is made as `throws` and letting the
   error propagate out, or
-* 将函数声明为调用时 `throws` 并将错误传递给上层，或者
+* 将函数声明为在调用时 `throws` 并将错误传递给上层，或者
 * using `try?` when the specific reason for failure is unimportant and only the
   information about whether the call failed is needed.
-* 当失败原因某些不重要并且只需要是否调失败的信息时使用 `try?` 。
+* 在某些不重要失败原因并且只需要调用是否失败的信息时使用 `try?` 。
 
 In general, with exceptions noted below, force-`try!` is forbidden; it is
 equivalent to `try` followed by `fatalError` but without a meaningful message.
@@ -2408,7 +2408,7 @@ state that immediate termination is the only reasonable action, it is better to
 use `do`-`catch` or `try?` and provide more context in the error message to
 assist debugging if the operation does fail.
 
-通常来说，除了下面的说明以外，强制-`try!` 是禁止的；它等同于对 `fatalError` 使用 `try` 但却没有有意义的信息。如果某个错误的发生意味着程序处在无法恢复的状态，那么马上终止是唯一合理的动作，这时使用 `do`-`catch` 或者 `try?` 并提供错误信息的更多上下文可以更好地帮助调试。
+通常来说，除了下面的说明以外，强制-`try!` 是禁止的；它等同于对 `fatalError` 使用 `try` 但却没有有意义的信息。如果某个错误的发生意味着程序处在无法恢复的状态，那么立即终止是唯一合理的动作，这时使用 `do`-`catch` 或者 `try?` 并提供错误的更多上下文信息，可以更好地帮助调试。
 
 > **Exception:** Force-`try!` is allowed in unit tests and test-only code. It is
 > also allowed in non-test code when it is unmistakably clear that an error
@@ -2417,7 +2417,7 @@ assist debugging if the operation does fail.
 > the Swift REPL. For example, consider initializing a regular expression from a
 > a string literal:
 >
-> **例外：**强制-`try!` 在单元测试和仅用于测试的代码是允许使用的。当非常明确错误只可能是由**编程人员**抛出时，非测试代码也允许使用；我们特别定义这种情况，为了用在 Swift REPL 里没有上下文就无法推测的单个表达式时。例如，考虑通过字符串字面量构造正则表达式的情况：
+> **例外：**强制-`try!` 在单元测试和仅用于测试的代码是允许使用的。也可以在非测试代码里使用，在错误抛出非常明确只可能是由**编程人员**导致时；我们特别定义这种情况，是因为在 Swift REPL 里有些单个表达式没有上下文就无法被推断。例如，考虑通过字符串字面量来构造正则表达式的情况：
 >
 > ~~~ swift
 > let regex = try! NSRegularExpression(pattern: "a*b+c?")
@@ -2429,13 +2429,13 @@ assist debugging if the operation does fail.
 > occur if the programmer mistyped it. There is no benefit to writing extra
 > error handling logic here.
 >
-> `NSRegularExpression` 构造器会在正则表达式不合法时抛出错误，但当它是字符串字面量时，错误只可能由于编程人员编写错误导致。这时候编写额外的错误处理逻辑没有什么益处。
+> `NSRegularExpression` 构造器会在正则表达式不合法时抛出错误，但当它是字符串字面量时，错误只可能由于编程人员的编写错误导致。这时候编写额外的错误处理逻辑并没有什么益处。
 >
 > If the pattern above were not a literal but instead were dynamic or derived
 > from user input, `try!` should **not** be used and errors should be handled
 > gracefully.
 >
-> 如果上面的匹配模式不是字面量而是动态生成或者从使用者输入传递的，**不**应该使用 `try!` ，而应该更优雅地处理出现的错误。
+> 如果上面 pattern 不是字面量，而是动态生成的或者是使用者传入的，则**不**应该使用 `try!` ，而应该更优雅地处理出现的错误。
 
 ### 强制解包和强制擦除/Force Unwrapping and Force Casts
 
@@ -2444,7 +2444,7 @@ discouraged. Unless it is extremely clear from surrounding code why such an
 operation is safe, a comment should be present that describes the invariant that
 ensures that the operation is safe. For example,
 
-强制解包和强制擦除通常意味着有代码异味和被强迫妥协。除非它能通过周围的代码非常清晰地解释该操作的安全性，并需要有注释来描述这个操作永远是安全的。例如：
+强制解包和强制擦除通常意味着有代码异味和被强迫进行妥协。除非它能通过周围代码解释清楚该操作的安全性，并需要附加注释来描述这个操作是永远安全的。例如，
 
 ~~~ swift
 let value = getSomeInteger()
@@ -2463,7 +2463,7 @@ return SomeEnum(rawValue: value)!
 > control flow. In the event that `nil` is unwrapped or a cast operation is to
 > an incompatible type, the test will fail which is the desired result.
 >
-> **例外：**在单元测试和仅用于测试的代码里允许没有附加注释的强制解包。这可以令减少代码不必要的控制流。在 `nil` 被解包或者不合适的类型擦除发生时，测试也会按照预期而失败。
+> **例外：**在单元测试和仅用于测试的代码里允许没有附加注释的强制解包。这可以减少代码不必要的控制流。在 `nil` 被解包或者不合适的类型擦除发生时，测试也会按照预期而失败。
 
 ### 可选值隐式解包/Implicitly Unwrapped Optionals
 
@@ -2471,7 +2471,7 @@ Implicitly unwrapped optionals are inherently unsafe and should be avoided
 whenever possible in favor of non-optional declarations or regular `Optional`
 types. Exceptions are described below.
 
-可选值隐式解包有潜在的不安全之处，当可以用非可选值声明或者习惯的 `Optional` 类型时就应该避免它。除了下面描述的情况外。
+可选值隐式解包有潜在的不安全之处，当可以用非可选值声明或者习惯的 `Optional` 类型时就应该避免。除了下面描述的情况外。
 
 User-interface objects whose lifetimes are based on the UI lifecycle instead of
 being strictly based on the lifetime of the owning object are allowed to use
@@ -2484,7 +2484,7 @@ properties regular optionals can put too much burden on the user to unwrap them
 because they are guaranteed to be non-nil and remain that way once the objects
 are ready for use.
 
-存活时间基于 UI 生命周期而不是严格基于持有关系的用户界面元素可以使用可选值显式解包。这种情况的例子包括连接 XIB 文件或 storyboard 中元素的 `@IBOutlet` 属性，显式初始化的属性，例如在 `prepareForSegue` 实现里调用的 view controller，还有在类的生命周期其它时间会被初始化的属性，例如在 view controller `viewDidLoad` 方法里的视图。这些属性如果用习惯的可选值会加重使用者解包的负担，因为它们能确保为非空并且一旦已经准备好被使用就会一直保持在这种状态。
+存活时间基于 UI 生命周期而不是严格基于持有关系的用户界面元素可以使用可选值显式解包。这种情况的例子包括连接 XIB 文件或 storyboard 中元素的 `@IBOutlet` 属性，显式初始化的属性，例如在 `prepareForSegue` 实现里调用的 view controller，还有在类生命周期以外时间点会被初始化的属性，例如在 view controller `viewDidLoad` 方法里的视图。这些属性如果用习惯的可选值会加重使用者解包的负担，因为它们能确保非空并且一旦已经准备好被使用就会一直保持在这种状态。
 
 ~~~ swift
 class SomeViewController: UIViewController {
@@ -2509,14 +2509,14 @@ footprint of those implicitly unwrapped optionals as small as possible in your
 Swift code; that is, do not propagate them through multiple layers of your own
 abstractions.
 
-可选值隐式解包也会在 Swift 代码使用缺少恰当判空特性的 Objective-C API 时出现。如果可能，和该代码的拥有者协商添加那些注解就会使该 API 在 Swift 可以更清晰的引入。如果没有可能，尝试尽可能将这些可选值隐式解包在 Swift 代码中的影响缩小 ；也就是说，不要将它们扩散到你自己的多个抽象层。
+可选值隐式解包也会在 Swift 代码使用缺少恰当判空特性的 Objective-C API 时出现。如果可能，和该代码的拥有者商量添加上那些注解，该 API 在 Swift 就可以更清晰的引入。如果没有可能，尽可能尝试将这些可选值隐式解包在 Swift 代码中的影响缩小 ；也就是说，不要将它们扩散到多个你自己的抽象层。
 
 Implicitly unwrapped optionals are also allowed in unit tests. This is for
 reasons similar to the UI object scenario above&mdash;the lifetime of test
 fixtures often begins not in the test's initializer but in the `setUp()` method
 of a test so that they can be reset before the execution of each test.
 
-可选值隐式解包在单元测试也被允许。因为这和上面的 UI 元素情况差不多——测试里对象的生命周期通常不从测试构造器开始，而是从测试的 `setUp()` 方法开始，以便在每次测试执行前重置。
+可选值隐式解包在单元测试也被允许。这和上面的 UI 元素情况理由差不多——测试里对象的生命周期通常不从测试构造器开始，而是从测试的 `setUp()` 方法开始，以便在每次测试执行前重置。
 
 ### 访问等级/Access Levels
 
@@ -2525,13 +2525,13 @@ declarations, the default access level is `internal`. For nested declarations,
 the default access level is the lesser of `internal` and the access level of the
 enclosing declaration.
 
-在声明里省略显式的访问等级是允许的。顶层声明的默认访问等级是 `internal`。嵌套声明的默认访问等级是其外层声明访问等级但不高于 `internal` 。
+在声明里省略显式的访问等级是允许的。顶层声明的默认访问等级是 `internal`。嵌套的声明默认访问等级和其外层声明访问等级相同但不能高于 `internal` 。
 
 Specifying an explicit access level at the file level on an extension is
 forbidden. Each member of the extension has its access level specified if it is
 different than the default.
 
-在扩展指定文件级别的显式访问等级是不允许的。拓展里每一个成员如果不采用默认的则应该单独指定访问等级。
+给文件级别的扩展指定显式访问等级是不允许的。拓展里的每一个成员如果不采用默认的访问等级则应该单独进行指定。
 
 ~~~ swift
 extension String {
@@ -2566,7 +2566,7 @@ preferred (instead of naming conventions) to express scoped and hierarchical
 relationships among types when possible. For example, flag `enum`s or error
 types that are associated with a specific type are nested in that type.
 
-Swift 里允许嵌套 `enum`，`struct` 和 `class`，所以在可能的时候，嵌套更适合（比起命名约定）表示作用域和类型之间的分级关系。例如，在类型里嵌套特定类型的标志 `enum` 或者错误类型。
+Swift 里允许嵌套 `enum`，`struct` 和 `class`，所以在可能时，嵌套更适合（比起命名约定）表示作用域和类型之间的分级关系。例如，在类型里嵌套特定类型的 `enum` 作标志或者错误类型。
 
 ~~~ swift
 class Parser {
@@ -2607,7 +2607,7 @@ to group a set of related declarations, such as constants or helper functions.
 This `enum` automatically has no instances and does not require that extra
 boilerplate code be written to prevent instantiation.
 
-声明一个没有 case 的 `enum` 是定义用于分组相关声明的“命名空间”的公认方案，例如常量或者帮助方法。该 `enum` 自然而然就会不存在实例并且不需要额外样板代码来避免可被实例化。
+声明一个没有 case 的 `enum` 是定义用于相关声明分组的“命名空间”的公认方案，例如常量或者帮助方法。该 `enum` 会自然而然不存在实例并且不需要额外样板代码来避免可被实例化。
 
 ~~~ swift
 enum Dimensions {
@@ -2650,7 +2650,7 @@ logic in the successful case. In the second example without `guard`, the main
 logic is buried at an arbitrary nesting level and the thrown errors are
 separated from their conditions by a great distance.
 
-可以在下面的例子中体现这些理论；第一种例子里，有清晰的流程，检查不合法的状态并退出，然后在成功的情况下执行主逻辑。在没有 `guard` 的第二个例子里，主逻辑混杂在某个任意嵌套层级里，抛出的错误和它们的触发条件分隔得很开。
+下面的例子中会体现这些理论；第一种例子里，有清晰的流程，检查不合法的状态并退出，然后在成功的情况下执行主逻辑。在没有 `guard` 的第二个例子里，主逻辑混杂在某个任意嵌套层级里，抛出的错误和它们的触发条件被分隔得很开。
 
 ~~~ swift
 func discombobulate(_ values: [Int]) throws -> Int {
@@ -2693,7 +2693,7 @@ A `guard`-`continue` statement can also be useful in a loop to avoid increased
 indentation when the entire body of the loop should only be executed in some
 cases (but see also the `for`-`where` discussion below.)
 
-`guard`-`continue` 语句也可以避免整个循环体只在某些情况下执行的循环的缩进增加。
+`guard`-`continue` 语句也可以避免循环的整个循环体只在某些情况下执行时缩进增加（但也可以看看下面 `for`-`where` 的讨论）。
 
 ### `for`-`where` 循环/`for`-`where` Loops
 
@@ -2755,7 +2755,7 @@ In other words, there is never a `case` whose body contains _only_ the
 `fallthrough` statement. Cases containing _additional_ statements which then
 fallthrough to the next case are permitted.
 
-也就是说，不能有_只_执行 `fallthrough` 语句的 `case` 。包含_额外_语句然后贯穿到下一个的 case 是允许的。
+也就是说，不能有_只_执行 `fallthrough` 语句的 `case` 。包含_其余_语句再贯穿到下一个的 case 是允许的。
 
 ### 模式匹配/Pattern Matching
 
@@ -2798,7 +2798,7 @@ the `label` variable above, that has been lost because `let` distributes across
 the entire pattern and thus shadows the variable with a binding that applies to
 any string value:
 
-在下面的例子中，如果作者意图是使用上面的 `label` 变量进行匹配，那么就会因为 `let` 适用于整个模式匹配，从而该值会被任何绑定的字符串覆盖。
+在下面的例子中，如果作者意图是使用上面的 `label` 变量进行匹配，那么就会因为 `let` 适用于整个模式匹配，从而该值会被任何绑定的字符串所覆盖。
 
 ~~~ swift
 switch DataPoint.labeled("hello", 100) {
@@ -2884,7 +2884,7 @@ literal `"x"` is neither `String` nor `Character` nor `UnicodeScalar`, but it
 can become any of those types depending on its context, falling back to `String`
 as a default.
 
-Swift 里的整型和字符串字面量没有固定类型。例如，`5` 本身不是一个 `Int`；它是能被 `ExpressibleByIntegerLiteral` 解释成任意类型的特殊字面量值，并且如果类型推断没有把它转换为更具体的类型，就会变成 `Int` 值。类似的，字面量`"x"`并不是 `String`， `Character` 或  `UnicodeScalar`，不过它可以根据上下文变成这些类型，默认情况是 `String`。
+Swift 里的整型和字符串字面量没有固定类型。例如，`5` 本身不是一个 `Int`；它是能被 `ExpressibleByIntegerLiteral` 解释成任意类型的特殊字面量值，并且如果类型推断没有把它转换为更具体的类型，就会变成 `Int` 值。类似的，字面量`"x"`并不是 `String`， `Character` 或  `UnicodeScalar`，不过它可以根据上下文变成这些类型，默认情况是变成 `String`。
 
 Thus, when a literal is used to initialize a value of a type other than its
 default, and when that type cannot be inferred otherwise by context, specify the
@@ -2926,7 +2926,7 @@ string is coerced to a character. So while the following examples emit errors,
 they are "good" because the errors are caught at compile-time and for the right
 reasons.
 
-如果字面量的强制转换不合理，编译器会抛出合适的错误，例如，不属于整型类型的数字或者强制转换为字符的多字符的字符串。所以下面例子抛出错误是“好”事，因为这些错误在编译期就找到了正确的错因。
+如果字面量的强制转换不合理，编译器会抛出合适的错误，例如，数字不属于整型类型或者强制转换为字符的多字符的字符串时。所以下面例子抛出错误是“好”事，因为这些错误在编译期就找到了正确的错因。
 
 ~~~ swift
 // error: integer literal '9223372036854775808' overflows when stored into 'Int64'
@@ -2967,7 +2967,7 @@ The graphically-rendered playground literals `#colorLiteral(...)`,
 `#imageLiteral(...)`, and `#fileLiteral(...)` are forbidden in non-playground
 production code. They are permitted in playground sources.
 
-会图形渲染的 playground 字面量 `#colorLiteral(...)`，`#imageLiteral(...)` 和 `#fileLiteral(...)` 在非 playground 的代码里是禁止的。它们只允许在 playground 源码里。
+会进行图形渲染的 playground 字面量 `#colorLiteral(...)`，`#imageLiteral(...)` 和 `#fileLiteral(...)` 在非 playground 的代码里是禁止的。它们只允许在 playground 源码里。
 
 ~~~ swift
 let color = UIColor(red: 1.0, green: 1.0, blue: 1.0, alpha: 1.0)
@@ -3005,7 +3005,7 @@ Masking operations are comparatively rare but are permitted (and in fact
 necessary for correctness) in problem domains that use modular arithmetic, such
 as cryptography, big-integer implementations, hash functions, and so forth.
 
-掩码操作比较少见，但在模数运算的问题领域是允许的（事实上为了正确性是必须的），例如加密，大整型实现，哈希函数等等。
+掩码操作比较少见，但在模数运算的问题领域是允许的（事实上为了正确性是必要的），例如加密，大整型实现，哈希函数等等。
 
 ~~~ swift
 var hashValue: Int {
@@ -3050,7 +3050,7 @@ multiplication operator defined by Swift (not including the masking version), a
 numeric matrix library may define additional operators to support other
 operations like cross product and dot product.
 
-通常来说，应该避免定义自定义运算符。然而，当一个运算符在问题领域中有清晰和良好含义定义，并且使用它会比函数调用显著提高代码的可读性时，是允许的。例如，`*` 在 Swift 里只定义为乘法运算符（不包含掩码版本）， 数学矩阵库可能会定义额外的运算符来支持其他运算比如叉乘和点乘。
+通常来说，应该避免自定义运算符。然而，当一个运算符在问题领域中有清晰和含义良好的定义，并且使用它会比函数调用显著提高代码的可读性时，是允许的。例如，`*` 在 Swift 里只定义为乘法运算符（不包含掩码版本）， 数学矩阵库可能会定义额外的运算符来支持其他运算比如叉乘和点乘。
 
 An example of a prohibited use case is defining custom `<~~` and `~~>` operators
 to decode and encode JSON data. Such operators are not native to the problem
@@ -3058,7 +3058,7 @@ domain of processing JSON and even an experienced Swift engineer would have
 difficulty understanding the purpose of the code without seeking out
 documentation of those operators.
 
-禁止用法其中一种例子是定义自定义 `<~~` 和 `~~>` 运算符来解码和编码 JSON 数据。这样的运算符不是 JSON 领域问题的原生处理，甚至连有经验的 Swift 工程师在没有这些运算符文档的情况下也可能会对处理代码有着不同的理解。
+禁止用法其中一种例子是定义自定义 `<~~` 和 `~~>` 运算符来解码和编码 JSON 数据。这样的运算符不是 JSON 领域问题的原生处理方式，甚至连有经验的 Swift 工程师在没有这些运算符文档的情况下也可能会对这种处理代码有着不同的理解。
 
 If you must use third-party code of unquestionable value that provides an API
 only available through custom operators, you are **strongly encouraged** to
@@ -3066,7 +3066,7 @@ consider writing a wrapper that defines more readable methods that delegate to
 the custom operators. This will significantly reduce the learning curve required
 to understand how such code works for new teammates and other code reviewers.
 
-如果你一定要让没问题的值使用第三方代码里只提供了自定义运算符形式的 API，**强烈建议**你编写一个包装器，定义更高可读性方法来代理到该自定义运算符。对团队新成员或者其他代码审查者来说，这会显著降低理解这样的代码是如何工作的学习曲线。
+如果你一定要让没问题的值使用第三方代码里只提供了自定义运算符形式的 API，**强烈建议**你编写一个包装器，定义可读性更好的方法作为该自定义运算符的代理。对团队新成员或者其他代码审查者来说，这会显著降低理解这样的代码是如何工作的学习曲线。
 
 ### 重载已存在运算符/Overloading Existing Operators
 
@@ -3075,7 +3075,7 @@ equivalent to the existing uses in the standard library. Examples of permitted
 use cases are implementing the operator requirements for `Equatable` and
 `Hashable`, or defining a new `Matrix` type that supports arithmetic operations.
 
-当你用的运算符语义上和标准库中已存在的等同时，重载运算符是允许的。允许用法的例子是为 `Equatable` 和 `Hashable` 实现运算符要求，或者定义新的 `Matrix` 类型来支持算数运算。
+用语义上和标准库中已存在等同的重载运算符是允许的。允许的例子是为 `Equatable` 和 `Hashable` 实现运算符要求，或者定义新的 `Matrix` 类型来支持算数运算。
 
 If you wish to overload an existing operator with a meaning other than its
 natural meaning, follow the guidance in
@@ -3202,19 +3202,19 @@ appears with an empty description. When a description does not fit on a single
 line, continuation lines are indented 2 spaces in from the position of the
 hyphen starting the tag.
 
-对形参，返回值和函数抛出的错误按照 `Parameter(s)`，`Returns` 和 `Throws` 标签的顺序清晰地写下文档。不要出现空白的描述。当一个描述需要换行时，续行的缩进在开始标记连字符的基础上加上 2 个空格。
+对形参，返回值和函数抛出的错误按照 `Parameter(s)`，`Returns` 和 `Throws` 标签的顺序清晰地写下文档。不要出现空白的描述。当一个描述需要换行时，续行的缩进在开始的标记连字符基础上加上 2 个空格。
 
 The recommended way to write documentation comments in Xcode is to place the
 text cursor on the declaration and press **Command + Option + /**. This will
 automatically generate the correct format with placeholders to be filled in.
 
-Xcode 里编写文档注释的推荐方式是将文字光标放在声明上并且按 **Command + Option + /**。这会自动创建带待填充占位符的正确格式注释。
+Xcode 里编写文档注释的推荐方式是将文字光标放在声明上并且按下 **Command + Option + /**。这会自动创建有待填充占位符的正确格式注释。
 
 `Parameter(s)` and `Returns` tags may be omitted only if the single-sentence
 brief summary fully describes the meaning of those items and including the tags
 would only repeat what has already been said.
 
-`Parameter(s)` 和 `Returns` 标签只有当一句话简短概括中已经有完整描述时可以省略，如果还包括它们只是重复已经说过的内容。
+`Parameter(s)` 和 `Returns` 标签只有当一句话简短概括中已经有完整描述时可以省略，如果还包括它们就只是重复已经说过的内容。
 
 The content following the `Parameter(s)`, `Returns`, and `Throws` tags should be
 terminated with a period, even when they are phrases instead of complete
@@ -3315,13 +3315,13 @@ At a minimum, documentation comments are present for every open or public
 declaration, and every open or public member of such a declaration, with
 specific exceptions noted below:
 
-最起码，每个 open 或 public 声明和里面每个 open 或 public 成员都应该有文档注释，除了下面的说明以外：
+最起码，每个 open 或 public 声明和里面的每个 open 或 public 成员都应该有文档注释，除了下面的说明以外：
 
 * Individual cases of an `enum` often are not documented if their meaning is
   self-explanatory from their name. Cases with associated values, however,
   should document what those values mean if it is not obvious.
 
-* `enum` 里单个的 case 的名字如果可以自解释则通常不需要注释。有关联值的 Case 如果值的含义不明确，那么不管怎样都应该注释。
+* `enum` 里单个的 case 的名字如果已经可以自解释则通常不需要注释。有关联值的 Case 如果值的含义不明确，那么不管怎样都应该注释。
   
 * A documentation comment is not always present on a declaration that overrides
   a supertype declaration or implements a protocol requirement, or on a
@@ -3370,7 +3370,7 @@ not scalable because the extension or the conformance could be updated in the
   that conformance and client code could use it for other purposes in the
   future.
   
-  下面的例子则更微妙一些，但这是一个注释无法拓展的例子，因为这个拓展或者类型一致性以后可能会变化。这个 `Comparable` 可能是在编写对该类型值的排序代码时加上的，但这不是一致性唯一可能的用途，并且使用者可能在以后其他用途代码中依赖它。
+  下面的例子则更微妙一些，但这是一个注释无法拓展的例子，因为这个拓展或者类型一致性在以后可能会变化。这个 `Comparable` 可能是在编写对该类型值的排序代码时加上的，但这不是一致性的唯一可能用途，并且使用者可能在以后其他用途代码里会依赖它。
   
   ~~~ swift
   /// Make `Candidate` comparable so that they can be sorted.
