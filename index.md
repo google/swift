@@ -17,7 +17,7 @@ also incorporates feedback from usage across multiple Swift projects within
 Google. It is a living document and the basis upon which the formatter is
 implemented.
 
-这份代码风格指南基于Apple 优秀的 Swift 标准库代码风格，吸取了多个 Google 内部 Swift 项目的使用反馈而成。本文档会保持更新，并且已经基于本文档实现了格式化工具。
+这份代码风格指南基于 Apple 优秀的 Swift 标准库代码风格，吸取了多个 Google 内部 Swift 项目的使用反馈而成。本文档会保持更新，并且已经基于本文档实现了格式化工具。
 
 ## 目录/Table of Contents
 {:.no_toc}
@@ -595,7 +595,7 @@ are:
    
    如果整个声明，语句或者表达式适合使用一行，就使用一行。
    
-1. Comma-delimited lists are only laid out in one direction: horizontally or
+2. Comma-delimited lists are only laid out in one direction: horizontally or
    vertically. In other words, all elements must fit on the same line, or each
    element must be on its own line. A horizontally-oriented list does not
    contain any line breaks, even before the first element or after the last
@@ -604,23 +604,23 @@ are:
    
    逗号分隔列表只能一个方向展示：水平或者垂直。换句话说，所有元素必须在同一行上，或者每个元素必须在单独的行上。水平向的列表不包含任何换行，即使在第一个元素之前或者最后一个元素之后。除控制流语句外，垂直向的列表在第一个元素之前和每个元素之后需要换行。
    
-1. A continuation line starting with an unbreakable token sequence is indented
+3. A continuation line starting with an unbreakable token sequence is indented
    at the same level as the original line.
    
    以不可破坏标记符开始的后续行和原始行缩进保持一致。
    
-1. A continuation line that is part of a vertically-oriented comma-delimited
+4. A continuation line that is part of a vertically-oriented comma-delimited
    list is indented exactly +2 from the original line.
    
-   作为垂直向逗号分隔列表一部分的后续行在原始行缩进的基础上+2。
+   作为垂直向逗号分隔列表一部分的后续行在原始行缩进的基础上 +2。
    
-1. When an open curly brace (`{`) follows a line-wrapped declaration or
+5. When an open curly brace (`{`) follows a line-wrapped declaration or
    expression, it is on the same line as the final continuation line unless that
    line is indented at +2 from the original line. In that case, the brace is
    placed on its own line, to avoid the continuation lines from blending
    visually with the body of the subsequent block.
 
-   在换行的声明或者表达式后的左花括号（`{`），除非该行的缩进是在原始行的基础上+2，都和最后的后续行在同一行。那种情况下，花括号另起一行，避免该行和随后块里的内容在视觉上有混淆。
+   在换行的声明或者表达式后的左花括号（`{`），都和最后的后续行在同一行，除非该行的缩进是在原始行的基础上 +2。如果是后者，花括号另起一行，避免该行和之后块里的内容在视觉上有混淆。
    
    ~~~ swift
    public func index<Elements: Collection, Element>(
@@ -630,7 +630,7 @@ are:
    where
      Elements.Element == Element,
      Element: Equatable
-   {  // GOOD.
+   {  // 推荐
      for current in elements {
        // ...
      }
@@ -645,7 +645,7 @@ are:
    ) -> Elements.Index?
    where
      Elements.Element == Element,
-     Element: Equatable {  // AVOID.
+     Element: Equatable {  // 不推荐
      for current in elements {
        // ...
      }
@@ -665,7 +665,7 @@ additional rules apply:
    
    如果范型约束列表和返回类型在同一行时超过了单行字符限制，在 `where` 关键字**之前**插入换行，并且和原始行缩进保持一致。
    
-1. If the generic constraint list still exceeds the column limit after inserting
+2. If the generic constraint list still exceeds the column limit after inserting
    the line break above, then the constraint list is oriented vertically with a
    line break after the `where` keyword and a line break after the final
    constraint.
@@ -683,10 +683,10 @@ throughout the file. Specifically, it prevents the zig-zag effect that would be
 present if the arguments are indented based on opening parentheses, as is common
 in other languages:
 
-这个换行风格能确保通过缩进和换行让_读者_可以_快速容易地识别_声明的不同部分，并且在文件中的这些部分缩进风格应该保持一致。具体来说，这能避免实参基于左括号缩进而出现的锯齿效应，这在其他语言里很常见：
+这个换行风格能确保，通过缩进和换行，_读者_可以_快速容易地识别_声明的不同部分，并且在文件中的这些部分缩进风格应该保持一致。具体来说，这能避免实参基于左括号缩进而出现的锯齿效应，这在其他语言里很常见：
 
 ~~~ swift
-public func index<Elements: Collection, Element>(of element: Element,  // AVOID.
+public func index<Elements: Collection, Element>(of element: Element,  // 不推荐
                                                  in collection: Elements) -> Elements.Index?
     where Elements.Element == Element, Element: Equatable {
   doSomething()
@@ -768,7 +768,7 @@ public func performanceTrackingIndex<Elements: Collection, Element>(
 However, `typealias`es or some other means are often a better way to simplify
 complex declarations whenever possible.
 
-然而，如果可以用 `typealias` 或其他手段简化复杂声明通常是更好的解决方法。
+然而，用 `typealias` 或其他手段简化复杂声明通常是更好的解决方法。
 
 #### 类型和拓展声明/Type and Extension Declarations
 
@@ -777,7 +777,7 @@ The examples below apply equally to `class`, `struct`, `enum`, `extension`, and
 superclasses in their inheritance list, but they are otherwise structurally
 similar).
 
-下面的例子同样适用于 `class`，`struct`，`enum`，`extension` 和 `protocol`（除了第一个的继承列表里有父类外，其余结构都是类似的）。
+下面的例子同样适用于 `class`、`struct`、`enum`、`extension` 和 `protocol`（除了第一个的继承列表里有父类外，其余结构都是类似的）。
 
 <pre class="lw-container">
 <span class="lw-ub"><em>modifiers</em> class <em>Name</em></span>{
@@ -881,7 +881,7 @@ token following the control flow keyword. Additional continuation lines are
 indented at that same position if they are syntactically parallel elements, or
 in +2 increments from that position if they are syntactically nested.
 
-当控制流语句（例如 `if`,`gurad`,`while` 或 `for`）需要换行时，首个后续行的缩进和紧接着控制流关键字的元素保持一致。其余的后续行如果是语法上平级的元素，那么缩进也保持一致，如果语法上有嵌套层级，则在原来缩进基础上+2。
+当控制流语句（例如 `if`、`gurad`、`while` 或者 `for`）需要换行时，首个后续行的缩进和紧接着控制流关键字的元素保持一致。其余的后续行如果是语法上平级的元素，那么缩进也保持一致，如果语法上有嵌套层级，则在原来缩进基础上 +2。
 
 The open brace (`{`) preceding the body of the control flow statement can either
 be placed on the same line as the last continuation line or on the next line,
@@ -889,7 +889,7 @@ at the same indentation level as the beginning of the statement. For `guard`
 statements, the `else {` must be kept together, either on the same line or on
 the next line.
 
-控制流语句执行体前面左花括号（`{`）既可以和最后的条件同一行也可以另起一行，并和该语句缩进保持一致。对于 `guard` 语句， `else {` 必须连在一起，不管是在同一行中还是另起一行。
+控制流语句执行体前面的左花括号（`{`），既可以和最后的条件同一行，也可以另起一行并和该语句缩进保持一致。对于 `guard` 语句，`else {` 必须连在一起，不管是在同一行还是另起一行。
 
 ~~~ swift
 if aBooleanValueReturnedByAVeryLongOptionalThing() &&
@@ -940,7 +940,7 @@ When line-wrapping other expressions that are not function calls (as described
 above), the second line (the one immediately following the first break) is
 indented exactly +2 from the original line.
 
-非函数调用（上面提到的）的其他表达式换行时，第二行（在第一个换行后的行）的缩进在原始行的基础上+2。
+非函数调用（上面列举的都是函数调用）的其他表达式换行时，第二行（在第一个换行后的行）的缩进在原始行的基础上 +2。
 
 When there are multiple continuation lines, indentation may be varied in
 increments of +2 as needed. In general, two continuation lines use the same
@@ -949,7 +949,7 @@ elements. However, if there are many continuation lines caused by long wrapped
 expressions, consider splitting them into multiple statements using temporary
 variables when possible.
 
-当有多个后续行时，缩进会根据需要在原来的基础上 +2 递增变化。通常来说，有且仅当两个后续行以语法上平级的元素开始时才使用相同的缩进。然而，如果因为很长的表达式产生了很多个后续行，考虑将它分隔成多个语句的可能性，并使用临时变量。
+当有多个后续行时，缩进会根据需要在原来的基础上 +2 递增变化。通常来说，当且仅当两个后续行以语法上平级的元素开始时，才使用相同的缩进。然而，如果因为很长的表达式产生了很多个后续行，考虑用临时变量将它分隔成多个语句。
 
 ~~~ swift
 let result = anExpression + thatIsMadeUpOf * aLargeNumber +
@@ -983,7 +983,7 @@ places **only**:
    as `if`, `guard`, `while`, or `switch`) from the expression that follows it
    if that expression starts with an open parenthesis (`(`).
 
-   条件或 switch 语句（例如 `if`，`guard`，`while` 或者 `switch`）开始的任何保留关键字要和它之后的表达式分隔开，如果该表达式是以左括号（`(`）开始的。
+   条件或 switch 语句（例如 `if`、`guard`、`while` 或者 `switch`）开始的任何保留关键字要和它之后的表达式分隔开，如果该表达式以左括号（`(`）开始。
    
    ~~~ swift
    if (x == 0 && y == 0) || z == 0 {
@@ -999,11 +999,11 @@ places **only**:
    ~~~
    {:.bad}
 
-1. Before any closing curly brace (`}`) that follows code on the same line,
+2. Before any closing curly brace (`}`) that follows code on the same line,
    before any open curly brace (`{`), and after any open curly brace (`{`) that
    is followed by code on the same line.
    
-   在同一行代码后面的右花括号（`}`）之前，任何左话括号（`{`）之前，后续代码在同一行的左花括号（`{`）之后。
+   在同一行代码后面的右花括号（`}`）之前，任何左花括号（`{`）之前，后续代码在同一行的左花括号（`{`）之后。
 
    ~~~ swift
    let nonNegativeCubes = numbers.map { $0 * $0 * $0 }.filter { $0 >= 0 }
@@ -1016,10 +1016,10 @@ places **only**:
    ~~~
    {:.bad}
 
-1. _On both sides_ of any binary or ternary operator, including the
+3. _On both sides_ of any binary or ternary operator, including the
    "operator-like" symbols described below, with exceptions noted at the end:
 
-   在二元或者三元运算符的每一侧，包括下面描述的“类运算符”，除了最后的例外说明：
+   在二元或者三元运算符的每一侧，包括下面描述的“类运算符”，除了最后的例外：
 
    1. The `=` sign used in assignment, initialization of variables/properties,
       and default arguments in functions.
@@ -1044,7 +1044,7 @@ places **only**:
       ~~~
       {:.bad}
 
-   1. The ampersand (`&`) in a protocol composition type.
+   2. The ampersand (`&`) in a protocol composition type.
    
       And 符号（`&`）用在协议组合类型时。
 
@@ -1062,7 +1062,7 @@ places **only**:
       ~~~
       {:.bad}
 
-   1. The operator symbol in a function declaring/implementing that operator.
+   3. The operator symbol in a function declaring/implementing that operator.
 
       运算符用在函数声明/实现时。
 
@@ -1080,7 +1080,7 @@ places **only**:
       ~~~
       {:.bad}
 
-   1. The arrow (`->`) preceding the return type of a function.
+   4. The arrow (`->`) preceding the return type of a function.
    
       箭头（`->`）用在函数的返回类型之前时。
    
@@ -1098,7 +1098,7 @@ places **only**:
       ~~~
       {:.bad}
 
-   1. **Exception:** There is no space on either side of the dot (`.`) used to
+   5. **Exception:** There is no space on either side of the dot (`.`) used to
       reference value and type members.
 
       **例外：**点（`.`）用在引用值和类型成员时两侧都没有空格。
@@ -1113,7 +1113,7 @@ places **only**:
       ~~~
       {:.bad}
 
-   1. **Exception:** There is no space on either side of the `..<` or `...`
+   6. **Exception:** There is no space on either side of the `..<` or `...`
       operators used in range expressions.
    
       **例外：**`..<` 或者 `…` 运算符用在范围表达式时两侧都没空格。
@@ -1136,7 +1136,7 @@ places **only**:
       ~~~
       {:.bad}
    
-1. After, but not before, the comma (`,`) in parameter lists and in
+4. After, but not before, the comma (`,`) in parameter lists and in
    tuple/array/dictionary literals.
 
    逗号（`,`）用在形参列表和元组/数组/字典字面量时，在逗号后面而不是前面。
@@ -1153,13 +1153,13 @@ places **only**:
    ~~~
    {:.bad}
 
-1. After, but not before, the colon (`:`) in
+5. After, but not before, the colon (`:`) in
 
-   冒号（`:`）的后面而不是前面用在
+   如果是下列场景，加在冒号（`:`）后面而不是前面
 
    1. Superclass/protocol conformance lists and generic constraints.
 
-      父类/协议遵循列表和范型约束时。
+      父类/协议遵循列表和范型约束。
 
       ~~~ swift
       struct HashTable: Collection {
@@ -1183,9 +1183,9 @@ places **only**:
       ~~~
       {:.bad}
 
-   1. Function argument labels and tuple element labels.
+   2. Function argument labels and tuple element labels.
 
-      函数实参标签和元组元素标签时。
+      函数实参标签和元组元素标签。
 
       ~~~ swift
       let tuple: (x: Int, y: Int)
@@ -1210,9 +1210,9 @@ places **only**:
       ~~~
       {:.bad}
 
-   1. Variable/property declarations with explicit types.
+   3. Variable/property declarations with explicit types.
 
-      变量/属性的类型显式声明时。
+      变量/属性的类型显式声明。
 
       ~~~ swift
       let number: Int = 5
@@ -1225,9 +1225,9 @@ places **only**:
       ~~~
       {:.bad}
 
-   1. Shorthand dictionary type names.
+   4. Shorthand dictionary type names.
 
-      字典类型缩写时。
+      字典类型缩写。
 
       ~~~ swift
       var nameAgeMap: [String: Int] = []
@@ -1240,9 +1240,9 @@ places **only**:
       ~~~
       {:.bad}
 
-   1. Dictionary literals.
+   5. Dictionary literals.
 
-      字典字面量时。
+      字典字面量。
       
       ~~~ swift
       let nameAgeMap = ["Ed": 40, "Timmy": 9]
@@ -1255,10 +1255,10 @@ places **only**:
       ~~~
       {:.bad}
 
-1. At least two spaces before and exactly one space after the double slash
+6. At least two spaces before and exactly one space after the double slash
    (`//`) that begins an end-of-line comment.
 
-   双斜杠（`//`）用于开始行结束的注释时，双斜杠之前最少两个空格，之后正好一个空格。
+   行尾注释的双斜杠（`//`），双斜杠之前最少两个空格，之后只加一个空格。
    
    ~~~ swift
    let initialFactor = 2  // Warm up the modulator.
@@ -1270,10 +1270,10 @@ places **only**:
    ~~~
    {:.bad}
 
-1. Outside, but not inside, the brackets of an array or dictionary literals and
+7. Outside, but not inside, the brackets of an array or dictionary literals and
    the parentheses of a tuple literal.
 
-   括号用于数组、字典或元组字面量时，括号外面而不是里面。
+   数组、字典或元组字面量定义，加在括号外面而不是里面。
    
    ~~~ swift
    let numbers = [1, 2, 3]
@@ -1291,7 +1291,7 @@ places **only**:
 > variable number of additional spaces in your code with the goal of making
 > certain tokens appear directly below certain other tokens on previous lines.
 >
-> **术语说明：**_水平对齐_是一种约定，通过在代码中添加不同数量的空格让某些元素直接显示在前面行中该类型的其他元素下面。
+> **术语说明：**_水平对齐_是一种约定，通过在代码中添加不同数量的空格，让某些元素直接显示在前面行中该类型的其他元素下面。
 
 Horizontal alignment is forbidden except when writing obviously tabular data
 where omitting the alignment would be harmful to readability. In other cases
@@ -1299,7 +1299,7 @@ where omitting the alignment would be harmful to readability. In other cases
 or `class`), horizontal alignment is an invitation for maintenance problems if a
 new member is introduced that requires every other member to be realigned.
 
-水平对齐是禁止的，除了在分明的表格数据里，省略会不利于可读性之外。其他情况下（例如，对 `struct` 或  `class` 里的存储属性声明的类型进行对齐）水平对齐会引起维护问题，因为在新的成员引入时其余所有的成员都需要重新对齐。
+水平对齐是禁止的，除非是明确的表格数据，此时不对齐会降低可读性。其他情况下（例如，对 `struct` 或 `class` 里的存储属性声明的类型进行对齐）水平对齐会引起维护问题，因为在新的成员引入时其余所有的成员都需要重新对齐。
 
 ~~~ swift
 struct DataPoint {
@@ -1321,36 +1321,36 @@ struct DataPoint {
 
 A single blank line appears in the following locations:
 
-单独的空白行在以下这些情况下出现：
+在这些情况下使用单独的空白行：
 
 1. Between consecutive members of a type: properties, initializers, methods,
    enum cases, and nested types, **except that**:
 
-   在类型中这些连续成员之间：属性，构造器，方法，枚举情况，嵌套类型，**除了**：
+   在类型中这些连续成员之间：属性、构造器、方法、枚举项、嵌套类型，**除非**：
    
    1. A blank line is optional between two consecutive stored properties or two
       enum cases whose declarations fit entirely on a single line. Such blank
       lines can be used to create _logical groupings_ of these declarations.
       
-      两个连续的存储属性或者枚举里两个也完全适合声明在一行里的 case，之间空白行是可选的。这时候空白行可以用来将这些声明进行_逻辑分组_。
+      如果两个连续的存储属性，或者两个枚举项可以写在一行中，那空白行就是可选的。这时候空白行可以用来对这些声明进行_逻辑分组_。
       
-   1. A blank line is optional between two extremely closely related properties
+   2. A blank line is optional between two extremely closely related properties
    that do not otherwise meet the criterion above; for example, a private
       stored property and a related public computed property.
    
-     不适用于前面规则，但两个属性非常相关，之间的空白行也是可选的。例如，一个私有的存储属性和它相关的公开计算属性。
+     不适用于前面规则，但两个属性有强关联，那之间的空白行也是可选的。例如，一个私有的存储属性和它相关的公开计算属性。
    
-1. _Only as needed_ between statements to organize code into logical
+2. _Only as needed_ between statements to organize code into logical
    subsections.
    
-   **只有需要**用于组织代码进行逻辑分段的语句之间。
+   如果用于分割代码，**只在需要的时候使用**，根据逻辑对代码进行分割。
    
-1. _Optionally_ before the first member or after the last member of a type
+3. _Optionally_ before the first member or after the last member of a type
    (neither is encouraged nor discouraged).
    
-   类型的第一个成员之前或者最后一个成员之后的空白行是_可选的_（不赞成也不反对）。
+   类型的第一个成员之前，或者最后一个成员之后的空白行是_可选的_（不赞成也不反对）。
    
-1. Anywhere explicitly required by other sections of this document.
+4. Anywhere explicitly required by other sections of this document.
 
    本文档中其他章节中明确要求的地方。
 
@@ -1358,14 +1358,14 @@ _Multiple_ blank lines are permitted, but never required (nor encouraged). If
 you do use multiple consecutive blank lines, do so consistently throughout your
 code base.
 
-_多个_空白行是允许的，但不是必须的（不赞成）。如果你使用多个连续的空白行，那么在你的代码里应该贯彻到底。
+_多个_空白行是允许的，但不是必须的（不赞成）。如果使用多个连续的空白行，那么在你的代码里应该贯彻到底。
 
 ### 括号/Parentheses
 
 Parentheses are **not** used around the top-most expression that follows an
 `if`, `guard`, `while`, or `switch` keyword.
 
-`if`，`guard`，`while` 或 `switch` 关键字后面的顶层表达式**不需要**使用括号。
+`if`、`guard`、`while` 或 `switch` 关键字后面的顶层表达式**不需要**使用括号。
 
 ~~~ swift
 if x == 0 {
@@ -1404,7 +1404,7 @@ table memorized.
 Non-documentation comments always use the double-slash format (`//`), never the
 C-style block format (`/* ... */`).
 
-非文档注释总是用双斜杠进行格式化（`//`），而不要使用 C 风格的块格式化（`/* ... */`）。
+非文档注释总是用双斜杠进行格式化（`//`），不要使用 C 风格的块格式化（`/* ... */`）。
 
 ### 属性/Properties
 
@@ -1416,7 +1416,7 @@ Local variables are declared close to the point at which they are first used
 With the exception of tuple destructuring, every `let` or `var` statement
 (whether a property or a local variable) declares exactly one variable.
 
-除了元组的解构时，每个 `let` 或者 `var` 语句（无论是属性或者局部变量）只声明一个变量。
+除了元组的解构，每个 `let` 或者 `var` 语句（无论是属性或者局部变量）只声明一个变量。
 
 ~~~ swift
 var a = 5
@@ -1437,7 +1437,7 @@ Case statements are indented at the _same_ level as the switch statement to
 which they belong; the statements inside the case blocks are then indented +2
 spaces from that level.
 
-Case 语句的缩进和它们的 switch 语句保持_一致_;case 块里的语句在该缩进基础上+2空格。
+Case 语句的缩进和它们的 switch 语句保持_一致_；case 块里的语句在该缩进基础上 +2 空格。
 
 ~~~ swift
 switch order {
@@ -1475,14 +1475,14 @@ print("Same")
 ~~~
 {:.bad}
 
-### 枚举 Case/Enum Cases
+### 枚举项/Enum Cases
 
 In general, there is only one `case` per line in an `enum`. The comma-delimited
 form may be used only when none of the cases have associated values or raw
 values, all cases fit on a single line, and the cases do not need further
 documentation because their meanings are obvious from their names.
 
-通常来说，在一个 `enum` 里每行只有一个 `case`。逗号分隔形式只能在 case 都没有关联值或者原始值时使用，所有 case 都能从名字明确其含义而不需要额外的注释，就可以写在同一行。
+通常来说，一个 `enum` 里每行只有一个 `case`。逗号分隔形式只能在枚举项都没有关联值或者原始值时使用，所有枚举项都能从名字明确其含义而不需要额外的注释，就可以写在同一行。
 
 ~~~ swift
 public enum Token {
@@ -1513,7 +1513,7 @@ public enum Token {
 When all cases of an `enum` must be `indirect`, the `enum` itself is declared
 `indirect` and the keyword is omitted on the individual cases.
 
-当 `enum` 里所有 case 都需要被声明为 `indirect` 时，该 `enum` 就声明为 `indirect`，单独 case 前面的关键字就可以省略。
+如果 `enum` 里所有枚举项都需要被声明为 `indirect`，那这个 `enum` 就声明为 `indirect`，单独枚举项前面的关键字可以省略。
 
 ~~~ swift
 public indirect enum DependencyGraphNode {
@@ -1534,12 +1534,12 @@ public enum DependencyGraphNode {
 When an `enum` case does not have associated values, empty parentheses are never
 present.
 
-当 `enum` 的 case 没有关联值时，不应该出现空的括号。
+当 `enum` 的枚举项没有关联值时，不应该出现空的括号。
 
 ~~~ swift
 public enum BinaryTree<Element> {
   indirect case node(element: Element, left: BinaryTree, right: BinaryTree)
-  case empty  // GOOD.
+  case empty  // 推荐
 }
 ~~~
 {:.good}
@@ -1547,7 +1547,7 @@ public enum BinaryTree<Element> {
 ~~~ swift
 public enum BinaryTree<Element> {
   indirect case node(element: Element, left: BinaryTree, right: BinaryTree)
-  case empty()  // AVOID.
+  case empty()  // 不推荐
 }
 ~~~
 {:.bad}
@@ -1556,12 +1556,12 @@ The cases of an enum must follow a logical ordering that the author could
 explain if asked. If there is no obviously logical ordering, use a
 lexicographical ordering based on the cases' names.
 
-枚举的 case 必须遵循一定的可解释排序逻辑。如果没有明显的排序逻辑，按照 case 名字的首字母排序。
+枚举项必须遵循一定的可解释排序逻辑。如果没有明显的排序逻辑，按照枚举项名字的首字母排序。
 
 In the following example, the cases are arranged in numerical order based on the
 underlying HTTP status code and blank lines are used to separate groups.
 
-在下面的例子中，case 根据其表示的 HTTP 状态码数字进行排序，并通过空行进行分组。
+在下面的例子中，枚举项根据其表示的 HTTP 状态码数字进行排序，并通过空行进行分组。
 
 ~~~ swift
 public enum HTTPStatus: Int {
@@ -1582,7 +1582,7 @@ The following version of the same enum is less readable. Although the cases are
 ordered lexicographically, the meaningful groupings of related values has been
 lost.
 
-同样的枚举，下面这个版本的写法可读性就差一些。尽管 case 根据字母排序，但是却失去了对关联值含义的表达。
+同样的枚举，下面这个版本的写法可读性就差一些。尽管枚举项根据字母排序，但是却失去了对关联值含义的表达。
 
 ~~~ swift
 public enum HTTPStatus: Int {
@@ -1604,12 +1604,12 @@ name of their trailing closure argument. Doing so prevents using trailing
 closure syntax&mdash;when the label is not present, a call to the function with
 a trailing closure is ambiguous.
 
-函数重载时，不能出现两个重载_只有_尾随闭包的实参名字有区别的情况。
+函数重载时，不能出现两个_只有_尾随闭包的实参名字不同的重载。
 
 Consider the following example, which prohibits using trailing closure syntax to
 call `greet`:
 
-考虑下面的例子，这样会不允许用尾随闭包语法来调用 `greet`：
+考虑下面的例子，这种情况下无法使用尾随闭包语法来调用 `greet`：
 
 ~~~ swift
 func greet(enthusiastically nameProvider: () -> String) {
@@ -1627,7 +1627,7 @@ greet { "John" }  // error: ambiguous use of 'greet'
 This example is fixed by differentiating some part of the function name other
 than the closure argument&mdash;in this case, the base name:
 
-这个例子可以用除闭包实参外函数名的一部分差异来区分——具体这种情况下，可以用函数的基础名字：
+要解决这个问题，可以改变函数名的一部分——在这个例子中，可以修改函数的基础名字：
 
 ~~~ swift
 func greetEnthusiastically(_ nameProvider: () -> String) {
@@ -1647,7 +1647,7 @@ If a function call has multiple closure arguments, then _none_ are called using
 trailing closure syntax; _all_ are labeled and nested inside the argument
 list's parentheses.
 
-当一个函数调用有多个闭包实参，那么_都不_使用尾随闭包语法调用；_都_需要写出标签并放在在实参列表的括号里。
+如果一个函数调用有多个闭包实参，那么_都不_使用尾随闭包语法调用；_都_需要写出标签并放在在实参列表的括号里。
 
 ~~~ swift
 UIView.animate(
@@ -1676,14 +1676,14 @@ If a function has a single closure argument and it is the final argument, then
 it is _always_ called using trailing closure syntax, except in the following
 cases to resolve ambiguity or parsing errors:
 
-如果函数只有一个闭包实参并且是最后的实参，那么_永远_使用尾随闭包语法调用它，除了下面这些解决歧义或者分析错误的情况：
+如果函数只有一个闭包实参，并且它是最后的实参，那么_永远_使用尾随闭包语法调用它，除了下面这些解决歧义或者分析错误的情况：
 
 1. As described above, labeled closure arguments must be used to disambiguate
    between two overloads with otherwise identical arguments lists.
    
-   如上面所描述，必须使用带标签的闭包参数来消除两个其他实参列表都相同的重载之间的歧义。
+   如上面所描述，必须使用带标签的闭包参数，来消除两个其他实参列表都相同的重载之间的歧义。
    
-1. Labeled closure arguments must be used in control flow statements where the
+2. Labeled closure arguments must be used in control flow statements where the
    body of the trailing closure would be parsed as the body of the control flow
    statement.
    
@@ -1734,13 +1734,13 @@ Trailing commas in array and dictionary literals are _required_ when each
 element is placed on its own line. Doing so produces cleaner diffs when items
 are added to those literals later.
 
-当数组和字典里字面量里每个元素独占一行时_需要_加上末尾逗号。这样做在这些字面量后续加入新的元素时会有更明显的区分。
+当数组和字典里字面量里每个元素独占一行时，_需要_加上末尾逗号。在这些字面量后续加入新的元素时，会有更明显的区分。
 
 ~~~ swift
 let configurationKeys = [
   "bufferSize",
   "compression",
-  "encoding",                                    // GOOD.
+  "encoding",                                    // 推荐
 ]
 ~~~
 {:.good}
@@ -1749,7 +1749,7 @@ let configurationKeys = [
 let configurationKeys = [
   "bufferSize",
   "compression",
-  "encoding"                                     // AVOID.
+  "encoding"                                     // 不推荐
 ]
 ~~~
 {:.bad}
@@ -1761,7 +1761,7 @@ hexadecimal, octal, and binary) use the underscore (`_`) separator to group
 digits for readability when the literal has numeric value or when there exists a
 domain-specific grouping.
 
-当长数字字面量（十进制，十六进制，八进制和二进制）有数值或存在特定领域分组时建议使用下划线（`_`）对数字进行分组，但不强制。
+如果长数字字面量（十进制、十六进制、八进制和二进制）有数值或存在特定领域分组，建议使用下划线（`_`）对数字进行分组，但不强制。
 
 Recommended groupings are three digits for decimal (thousands separators), four
 digits for hexadecimal, four or eight digits for binary literals, or
@@ -1782,7 +1782,7 @@ written on their own line immediately before the declaration to which they
 apply, are lexicographically ordered, and are indented at the same level as the
 declaration.
 
-每个带参数的注解（例如 `@availability(…)` 或 `@objc(…)`）写在其适用声明的前面单独一行，并且按照首字母排序，缩进和声明保持一致。
+每个带参数的注解（例如 `@availability(…)` 或 `@objc(…)`）写在其适用声明的前面单独一行，按照首字母排序，缩进和声明保持一致。
 
 ~~~ swift
 @available(iOS 9.0, *)
@@ -1807,7 +1807,7 @@ line as the declaration would require a declaration to be wrapped that
 previously did not need to be wrapped, then the attribute is placed on its own
 line.
 
-不带参数的注解（例如不带参数的 `@objc` ，`@IBOutlet` 或者 `@NSManaged`）当且仅当不导致换行时_可以_按首字母排序与声明写在同一行。如果在声明的行增加该注解后导致需要换行的话，则将注解另起一行。
+不带参数的注解（例如不带参数的 `@objc`、`@IBOutlet` 或者 `@NSManaged`）当且仅当不导致换行时，_可以_按首字母排序与声明写在同一行。如果在声明的行增加该注解后导致需要换行的话，则将注解另起一行。
 
 ~~~ swift
 public class MyViewController: UIViewController {
@@ -1826,15 +1826,17 @@ Apple's
 hosted on swift.org are considered part of this style guide and are followed as
 if they were repeated here in their entirety.
 
-这部分代码风格指南是参考 Apple 官方的 Swift 命名和 API 代码风格指南而成的，并且应该遵循那些在这里重复的部分。
+Apple 官方的 [Swift 命名和 API 代码风格指南](https://swift.org/documentation/api-design-guidelines/) 也是本文档的一部分，同样需要遵循，这里不再重复其内容。
 
-### 命名约定不涉及访问控制/Naming Conventions Are Not Access Control
+> 译者注：这份文档的中文版是 SwiftGG 的长期维护项目之一，可以在 [这里](https://github.com/SketchK/the-swift-api-design-guidelines-in-chinese) 阅读。
+
+### 命名约定不是访问控制/Naming Conventions Are Not Access Control
 
 Restricted access control (`internal`, `fileprivate`, or `private`) is preferred
 for the purposes of hiding information from clients, rather than naming
 conventions.
 
-使用约定俗成的访问控制（`internal`，`fileprivate` 或 `private`）来达到隐藏信息的目的，而不要使用命名约定。
+使用约定俗成的访问控制（`internal`、`fileprivate` 或 `private`）来达到隐藏信息的目的，不要使用命名约定。
 
 Naming conventions (such as prefixing a leading underscore) are only used in
 rare situations when a declaration must be given higher visibility than is
@@ -1843,7 +1845,7 @@ example, a type that has a method that is only intended to be called by other
 parts of a library implementation that crosses module boundaries and must
 therefore be declared `public`.
 
-命名约定（例如下划线前缀）只有在声明必须用到更高的可见性来解决语言限制的罕见情况下使用——例如，类型有一个方法，只打算被另一个库的实现跨模块调用，导致必须被声明为 `public` 的情况下。
+命名约定（例如下划线前缀）只有在声明必须用到更高的可见性来解决语言限制的罕见情况下使用——例如，类型有一个方法，只打算被另一个库的实现跨模块调用，导致必须被声明为 `public`。
 
 ### 标识符/Identifiers
 
@@ -1872,14 +1874,14 @@ For clarity, initializer arguments that correspond directly to a stored property
 have the same name as the property. Explicit `self.` is used during assignment
 to disambiguate them.
 
-为了更明确地表达，构造器实参和其直接对应的存储属性同名。在赋值的时候使用显式 `self.` 来消除歧义。
+为了代码可读性，构造器实参和其直接对应的存储属性同名。在赋值的时候使用显式 `self.` 来消除歧义。
 
 ~~~ swift
 public struct Person {
   public let name: String
   public let phoneNumber: String
 
-  // GOOD.
+  // 推荐
   public init(name: String, phoneNumber: String) {
     self.name = name
     self.phoneNumber = phoneNumber
@@ -1893,7 +1895,7 @@ public struct Person {
   public let name: String
   public let phoneNumber: String
 
-  // AVOID.
+  // 不推荐
   public init(name otherName: String, phoneNumber otherPhoneNumber: String) {
     name = otherName
     phoneNumber = otherPhoneNumber
@@ -1907,17 +1909,17 @@ public struct Person {
 Static and class properties that return instances of the declaring type are
 _not_ suffixed with the name of the type.
 
-静态属性和类属性返回声明类型的实例时**不需要**加上该类型名字作后缀。
+静态属性和类属性返回声明类型的实例时，**不需要**加上该类型名字作后缀。
 
 ~~~ swift
 public class UIColor {
-  public class var red: UIColor {                // GOOD.
+  public class var red: UIColor {                // 推荐
     // ...
   }
 }
 
 public class URLSession {
-  public class var shared: URLSession {          // GOOD.
+  public class var shared: URLSession {          // 推荐
     // ...
   }
 }
@@ -1926,13 +1928,13 @@ public class URLSession {
 
 ~~~ swift
 public class UIColor {
-  public class var redColor: UIColor {           // AVOID.
+  public class var redColor: UIColor {           // 不推荐
     // ...
   }
 }
 
 public class URLSession {
-  public class var sharedSession: URLSession {   // AVOID.
+  public class var sharedSession: URLSession {   // 不推荐
     // ...
   }
 }
@@ -1944,14 +1946,14 @@ declaring type, the names `shared` and `default` are commonly used. This style
 guide does not require specific names for these; the author should choose a name
 that makes sense for the type.
 
-当静态属性或者类属性用于描述该声明类型的单例实例时，通常使用 `shared` 和 `default` 作为名字。这个代码风格指南不强制要求使用这些命名，作者可以自行选择对该类型有意义的名字。
+如果静态属性或者类属性用于描述该声明类型的单例实例，通常使用 `shared` 和 `default` 作为名字。本指南不强制要求使用这些命名，作者可以自行选择对该类型有意义的名字。
 
 ### 全局常量/Global Constants
 
 Like other variables, global constants are `lowerCamelCase`. Hungarian notation,
 such as a leading `g` or `k`, is not used.
 
-和其他变量类似，全局常量也使用 `lowerCamelCase(驼峰命名法)`。而不使用匈牙利命名法，例如以 `g` 或者 `k` 开头。
+和其他变量类似，全局常量也使用 `lowerCamelCase（驼峰命名法）`。不要使用匈牙利命名法，例如以 `g` 或者 `k` 开头。
 
 ~~~ swift
 let secondsPerMinute = 60
@@ -1972,7 +1974,7 @@ Methods on delegate protocols and delegate-like protocols (such as data sources)
 are named using the linguistic syntax described below, which is inspired by
 Cocoa's protocols.
 
-代理协议和类似代理的协议（例如数据源协议）里的方法命名使用下面描述的口语化语法，这是受 Cocoa 框架里协议的命名启发而来。
+受 Cocoa 框架里协议的命名启发，代理协议和类似代理的协议（例如数据源协议）里的方法命名，使用下面描述的口语化语法。
 
 > The term "delegate's source object" refers to the object that invokes methods
 > on the delegate. For example, a `UITableView` is the source object that
@@ -2091,21 +2093,21 @@ Common themes among the rules in this section are: avoid redundancy, avoid
 ambiguity, and prefer implicitness over explicitness unless being explicit
 improves readability and/or reduces ambiguity.
 
-本章节中规则的通用主旨是：避免冗余，避免歧义，除了能明显提高可读性和/或减少歧义外尽量使用隐式而不是显式。
+本章节中规则的通用主旨是：避免冗余，避免歧义，除了能明显提高可读性和/或减少歧义外，尽量使用隐式而不是显式。
 
 ### 编译器警告/Compiler Warnings
 
 Code should compile without warnings when feasible. Any warnings that are able
 to be removed easily by the author must be removed.
 
-代码在编译时尽可能保持没有警告。任何可以简单去除的警告作者都应该去除。
+代码在编译时尽可能保持没有警告。在作者力所能及的范围内去除警告。
 
 A reasonable exception is deprecation warnings, where it may not be possible to
 immediately migrate to the replacement API, or where an API may be deprecated
 for external users but must still be supported inside a library during a
 deprecation period.
 
-在不可能马上迁移到替代 API 时或者在 API 对外部用户废弃但还需要继续对库内部支持的废弃时期，有理由的废弃警告可以例外。
+如果不能马上迁移到替代 API，或者在 API 对外部用户废弃但还需要继续对库内部支持时，有理由的废弃警告可以保留。
 
 ### 构造器/Initializers
 
@@ -2114,12 +2116,12 @@ arguments for `var` properties and for any `let` properties that lack default
 values. When that initializer is suitable (that is, a `public` one is not
 needed), it is used and no explicit initializer is written.
 
-对于 `Struct`，Swift 会合成实参为 `var` 属性和缺少默认值的 `let` 属性的非公开逐一成员 `init`。如果该构造器已经足够（也就是说不需要 `public` 的话），直接使用而不需要书写显式的构造器。
+对于 `Struct`，Swift 会合成实参为 `var` 属性和缺少默认值的 `let` 属性的非公开逐一成员 `init`。如果该构造器已经足够（也就是说不需要 `public`），直接使用，不需要写显式的构造器。
 
 The initializers declared by the special `ExpressibleBy*Literal` compiler
 protocols are never called directly.
 
-遵循特殊的 `ExpressibleBy*Literal` 编译器协议而声明的构造器永远不应该直接调用。
+永远不要直接调用遵循特殊 `ExpressibleBy*Literal` 编译器协议的构造器。
 
 ~~~ swift
 struct Kilometers: ExpressibleByIntegerLiteral {
@@ -2128,8 +2130,8 @@ struct Kilometers: ExpressibleByIntegerLiteral {
   }
 }
 
-let k1: Kilometers = 10                          // GOOD.
-let k2 = 10 as Kilometers                        // ALSO GOOD.
+let k1: Kilometers = 10                          // 推荐
+let k2 = 10 as Kilometers                        // 推荐
 ~~~
 {:.good}
 
@@ -2140,7 +2142,7 @@ struct Kilometers: ExpressibleByIntegerLiteral {
   }
 }
 
-let k = Kilometers(integerLiteral: 10)           // AVOID.
+let k = Kilometers(integerLiteral: 10)           // 不推荐
 ~~~
 {:.bad}
 
@@ -2149,7 +2151,7 @@ a metatype variable. In direct calls to the initializer using the literal type
 name, `.init` is omitted. (**Referring** to the initializer directly by using
 `MyType.init` syntax to convert it to a closure is permitted.)
 
-只有当调用者是元类型变量时才允许明确调用  `.init(...)`  。使用字面量类型名字直接调用构造器时，省略 `.init`。（构造器使用 `MyType.init` 语法作为闭包进行**引用**是允许的。）
+只有当调用者是元类型变量时才允许明确调用 `.init(...)`。使用字面量类型名字直接调用构造器时，省略 `.init`。（构造器使用 `MyType.init` 语法作为闭包进行**引用**是允许的。）
 
 ~~~ swift
 let x = MyType(arguments)
@@ -2171,7 +2173,7 @@ let x = MyType.init(arguments)
 The `get` block for a read-only computed property is omitted and its body is
 directly nested inside the property declaration.
 
-只读计算属性的 `get` 块可以省略，并将执行体直接嵌套在属性声明里。
+只读计算属性的 `get` 块可以省略，将执行体直接嵌套在属性声明里。
 
 ~~~ swift
 var totalCost: Int {
@@ -2197,7 +2199,7 @@ long forms `Array<Element>`, `Dictionary<Key, Value>`, and `Optional<Wrapped>`
 are only written when required by the compiler; for example, the Swift parser
 requires `Array<Element>.Index` and does not accept `[Element].Index`.
 
-数组，字典和可选类型尽可能使用简写形式，也就是 `[Element]`，`[Key: Value]` 和 `Wrapped?`。完整形式 `Array<Element>`，`Dictionary<Key, Value>` 和 `Optional<Wrapped>` 只有在编译器需要时才使用，例如 Swift 语法分析程序不接受 `[Element].Index` 而需要用 `Array<Element>.Index`。
+数组、字典和可选类型尽可能使用简写形式，也就是 `[Element]`，`[Key: Value]` 和 `Wrapped?`。完整形式 `Array<Element>`，`Dictionary<Key, Value>` 和 `Optional<Wrapped>` 只有在编译器需要时才使用，例如 Swift 语法分析程序不接受 `[Element].Index` 而需要用 `Array<Element>.Index`。
 
 ~~~ swift
 func enumeratedDictionary<Element>(
@@ -2232,7 +2234,7 @@ the function signature `Void -> Result` is an error in Swift because function
 arguments must be surrounded by parentheses, and `(Void)` has a different
 meaning: an argument list with a single empty-tuple argument.)
 
-空的实参列表永远写作 `()`，而不是 `Void`。（事实上， `Void -> Result` 的函数签名在 Swift 里会报错，因为函数实参必须用括号包围，而 `(void)` 有着其他含义：单个空元组实参的实参列表。
+空的实参列表永远写作 `()`，而不是 `Void`。（事实上，`Void -> Result` 的函数签名在 Swift 里会报错，因为函数实参必须用括号包围，而 `(void)` 有着其他含义：单个空元组实参的实参列表。）
 
 ~~~ swift
 func doSomething() {
@@ -2263,13 +2265,13 @@ of &minus;1 when an element was not found in a collection). Sentinel values can
 easily and accidentally propagate through other layers of logic because the type
 system cannot distinguish between them and valid outcomes.
 
-在设计算法时避免哨兵值（例如使用 -1 的 “索引” 表示集合里找不到某个元素）。哨兵值容易被偶然传递到其它逻辑层，因为类型系统没办法将它们和合法结果进行区分。
+在设计算法时避免哨兵值（例如 `index` 是 -1 表示集合里找不到某个元素）。哨兵值容易被偶然传递到其它逻辑层，因为类型系统没办法将它们和合法结果进行区分。
 
 `Optional` is used to convey a non-error result that is either a value or the
 absence of a value. For example, when searching a collection for a value, not
 finding the value is still a **valid and expected** outcome, not an error.
 
-`Optional` 用于值和缺省值其中之一的表达，是非错误结果。例如：在集合中查询一个值时，值没有找到是一个**合法并可预期**的结果，而不是一个错误。
+`Optional` 用于传递一个非错误的结果，要不有值，要不没有值。例如：在集合中查询一个值时，值没有找到是一个**合法并可预期**的结果，而不是一个错误。
 
 ~~~ swift
 func index(of thing: Thing, in things: [Thing]) -> Int? {
@@ -2277,9 +2279,9 @@ func index(of thing: Thing, in things: [Thing]) -> Int? {
 }
 
 if let index = index(of: thing, in: lotsOfThings) {
-  // Found it.
+  // 找到了
 } else {
-  // Didn't find it.
+  // 没找到
 }
 ~~~
 {:.good}
@@ -2291,9 +2293,9 @@ func index(of thing: Thing, in things: [Thing]) -> Int {
 
 let index = index(of: thing, in: lotsOfThings)
 if index != -1 {
-  // Found it.
+  // 找到了
 } else {
-  // Didn't find it.
+  // 没找到
 }
 ~~~
 {:.bad}
@@ -2304,7 +2306,7 @@ reason that is clear to the client. (The domain-specific restriction is meant to
 exclude severe errors that are typically out of the user's control to properly
 handle, such as out-of-memory errors.)
 
-`Optional` 也用于表示单一而明确失败的错误哨兵，也就是当操作是因为使用者明确的单个特定领域原因而失败时。（限制在特定领域是为了排除那些用户明显无法正确处理的严重错误，例如内存不足错误。）
+`Optional` 也用于表示单一而明确失败的错误哨兵，也就是当操作是因为使用者明确的单个特定领域原因而失败时。（限制在特定领域，是为了排除那些用户明显无法正确处理的严重错误，例如内存不足错误。）
 
 For example, converting a string to an integer would fail if the
 string does not represent a valid integer that fits into the type's bit width:
@@ -2324,7 +2326,7 @@ Conditional statements that test that an `Optional` is non-`nil` but do not
 access the wrapped value are written as comparisons to `nil`. The following
 example is clear about the programmer's intent:
 
-判断一个 `Optional` 是否非 `nil` 但不需要访问解包值时，条件语句用和 `nil` 比较的形式。下面的例子能清晰地表达程序意图：
+如果要判断一个 `Optional` 非 `nil` 但不需要访问解包值，可以直接和 `nil` 进行比较。下面的例子能清晰地表达程序意图：
 
 ~~~ swift
 if value != nil {
@@ -2337,7 +2339,7 @@ This example, while taking advantage of Swift's pattern matching and binding
 syntax, obfuscates the intent by appearing to unwrap the value and then
 immediately throw it away.
 
-这个例子里，如果利用 Swift 模式匹配和绑定语法，将值解包后马上丢弃，会混淆程序意图。
+这个例子里，用到了 Swift 模式匹配和绑定语法，将值解包后又马上丢弃，这就会让人产生误解（译者注：程序的目的是判断有没有值，但是这种写法看起来并不直观，好像有其他意图）。
 
 ~~~ swift
 if let _ = value {
@@ -2350,7 +2352,7 @@ if let _ = value {
 
 Error types are used when there are multiple possible error states.
 
-错误类型在错误有多种可能得状态时使用。
+错误类型在错误有多种可能的状态时使用。
 
 Throwing errors instead of merging them with the return type cleanly separates
 concerns in the API. Valid inputs and valid state produce valid outputs in the
@@ -2358,7 +2360,7 @@ result domain and are handled with standard sequential control flow. Invalid
 inputs and invalid state are treated as errors and are handled using the
 relevant syntactic constructs (`do`-`catch` and `try`). For example:
 
-将错误抛出而不是随着返回值返回可以更清晰地将问题从 API 里分离。合法输入和合法状态在结果域里产生合法输出，并通过标准的控制流进行处理。非法输入和非法状态应视作错误，并使用相关语法结构进行处理（`do`-`catch` 和 `try`）。例如：
+将错误抛出而不是随着返回值返回，可以更清晰地将问题从 API 里分离。合法输入和合法状态在结果域里产生合法输出，并通过标准的控制流进行处理。非法输入和非法状态应视作错误，并使用相关语法结构进行处理（`do`-`catch` 和 `try`）。例如：
 
 ~~~ swift
 struct Document {
@@ -2406,7 +2408,7 @@ state that immediate termination is the only reasonable action, it is better to
 use `do`-`catch` or `try?` and provide more context in the error message to
 assist debugging if the operation does fail.
 
-通常来说，除了下面的说明以外，强制-`try!` 是禁止的；它等同于对 `fatalError` 使用 `try` 但却没有有意义的信息。如果某个错误的发生意味着程序处在无法恢复的状态，那么立即终止是唯一合理的动作，这时使用 `do`-`catch` 或者 `try?` 并提供错误的更多上下文信息，可以更好地帮助调试。
+通常来说，除了下面的说明以外，`try!` 是禁止的；它等同于对 `fatalError` 使用 `try` 但却没有有意义的信息。如果某个错误的发生意味着程序处在无法恢复的状态，那么立即终止是唯一合理的动作，这时使用 `do`-`catch` 或者 `try?` 并提供错误的更多上下文信息，可以更好地帮助调试。
 
 > **Exception:** Force-`try!` is allowed in unit tests and test-only code. It is
 > also allowed in non-test code when it is unmistakably clear that an error
@@ -2415,7 +2417,7 @@ assist debugging if the operation does fail.
 > the Swift REPL. For example, consider initializing a regular expression from a
 > a string literal:
 >
-> **例外：**强制-`try!` 在单元测试和仅用于测试的代码是允许使用的。也可以在非测试代码里使用，在错误抛出非常明确只可能是由**编程人员**导致时；我们特别定义这种情况，是因为在 Swift REPL 里有些单个表达式没有上下文就无法被推断。例如，考虑通过字符串字面量来构造正则表达式的情况：
+> **例外：**`try!` 在单元测试和仅用于测试的代码中允许使用。如果确定错误抛出只可能由**编程人员**导致，也可以在非测试代码里使用；我们特别定义这种情况，是因为在 Swift REPL 里有些单个表达式没有上下文就无法被推断。例如，考虑通过字符串字面量来构造正则表达式的情况：
 >
 > ~~~ swift
 > let regex = try! NSRegularExpression(pattern: "a*b+c?")
@@ -2433,16 +2435,16 @@ assist debugging if the operation does fail.
 > from user input, `try!` should **not** be used and errors should be handled
 > gracefully.
 >
-> 如果上面 pattern 不是字面量，而是动态生成的或者是使用者传入的，则**不**应该使用 `try!` ，而应该更优雅地处理出现的错误。
+> 如果上面 pattern 不是字面量，而是动态生成的或者是使用者传入的，则**不**应该使用 `try!`，应该更优雅地处理出现的错误。
 
-### 强制解包和强制擦除/Force Unwrapping and Force Casts
+### 强制解包和强制类型转换/Force Unwrapping and Force Casts
 
 Force-unwrapping and force-casting are often code smells and are strongly
 discouraged. Unless it is extremely clear from surrounding code why such an
 operation is safe, a comment should be present that describes the invariant that
 ensures that the operation is safe. For example,
 
-强制解包和强制擦除通常意味着有代码异味和被强迫进行妥协。除非它能通过周围代码解释清楚该操作的安全性，并需要附加注释来描述这个操作是永远安全的。例如，
+强制解包和强制类型转换通常说明代码有问题，强烈不推荐。除非它能通过周围代码解释清楚该操作的安全性，并需要附加注释来描述这个操作是永远安全的。例如，
 
 ~~~ swift
 let value = getSomeInteger()
@@ -2461,7 +2463,7 @@ return SomeEnum(rawValue: value)!
 > control flow. In the event that `nil` is unwrapped or a cast operation is to
 > an incompatible type, the test will fail which is the desired result.
 >
-> **例外：**在单元测试和仅用于测试的代码里允许没有附加注释的强制解包。这可以减少代码不必要的控制流。在 `nil` 被解包或者不合适的类型擦除发生时，测试也会按照预期而失败。
+> **例外：**在单元测试和仅用于测试的代码里，允许使用没有注释的强制解包。这可以减少代码中不必要的控制流。在 `nil` 被解包或者不合适的类型擦除发生时，测试也会按照预期而失败。
 
 ### 可选值隐式解包/Implicitly Unwrapped Optionals
 
@@ -2469,7 +2471,7 @@ Implicitly unwrapped optionals are inherently unsafe and should be avoided
 whenever possible in favor of non-optional declarations or regular `Optional`
 types. Exceptions are described below.
 
-可选值隐式解包有潜在的不安全之处，当可以用非可选值声明或者习惯的 `Optional` 类型时就应该避免。除了下面描述的情况外。
+可选值隐式解包本身是不安全的，尽可能使用非可选值声明，或者使用常规的 `Optional` 类型。下面是一些特殊情况。
 
 User-interface objects whose lifetimes are based on the UI lifecycle instead of
 being strictly based on the lifetime of the owning object are allowed to use
@@ -2482,7 +2484,7 @@ properties regular optionals can put too much burden on the user to unwrap them
 because they are guaranteed to be non-nil and remain that way once the objects
 are ready for use.
 
-存活时间基于 UI 生命周期而不是严格基于持有关系的用户界面元素可以使用可选值显式解包。这种情况的例子包括连接 XIB 文件或 storyboard 中元素的 `@IBOutlet` 属性，显式初始化的属性，例如在 `prepareForSegue` 实现里调用的 view controller，还有在类生命周期以外时间点会被初始化的属性，例如在 view controller `viewDidLoad` 方法里的视图。这些属性如果用习惯的可选值会加重使用者解包的负担，因为它们能确保非空并且一旦已经准备好被使用就会一直保持在这种状态。
+存活时间基于 UI 生命周期而不是严格基于持有关系的用户界面元素，可以使用可选值显式解包。这种情况的例子包括连接 XIB 文件或 storyboard 中元素的 `@IBOutlet` 属性，外部初始化的属性（例如 view controller 调用的 `prepareForSegue` 实现），还有在类生命周期中初始化的属性（例如在 view controller `viewDidLoad` 方法里初始化的视图）。这些属性如果用可选值，会加重使用者解包的负担，因为它们能确保非空，并且一旦初始化完毕就会一直有值。
 
 ~~~ swift
 class SomeViewController: UIViewController {
@@ -2507,14 +2509,14 @@ footprint of those implicitly unwrapped optionals as small as possible in your
 Swift code; that is, do not propagate them through multiple layers of your own
 abstractions.
 
-可选值隐式解包也会在 Swift 代码使用缺少恰当判空特性的 Objective-C API 时出现。如果可能，和该代码的拥有者商量添加上那些注解，该 API 在 Swift 就可以更清晰的引入。如果没有可能，尽可能尝试将这些可选值隐式解包在 Swift 代码中的影响缩小 ；也就是说，不要将它们扩散到多个你自己的抽象层。
+如果在 Swift 中使用不支持可空属性的 Objective-C API，也可能用到可选值隐式解包。如果可能的话，让代码的维护者进行修改，从而能在 Swift 中正常使用可选值。如果没有可能，尽可能缩小这些可选值隐式解包在 Swift 代码中的影响；也就是说，不要将它们扩散到多个你自己的抽象层中。
 
 Implicitly unwrapped optionals are also allowed in unit tests. This is for
 reasons similar to the UI object scenario above&mdash;the lifetime of test
 fixtures often begins not in the test's initializer but in the `setUp()` method
 of a test so that they can be reset before the execution of each test.
 
-可选值隐式解包在单元测试也被允许。这和上面的 UI 元素情况理由差不多——测试里对象的生命周期通常不从测试构造器开始，而是从测试的 `setUp()` 方法开始，以便在每次测试执行前重置。
+可选值隐式解包在单元测试中可以使用。这和上面的 UI 元素情况理由差不多——测试里对象的生命周期通常不从测试构造器开始，而是从测试的 `setUp()` 方法开始，以便在每次测试执行前重置。
 
 ### 访问等级/Access Levels
 
@@ -2523,13 +2525,13 @@ declarations, the default access level is `internal`. For nested declarations,
 the default access level is the lesser of `internal` and the access level of the
 enclosing declaration.
 
-在声明里省略显式的访问等级是允许的。顶层声明的默认访问等级是 `internal`。嵌套的声明默认访问等级和其外层声明访问等级相同但不能高于 `internal` 。
+在声明里省略显式的访问等级是允许的。顶层声明的默认访问等级是 `internal`。嵌套的声明默认访问等级和其外层声明访问等级相同，但不能高于 `internal` 。
 
 Specifying an explicit access level at the file level on an extension is
 forbidden. Each member of the extension has its access level specified if it is
 different than the default.
 
-给文件级别的扩展指定显式访问等级是不允许的。拓展里的每一个成员如果不采用默认的访问等级则应该单独进行指定。
+给文件级别的扩展指定显式访问等级是不允许的。拓展里的每一个成员如果不采用默认的访问等级，则应该单独进行指定。
 
 ~~~ swift
 extension String {
@@ -2564,7 +2566,7 @@ preferred (instead of naming conventions) to express scoped and hierarchical
 relationships among types when possible. For example, flag `enum`s or error
 types that are associated with a specific type are nested in that type.
 
-Swift 里允许嵌套 `enum`，`struct` 和 `class`，所以在可能时，嵌套更适合（比起命名约定）表示作用域和类型之间的分级关系。例如，在类型里嵌套特定类型的 `enum` 作标志或者错误类型。
+Swift 里允许嵌套 `enum`、`struct` 和 `class`，嵌套更适合（比起命名约定）表示作用域和类型之间的分级关系，因此推荐使用。例如，把类型相关的 `enum` 或者错误类型放到这个类型内部。
 
 ~~~ swift
 class Parser {
@@ -2598,14 +2600,14 @@ Swift does not currently allow protocols to be nested in other types or vice
 versa, so this rule does not apply to situations such as the relationship
 between a controller class and its delegate protocol.
 
-Swift 目前还不支持嵌套协议在其它类型中，反之亦然，所以该规则不适用于解决例如控制器类型和它代理协议之间的关系。
+Swift 目前还不支持在其它类型中嵌套协议，反之亦然，所以该规则不适用于某些情况，例如控制器类型和它的代理协议。
 
 Declaring an `enum` without cases is the canonical way to define a "namespace"
 to group a set of related declarations, such as constants or helper functions.
 This `enum` automatically has no instances and does not require that extra
 boilerplate code be written to prevent instantiation.
 
-声明一个没有 case 的 `enum` 是定义用于相关声明分组的“命名空间”的公认方案，例如常量或者帮助方法。该 `enum` 会自然而然不存在实例并且不需要额外样板代码来避免可被实例化。
+如果要定一个“命名空间”来对互相关联的声明（例如常量或者帮助方法）就行分组，公认的做法是声明一个没有枚举项的 `enum`。该 `enum` 自然不存在实例，并且不需要额外的样板代码来避免被实例化。
 
 ~~~ swift
 enum Dimensions {
@@ -2633,7 +2635,7 @@ A `guard` statement, compared to an `if` statement with an inverted condition,
 provides visual emphasis that the condition being tested is a special case that
 causes early exit from the enclosing scope.
 
-`guard` 语句，比起条件相反的 `if` 语句，会更好地从视觉上强调该检查条件是导致从外层作用域提前退出的特例。
+`guard` 语句，比起条件相反的 `if` 语句，会更好地从视觉上强调，该检查条件会导致从当前作用域提前退出。
 
 Furthermore, `guard` statements improve readability by eliminating extra levels
 of nesting (the "pyramid of doom"); failure conditions are closely coupled to
@@ -2691,7 +2693,7 @@ A `guard`-`continue` statement can also be useful in a loop to avoid increased
 indentation when the entire body of the loop should only be executed in some
 cases (but see also the `for`-`where` discussion below.)
 
-`guard`-`continue` 语句也可以避免循环的整个循环体只在某些情况下执行时缩进增加（但也可以看看下面 `for`-`where` 的讨论）。
+在循环语句中，`guard`-`continue` 语句也可以避免增加缩进，比如整个循环体只在某些情况下执行（不过要结合下面的 `for`-`where` 规范）。
 
 ### `for`-`where` 循环/`for`-`where` Loops
 
@@ -2699,7 +2701,7 @@ When the entirety of a `for` loop's body would be a single `if` block testing a
 condition of the element, the test is placed in the `where` clause of the `for`
 statement instead.
 
-当整个 `for` 循环体只包含了对元素的条件检查 `if` 块时，可以将该检查可以放在 `for` 语句里 `where` 分句中。
+当整个 `for` 循环体只包含对元素的条件检查 `if` 块，可以将该检查放在 `for` 语句的 `where` 分句中。
 
 ~~~ swift
 for item in collection where item.hasProperty {
@@ -2724,7 +2726,7 @@ When multiple `case`s of a `switch` would execute the same statements, the
 `case` statements that do nothing but `fallthrough` to a `case` below are not
 allowed.
 
-当 `switch` 里的多个 `case	` 执行同样的语句时，这些 `case` 可以合并成一个范围或者逗号分隔的列表。声明多个 `case` 却不做任何事只 `fallthrough` 到下面 `case` 是不允许的。
+当 `switch` 里的多个 `case` 执行同样的语句时，这些 `case` 可以合并成一个范围或者逗号分隔的列表。声明多个 `case` 却不做任何事，只是 `fallthrough` 到后面的 `case` 是不允许的。
 
 ~~~ swift
 switch value {
@@ -2753,7 +2755,7 @@ In other words, there is never a `case` whose body contains _only_ the
 `fallthrough` statement. Cases containing _additional_ statements which then
 fallthrough to the next case are permitted.
 
-也就是说，不能有_只_执行 `fallthrough` 语句的 `case` 。包含_其余_语句再贯穿到下一个的 case 是允许的。
+也就是说，不能有_只_执行 `fallthrough` 语句的 `case`。包含_其余_语句再下落（fallthrough）到下一个 `case` 是允许的。
 
 ### 模式匹配/Pattern Matching
 
@@ -2796,7 +2798,7 @@ the `label` variable above, that has been lost because `let` distributes across
 the entire pattern and thus shadows the variable with a binding that applies to
 any string value:
 
-在下面的例子中，如果作者意图是使用上面的 `label` 变量进行匹配，那么就会因为 `let` 适用于整个模式匹配，从而该值会被任何绑定的字符串所覆盖。
+在下面的例子中，如果作者意图是使用上面的 `label` 变量进行匹配，那么就会因为 `let` 适用于整个模式匹配，导致该值会被任何绑定的字符串所覆盖。
 
 ~~~ swift
 switch DataPoint.labeled("hello", 100) {
@@ -2809,7 +2811,7 @@ case let .labeled(label, value):
 Labels of tuple arguments and `enum` associated values are omitted when binding
 a value to a variable with the same name as the label.
 
-元组的实参标签和 `enum` 的关联值在用相同标签名字的变量来绑定值时可以被省略。
+元组的实参标签和 `enum` 的关联值在用相同标签名字的变量来绑定值时，可以被省略。
 
 ~~~ swift
 enum BinaryTree<Element> {
@@ -2829,7 +2831,7 @@ case .leaf(let element):
 Including the labels adds noise that is redundant and lacking useful
 information:
 
-包含多余并缺乏有用信息的标签只会造成混淆：
+多余并缺乏有用信息的标签只会造成混淆：
 
 ~~~ swift
 switch treeNode {
@@ -2847,7 +2849,7 @@ Assigning variables through a tuple pattern (sometimes referred to as a _tuple
 shuffle_) is only permitted if the left-hand side of the assignment is
 unlabeled.
 
-只有赋值表达式左侧没有标签的元组模式（有时候用_乱序元组_）变量赋值才被允许。
+只有赋值表达式左侧没有标签的元组模式（有时候用_乱序元组_），才允许进行元组模式变量赋值。
 
 ~~~ swift
 let (a, b) = (y: 4, x: 5.0)
@@ -2882,13 +2884,13 @@ literal `"x"` is neither `String` nor `Character` nor `UnicodeScalar`, but it
 can become any of those types depending on its context, falling back to `String`
 as a default.
 
-Swift 里的整型和字符串字面量没有固定类型。例如，`5` 本身不是一个 `Int`；它是能被 `ExpressibleByIntegerLiteral` 解释成任意类型的特殊字面量值，并且如果类型推断没有把它转换为更具体的类型，就会变成 `Int` 值。类似的，字面量`"x"`并不是 `String`， `Character` 或  `UnicodeScalar`，不过它可以根据上下文变成这些类型，默认情况是变成 `String`。
+Swift 里的整型和字符串字面量没有固定类型。例如，`5` 本身不是一个 `Int`；它能表示遵循 `ExpressibleByIntegerLiteral` 的任何类型，只有类型推断无法找到更明确的类型时，才会变成 `Int`。类似的，字面量 `"x"` 并不是 `String`、`Character` 或 `UnicodeScalar`，不过它可以根据上下文变成这些类型，默认情况是变成 `String`。
 
 Thus, when a literal is used to initialize a value of a type other than its
 default, and when that type cannot be inferred otherwise by context, specify the
 type explicitly in the declaration or use an `as` expression to coerce it.
 
-因此类型在使用默认以外的字面量方式构造值，并且该类型不能通过上下文推断更多信息时，需要在声明里用显式类型或者用 `as` 表达式来进行强制转换。
+因此类型在使用默认以外的字面量方式构造值，并且该类型不能通过上下文推断更多信息时，需要在声明里用显式类型，或者用 `as` 表达式来进行强制转换。
 
 ~~~ swift
 // Without a more explicit type, x1 will be inferred as type Int.
@@ -2924,7 +2926,7 @@ string is coerced to a character. So while the following examples emit errors,
 they are "good" because the errors are caught at compile-time and for the right
 reasons.
 
-如果字面量的强制转换不合理，编译器会抛出合适的错误，例如，数字不属于整型类型或者强制转换为字符的多字符的字符串时。所以下面例子抛出错误是“好”事，因为这些错误在编译期就找到了正确的错因。
+如果字面量的强制转换不合理，编译器会抛出对应的错误，例如，将不是整数的数字转换成证书，或者将一个字符串转换成字符。所以下面例子抛出错误是“好”事，因为这些错误在编译期就找到了正确的原因。
 
 ~~~ swift
 // error: integer literal '9223372036854775808' overflows when stored into 'Int64'
@@ -2938,7 +2940,7 @@ let b = "ab" as Character
 Using initializer syntax for these types of coercions can lead to misleading
 compiler errors, or worse, hard-to-debug runtime errors.
 
-这些类型使用构造器语法进行强制转换的话会产生易误导的编译器错误，或者可能更糟糕，产生难调试的运行时错误。
+如果使用构造器语法对这些类型进行强制转换，会产生易误导的编译器错误，也可能更糟，产生难调试的运行时错误。
 
 ~~~ swift
 // This first tries to create an `Int` (signed) from the literal and then
@@ -2965,7 +2967,7 @@ The graphically-rendered playground literals `#colorLiteral(...)`,
 `#imageLiteral(...)`, and `#fileLiteral(...)` are forbidden in non-playground
 production code. They are permitted in playground sources.
 
-会进行图形渲染的 playground 字面量 `#colorLiteral(...)`，`#imageLiteral(...)` 和 `#fileLiteral(...)` 在非 playground 的代码里是禁止的。它们只允许在 playground 源码里。
+禁止在非 playground 的代码中使用会进行图形渲染的 playground 字面量：`#colorLiteral(...)`、`#imageLiteral(...)` 和 `#fileLiteral(...)`。它们只允许出现在 playground 源码里。
 
 ~~~ swift
 let color = UIColor(red: 1.0, green: 1.0, blue: 1.0, alpha: 1.0)
@@ -2977,23 +2979,23 @@ let color = #colorLiteral(red: 1.0, green: 1.0, blue: 1.0, alpha: 1.0)
 ~~~
 {:.bad}
 
-### 捕获溢出运算/Trapping vs. Overflowing Arithmetic
+### 捕获 vs 溢出/Trapping vs. Overflowing Arithmetic
 
 The standard (trapping-on-overflow) arithmetic and bitwise operators (`+`, `-`,
 `*`, `<<`, and `>>`) are used for most normal operations, rather than the
 masking operations (preceded by `&`). Trapping on overflow is safer because it
 prevents bad data from propagating through other layers of the system.
 
-标准（捕获溢出）运算和二元运算符（`+`，`-`，`*`，`<<` 和 `>>`）大部分用于普通操作，而非掩码操作（前置 `&`）。捕获溢出会更加安全，因为它防止错误数据被传递到系统的其他层级。
+标准（捕获溢出）运算和二元运算符（`+`、`-`、`*`、`<<` 和 `>>`）大部分用于普通操作，而非掩码操作（前置 `&`）。捕获溢出会更加安全，因为它防止错误数据被传递到系统的其他层级。
 
 ~~~ swift
-// GOOD. Overflow will not cause the balance to go negative.
+// 推荐 Overflow will not cause the balance to go negative.
 let newBankBalance = oldBankBalance + recentHugeProfit
 ~~~
 {:.good}
 
 ~~~ swift
-// AVOID. Overflow will cause the balance to go negative if the summands are
+// 不推荐 Overflow will cause the balance to go negative if the summands are
 // large.
 let newBankBalance = oldBankBalance &+ recentHugeProfit
 ~~~
@@ -3003,11 +3005,11 @@ Masking operations are comparatively rare but are permitted (and in fact
 necessary for correctness) in problem domains that use modular arithmetic, such
 as cryptography, big-integer implementations, hash functions, and so forth.
 
-掩码操作比较少见，但在模数运算的问题领域是允许的（事实上为了正确性是必要的），例如加密，大整型实现，哈希函数等等。
+掩码操作比较少见，但在模数运算的问题领域是允许的（事实上为了正确性是必要的），例如加密、大整数实现、哈希函数等等。
 
 ~~~ swift
 var hashValue: Int {
-  // GOOD. What matters here is the distribution of the bit pattern rather than
+  // 推荐 What matters here is the distribution of the bit pattern rather than
   // the actual numeric value.
   return foo.hashValue &+ 31 * (bar.hashValue &+ 31 &* baz.hashValue)
 }
@@ -3038,7 +3040,7 @@ When used unwisely, custom-defined operators can significantly reduce the
 readability of code because such operators often lack the historical context of
 the more common ones built into the standard library.
 
-不理智地使用自定义运算符会显著影响代码可读性，因为这样的运算符比起标准库中更常用的运算符，通常缺乏历史背景。
+不理智地使用自定义运算符会显著影响代码可读性，因为比起标准库中更常用的运算符，这样的运算符缺乏共识，不容易被理解。
 
 In general, defining custom operators should be avoided. However, it is allowed
 when an operator has a clear and well-defined meaning in the problem domain
@@ -3048,7 +3050,7 @@ multiplication operator defined by Swift (not including the masking version), a
 numeric matrix library may define additional operators to support other
 operations like cross product and dot product.
 
-通常来说，应该避免自定义运算符。然而，当一个运算符在问题领域中有清晰和含义良好的定义，并且使用它会比函数调用显著提高代码的可读性时，是允许的。例如，`*` 在 Swift 里只定义为乘法运算符（不包含掩码版本）， 数学矩阵库可能会定义额外的运算符来支持其他运算比如叉乘和点乘。
+通常来说，应该避免定义自定义运算符。然而，当一个运算符在问题领域中有清晰和含义良好的定义，并且使用它会比函数调用显著提高代码的可读性时，可以使用。例如，`*` 在 Swift 里只定义为乘法运算符（不包含掩码版本）。数学矩阵库可能会定义额外的运算符来支持其他运算比如叉乘和点乘。
 
 An example of a prohibited use case is defining custom `<~~` and `~~>` operators
 to decode and encode JSON data. Such operators are not native to the problem
@@ -3056,7 +3058,7 @@ domain of processing JSON and even an experienced Swift engineer would have
 difficulty understanding the purpose of the code without seeking out
 documentation of those operators.
 
-禁止用法其中一种例子是定义自定义 `<~~` 和 `~~>` 运算符来解码和编码 JSON 数据。这样的运算符不是 JSON 领域问题的原生处理方式，甚至连有经验的 Swift 工程师在没有这些运算符文档的情况下也可能会对这种处理代码有着不同的理解。
+自定义 `<~~` 和 `~~>` 运算符来解码和编码 JSON 数据就是典型的禁止用法。这样的运算符不是 JSON 领域问题的原生处理方式，哪怕是有经验的 Swift 工程师，在没有运算符文档的情况下也可能会对这种处理代码有着不同的理解。
 
 If you must use third-party code of unquestionable value that provides an API
 only available through custom operators, you are **strongly encouraged** to
@@ -3064,16 +3066,16 @@ consider writing a wrapper that defines more readable methods that delegate to
 the custom operators. This will significantly reduce the learning curve required
 to understand how such code works for new teammates and other code reviewers.
 
-如果你一定要让没问题的值使用第三方代码里只提供了自定义运算符形式的 API，**强烈建议**你编写一个包装器，定义可读性更好的方法作为该自定义运算符的代理。对团队新成员或者其他代码审查者来说，这会显著降低理解这样的代码是如何工作的学习曲线。
+如果你必须使用第三方代码里的自定义运算符，那**强烈建议**你编写一个包装器，定义可读性更好的方法，作为该自定义运算符的代理。对团队新成员或者其他代码审查者来说，这会显著降低学习曲线，更快的理解代码原理。
 
-### 重载已存在运算符/Overloading Existing Operators
+### 重载现有运算符/Overloading Existing Operators
 
 Overloading operators is permitted when your use of the operator is semantically
 equivalent to the existing uses in the standard library. Examples of permitted
 use cases are implementing the operator requirements for `Equatable` and
 `Hashable`, or defining a new `Matrix` type that supports arithmetic operations.
 
-用语义上和标准库中已存在等同的重载运算符是允许的。允许的例子是为 `Equatable` 和 `Hashable` 实现运算符要求，或者定义新的 `Matrix` 类型来支持算数运算。
+用语义上和标准库中已存在等同的重载运算符是允许的。例子之一是实现 `Equatable` 和 `Hashable` 的运算符要求，或者定义新的 `Matrix` 类型来支持算数运算。
 
 If you wish to overload an existing operator with a meaning other than its
 natural meaning, follow the guidance in
@@ -3089,7 +3091,7 @@ and `+` to build an ad hoc regular expression API. Such an API would not provide
 strong enough readability benefits compared to simply representing the entire
 regular expression as a string.
 
-禁止更改运算符含义的一种例子是重载 `*` 和 `+` 来构建特定正则表达式的 API。这样的 API 没有比简单用字符串表示整个正则表达式的方式可读性强很多。
+禁止更改运算符含义的一种例子是重载 `*` 和 `+` 来构建特定正则表达式的 API。相比简单的用字符串表示整个正则表达式，这样的 API 并没有提高可读性。
 
 ## 文档注释/Documentation Comments
 
@@ -3148,7 +3150,7 @@ describes the declaration. (This sentence may span multiple lines, but if it
 spans too many lines, the author should consider whether the summary can be
 simplified and details moved to a new paragraph.)
 
-文档注释的开始使用简短的**一句话**概括来描述声明。（这句话可以跨行，但如果跨了很多行，作者应该考虑是否可以将概况简化并将细节移到新的段落中。）
+文档注释的开始使用简短的**一句话**概括来描述声明。（这句话可以跨行，但如果跨了很多行，作者应该考虑是否可以将概况简化，并将细节移到新的段落中。）
 
 If more detail is needed than can be stated in the summary, additional
 paragraphs (each separated by a blank line) are added after it.
@@ -3200,7 +3202,7 @@ appears with an empty description. When a description does not fit on a single
 line, continuation lines are indented 2 spaces in from the position of the
 hyphen starting the tag.
 
-对形参，返回值和函数抛出的错误按照 `Parameter(s)`，`Returns` 和 `Throws` 标签的顺序清晰地写下文档。不要出现空白的描述。当一个描述需要换行时，续行的缩进在开始的标记连字符基础上加上 2 个空格。
+对形参，返回值和函数抛出的错误按照 `Parameter(s)`、`Returns` 和 `Throws` 标签的顺序清晰地写下文档。不要出现空白的描述。当一个描述需要换行时，续行的缩进在开始的标记连字符基础上加 2 个空格。
 
 The recommended way to write documentation comments in Xcode is to place the
 text cursor on the declaration and press **Command + Option + /**. This will
@@ -3218,7 +3220,7 @@ The content following the `Parameter(s)`, `Returns`, and `Throws` tags should be
 terminated with a period, even when they are phrases instead of complete
 sentences.
 
-`Parameter(s)`，`Returns` 和 `Throws` 标签后面跟着的内容需要以句号结尾，即使它们只是短语而不是完整的句子。
+`Parameter(s)`、`Returns` 和 `Throws` 标签后面跟着的内容需要以句号结尾，即使它们只是短语而不是完整的句子。
 
 When a method takes a single argument, the singular inline form of the
 `Parameter` tag is used. When a method takes multiple arguments, the grouped
@@ -3255,7 +3257,7 @@ The following examples are incorrect, because they use the plural form of
 `Parameters` for a single parameter or the singular form `Parameter` for
 multiple parameters.
 
-下面的例子是错误的，因为它们对单个形参使用复数形式 `Parameters` 或者对多个形参使用单数形式 `Parameter`。
+下面的例子是错误的，因为它们对单个形参使用复数形式 `Parameters`，或者对多个形参使用单数形式 `Parameter`。
 
 ~~~ swift
 /// Returns the output generated by executing a command.
@@ -3313,13 +3315,13 @@ At a minimum, documentation comments are present for every open or public
 declaration, and every open or public member of such a declaration, with
 specific exceptions noted below:
 
-最起码，每个 open 或 public 声明和里面的每个 open 或 public 成员都应该有文档注释，除了下面的说明以外：
+最起码，每个 open 或 public 声明和里面的每个 open 或 public 成员都应该有文档注释，除了下面的情况：
 
 * Individual cases of an `enum` often are not documented if their meaning is
   self-explanatory from their name. Cases with associated values, however,
   should document what those values mean if it is not obvious.
 
-* `enum` 里单个的 case 的名字如果已经可以自解释则通常不需要注释。有关联值的 Case 如果值的含义不明确，那么不管怎样都应该注释。
+* `enum` 里单个的枚举项名字如果已经可以自解释，则通常不需要注释。有关联值的枚举项如果值的含义不明确，那么不管怎样都应该注释。
   
 * A documentation comment is not always present on a declaration that overrides
   a supertype declaration or implements a protocol requirement, or on a
@@ -3331,9 +3333,9 @@ specific exceptions noted below:
   documentation for the override be a mere copy of the base declaration's
   documentation.
 
-* 继承父类的声明，协议要求的实现或者提供协议要求的默认实现的扩展声明可以不需要文档注释。
+* 覆盖父类的声明、协议要求的实现或者提供协议要求的默认实现的扩展声明。
 
-  继承声明里用来描述继承后的新表现的注释是可以接受的。任何情况下都不应该出现单纯拷贝父声明文档的注释。
+  覆盖声明可以添加注释来描述新行为。但是任何情况下都不应该单纯拷贝基类的声明文档。
 
 * A documentation comment is not always present on test classes and test
   methods. However, they can be useful for functional test classes and for
@@ -3368,7 +3370,7 @@ not scalable because the extension or the conformance could be updated in the
   that conformance and client code could use it for other purposes in the
   future.
   
-  下面的例子则更微妙一些，但这是一个注释无法拓展的例子，因为这个拓展或者类型一致性在以后可能会变化。这个 `Comparable` 可能是在编写对该类型值的排序代码时加上的，但这不是一致性的唯一可能用途，并且使用者可能在以后其他用途代码里会依赖它。
+  下面的例子更巧妙一些，但这是一个注释无法拓展的例子，因为这个拓展或者类型一致性在以后可能会变化。这个 `Comparable` 可能是在编写对该类型值的排序代码时加上的，但这不是一致性的唯一可能用途，并且使用者可能在以后其他用途代码里会依赖它。
   
   ~~~ swift
   /// Make `Candidate` comparable so that they can be sorted.
