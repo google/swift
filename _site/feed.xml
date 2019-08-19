@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+  <channel>
+    <title>Google Swift Style Guide</title>
+    <description>Google's Swift style guide.
+</description>
+    <link>https://google.github.io/swift/swift-style/</link>
+    <atom:link href="https://google.github.io/swift/swift-style/feed.xml" rel="self" type="application/rss+xml"/>
+    <pubDate>Sun, 18 Aug 2019 21:19:27 -0700</pubDate>
+    <lastBuildDate>Sun, 18 Aug 2019 21:19:27 -0700</lastBuildDate>
+    <generator>Jekyll v3.7.3</generator>
+    
+  </channel>
+</rss>

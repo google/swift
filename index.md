@@ -1,6 +1,6 @@
 ---
 layout: page
-title: Swift Style Guide
+title: Swift Style Guide 中文版
 ---
 <!-- {% comment %}
 The width of <pre> elements on this page is carefully regulated, so we
@@ -3394,4 +3394,4 @@ rationale that it would only say `/// The canonical name.`) if a typical reader
 may have no idea what the term "canonical name" means in that context. Use the
 documentation as an opportunity to define the term. 
 
-但是，_不_要用这个例外来证明可以省略某些正常读者可能需要的相关信息。例如，对于 `canonicalName` 名字的属性，不要省略注释（只有合理的时候才可以只写 `/// The canonical name.`），因为正常读者可能不知道术语“规范名字”在上下文中的含义。 使用注释是定义该术语的好机会。
+但是，*不*要用这个例外来证明可以省略某些正常读者可能需要的相关信息。例如，对于 `canonicalName` 名字的属性，不要省略注释（只有合理的时候才可以只写 `/// The canonical name.`），因为正常读者可能不知道术语“规范名字”在上下文中的含义。 使用注释是定义该术语的好机会。
