@@ -1437,7 +1437,7 @@ Case statements are indented at the _same_ level as the switch statement to
 which they belong; the statements inside the case blocks are then indented +2
 spaces from that level.
 
-Case 语句的缩进和它们的 switch 语句保持_一致_；case 块里的语句在该缩进基础上 +2 空格。
+枚举项语句的缩进和它们的 switch 语句保持_一致_；枚举项块里的语句在该缩进基础上 +2 空格。
 
 ~~~ swift
 switch order {
@@ -1620,7 +1620,9 @@ func greet(apathetically nameProvider: () -> String) {
   print("Oh, look. It's \(nameProvider()).")
 }
 
-greet { "John" }  // error: ambiguous use of 'greet'
+greet { "John" }  
+// error: ambiguous use of 'greet'
+// 错误：‘greet’使用上有歧义
 ~~~
 {:.bad}
 
@@ -1706,6 +1708,7 @@ Timer.scheduledTimer(timeInterval: 30, repeats: false, block: { timer in
 })
 
 // This example fails to compile.
+// 这个例子无法通过编译。
 if let firstActive = list.first { $0.isActive } {
   process(firstActive)
 }
@@ -2450,10 +2453,12 @@ ensures that the operation is safe. For example,
 let value = getSomeInteger()
 
 // ...intervening code...
+// ...无关代码...
 
 // This force-unwrap is safe because `value` is guaranteed to fall within the
 // valid enum cases because it came from some data source that only permits
 // those raw values.
+// 这里的强制解包是安全的，会保证传入的`value`是合法的，因为它的数据源只提供这些合法枚举项
 return SomeEnum(rawValue: value)!
 ~~~
 {:.good}
@@ -2777,6 +2782,7 @@ let label = "goodbye"
 
 // `label` is treated as a value here because it is not preceded by `let`, so
 // the pattern below matches only data points that have the label "goodbye".
+// `label`在这里是值因为它没有前置的`let`，所以下面的模式匹配中只会匹配标签是“goodbye”的 data points。 
 switch DataPoint.labeled("hello", 100) {
 case .labeled(label, let value):
   // ...
@@ -2786,6 +2792,8 @@ case .labeled(label, let value):
 // introduce a new binding (shadowing the local variable within the case) rather
 // than to match against the value of the local variable. Thus, this pattern
 // matches data points with any string label.
+// 每个单独的绑定使用前置`let`能清晰地表达引入了一个新的绑定（覆盖枚举项里的局部变量），而不是匹配局部变量的值。
+// 这样，这个模式匹配将 data points 和任意字符串标签匹配。
 switch DataPoint.labeled("hello", 100) {
 case .labeled(let label, let value):
   // ...
@@ -2870,6 +2878,9 @@ confusing code.
 // This declares two variables, `Int`, which is a `Double` with value 5.0, and
 // `Double`, which is an `Int` with value 4.
 // `x` and `y` are not variables.
+// 这里声明了两个变量，一个是`Int`类型，但实际上是 5.0 的`Double`值，另一个是`Double`类型，
+// 但实际上是 4 的`Int`值。
+// `x` 和 `y` 不是变量。
 let (x: Int, y: Double) = (y: 4, x: 5.0)
 ~~~
 {:.bad}
@@ -2894,20 +2905,25 @@ type explicitly in the declaration or use an `as` expression to coerce it.
 
 ~~~ swift
 // Without a more explicit type, x1 will be inferred as type Int.
+// 没有更明确的类型，x1 会被推断为 Int 类型。
 let x1 = 50
 
 // These are explicitly type Int32.
+// 这些是明确的 Int32 类型。
 let x2: Int32 = 50
 let x3 = 50 as Int32
 
 // Without a more explicit type, y1 will be inferred as type String.
+// 没有更明确的类型，y1 会被推断为 String 类型。
 let y1 = "a"
 
 // These are explicitly type Character.
+// 这些是明确的 Character 类型。
 let y2: Character = "a"
 let y3 = "a" as Character
 
 // These are explicitly type UnicodeScalar.
+// 这些是明确的 UnicodeScalar 类型。
 let y4: UnicodeScalar = "a"
 let y5 = "a" as UnicodeScalar
 
@@ -2916,6 +2932,7 @@ func writeByte(_ byte: UInt8) {
 }
 // Inference also occurs for function arguments, so 50 is a UInt8 without
 // explicitly coercion.
+// 函数实参也可以推断，所以 50 是 UInt 但不需要强制明确。
 writeByte(50)
 ~~~
 {:.good}
@@ -2926,13 +2943,15 @@ string is coerced to a character. So while the following examples emit errors,
 they are "good" because the errors are caught at compile-time and for the right
 reasons.
 
-如果字面量的强制转换不合理，编译器会抛出对应的错误，例如，将不是整数的数字转换成证书，或者将一个字符串转换成字符。所以下面例子抛出错误是“好”事，因为这些错误在编译期就找到了正确的原因。
+如果字面量的强制转换不合理，编译器会抛出对应的错误，例如，将不是整数的数字转换成整数，或者将一个字符串转换成字符。所以下面例子抛出错误是“好”事，因为这些错误在编译期就找到了正确的原因。
 
 ~~~ swift
 // error: integer literal '9223372036854775808' overflows when stored into 'Int64'
+// 错误：整型字面量‘9223372036854775808’存在‘Int64’里会溢出
 let a = 0x8000_0000_0000_0000 as Int64
 
 // error: cannot convert value of type 'String' to type 'Character' in coercion
+// 错误：无法将“String”类型的值强制转换为“Character”
 let b = "ab" as Character
 ~~~
 {:.good}
@@ -2946,17 +2965,23 @@ compiler errors, or worse, hard-to-debug runtime errors.
 // This first tries to create an `Int` (signed) from the literal and then
 // convert it to a `UInt64`. Even though this literal fits into a `UInt64`, it
 // doesn't fit into an `Int` first, so it doesn't compile.
+// 这里首先尝试通过字面量创建一个`Int`(有符号的)，然后转换为`UInt64`。尽管这个字面量能作为`UInt64`，
+// 但它在第一步无法作为`Int`，所以这里无法通过编译。
 let a1 = UInt64(0x8000_0000_0000_0000)
 
 // This invokes `Character.init(_: String)`, thus creating a `String` "a" at
 // runtime (which involves a slow heap allocation), extracting the character
 // from it, and then releasing it. This is significantly slower than a proper
 // coercion.
+// 这里调用`Character.init(_: String)`，因此会在运行时创建一个`String`的“a”（会涉及到耗时的堆分配），
+// 从中提取字符，然后再释放掉它。这比恰当的强制指定耗时明显。
 let b = Character("a")
 
 // As above, this creates a `String` and then `Character.init(_: String)`
 // attempts to extract the single character from it. This fails a precondition
 // check and traps at runtime.
+// 和上面类似，这里会创建一个`String`并且使用`Character.init(_: String)`尝试从中提取单个字符。
+// 这会因此先决条件在运行时发生错误。
 let c = Character("ab")
 ~~~
 {:.bad}
@@ -2989,14 +3014,16 @@ prevents bad data from propagating through other layers of the system.
 标准（捕获溢出）运算和二元运算符（`+`、`-`、`*`、`<<` 和 `>>`）大部分用于普通操作，而非掩码操作（前置 `&`）。捕获溢出会更加安全，因为它防止错误数据被传递到系统的其他层级。
 
 ~~~ swift
-// 推荐 Overflow will not cause the balance to go negative.
+// GOOD. Overflow will not cause the balance to go negative.
+// 推荐。溢出不会导致 balance 为负。
 let newBankBalance = oldBankBalance + recentHugeProfit
 ~~~
 {:.good}
 
 ~~~ swift
-// 不推荐 Overflow will cause the balance to go negative if the summands are
+// AVOID. Overflow will cause the balance to go negative if the summands are
 // large.
+// 不推荐。如果加数太大，溢出会导致 balance 为负。
 let newBankBalance = oldBankBalance &+ recentHugeProfit
 ~~~
 {:.bad}
@@ -3009,8 +3036,9 @@ as cryptography, big-integer implementations, hash functions, and so forth.
 
 ~~~ swift
 var hashValue: Int {
-  // 推荐 What matters here is the distribution of the bit pattern rather than
+  // GOOD. What matters here is the distribution of the bit pattern rather than
   // the actual numeric value.
+  // 推荐。这里强调的是位的分布，而非实际的数值。
   return foo.hashValue &+ 31 * (bar.hashValue &+ 31 &* baz.hashValue)
 }
 ~~~
@@ -3020,6 +3048,7 @@ var hashValue: Int {
 var hashValue: Int {
   // INCORRECT. This will trap arbitrarily and unpredictably depending on the
   // hash values of the individual terms.
+  // 不正确。这可能随时出错，并且在不经意间依赖单个成员的哈希值。
   return foo.hashValue + 31 * (bar.hashValue + 31 * baz.hashValue)
 }
 ~~~
@@ -3370,7 +3399,7 @@ not scalable because the extension or the conformance could be updated in the
   that conformance and client code could use it for other purposes in the
   future.
   
-  下面的例子更巧妙一些，但这是一个注释无法拓展的例子，因为这个拓展或者类型一致性在以后可能会变化。这个 `Comparable` 可能是在编写对该类型值的排序代码时加上的，但这不是一致性的唯一可能用途，并且使用者可能在以后其他用途代码里会依赖它。
+  下面的例子更微妙一些，但这是一个注释无法拓展的例子，因为这个拓展或者类型一致性在以后可能会变化。这个 `Comparable` 可能是在编写对该类型值的排序代码时加上的，但这不是一致性的唯一可能用途，并且使用者可能在以后其他用途代码里会依赖它。
   
   ~~~ swift
   /// Make `Candidate` comparable so that they can be sorted.
