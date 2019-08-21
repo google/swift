@@ -3,16 +3,15 @@
 
   <head>
   <meta charset="utf-8">
-  <meta http-equiv="X-UA-Compatible" content="IE=edge">
   <meta name="viewport" content="width=device-width, initial-scale=1">
 
   <title>Swift Style Guide 中文版</title>
   <meta name="description" content="Google's Swift style guide.
 ">
 
-  <link rel="stylesheet" href="/google-swift-style-guide-in-chinese/css/main.css">
-  <link rel="canonical" href="http://stage.swift.gg/google-swift-style-guide-in-chinese//google-swift-style-guide-in-chinese/">
-  <link rel="alternate" type="application/rss+xml" title="Google Swift Style Guide 中文版" href="http://stage.swift.gg/google-swift-style-guide-in-chinese//google-swift-style-guide-in-chinese/feed.xml">
+  <link rel="stylesheet" href="/swift-style/css/main.css">
+  <link rel="canonical" href="http://localhost:4000/swift-style/">
+  <link rel="alternate" type="application/rss+xml" title="Google Swift Style Guide 中文版" href="http://localhost:4000/swift-style/feed.xml">
 </head>
 
 
@@ -35,12 +34,12 @@ also incorporates feedback from usage across multiple Swift projects within
 Google. It is a living document and the basis upon which the formatter is
 implemented.</p>
 
-<p>这份代码风格指南是基于优秀的 Apple Swift 标准库代码风格，并吸取了多个 Google 内部 Swift 项目的使用反馈而成。本文档会保持更新，并且已经基于本文档实现了格式化工具。</p>
+<p>这份代码风格指南基于 Apple 优秀的 Swift 标准库代码风格，吸取了多个 Google 内部 Swift 项目的使用反馈而成。本文档会保持更新，并且已经基于本文档实现了格式化工具。</p>
 
 <h2 class="no_toc" id="目录table-of-contents">目录/Table of Contents</h2>
 
 <ul id="markdown-toc">
-  <li><a href="#源文件基础source-file-basics" id="markdown-toc-源文件基础source-file-basics">源文件基础/Source File Basics</a>    <ul>
+  <li><a href="#源文件的基础要求source-file-basics" id="markdown-toc-源文件的基础要求source-file-basics">源文件的基础要求/Source File Basics</a>    <ul>
       <li><a href="#文件名file-names" id="markdown-toc-文件名file-names">文件名/File Names</a></li>
       <li><a href="#文件编码file-encoding" id="markdown-toc-文件编码file-encoding">文件编码/File Encoding</a></li>
       <li><a href="#空白符whitespace-characters" id="markdown-toc-空白符whitespace-characters">空白符/Whitespace Characters</a></li>
@@ -80,7 +79,7 @@ implemented.</p>
       <li><a href="#非文档注释non-documentation-comments" id="markdown-toc-非文档注释non-documentation-comments">非文档注释/Non-Documentation Comments</a></li>
       <li><a href="#属性properties" id="markdown-toc-属性properties">属性/Properties</a></li>
       <li><a href="#switch-语句switch-statements" id="markdown-toc-switch-语句switch-statements">Switch 语句/Switch Statements</a></li>
-      <li><a href="#枚举-caseenum-cases" id="markdown-toc-枚举-caseenum-cases">枚举 Case/Enum Cases</a></li>
+      <li><a href="#枚举项enum-cases" id="markdown-toc-枚举项enum-cases">枚举项/Enum Cases</a></li>
       <li><a href="#尾随闭包trailing-closures" id="markdown-toc-尾随闭包trailing-closures">尾随闭包/Trailing Closures</a></li>
       <li><a href="#末尾逗号trailing-commas" id="markdown-toc-末尾逗号trailing-commas">末尾逗号/Trailing Commas</a></li>
       <li><a href="#数字字面量numeric-literals" id="markdown-toc-数字字面量numeric-literals">数字字面量/Numeric Literals</a></li>
@@ -89,7 +88,7 @@ implemented.</p>
   </li>
   <li><a href="#命名naming" id="markdown-toc-命名naming">命名/Naming</a>    <ul>
       <li><a href="#apple-api-代码风格指南apples-api-style-guidelines" id="markdown-toc-apple-api-代码风格指南apples-api-style-guidelines">Apple API 代码风格指南/Apple’s API Style Guidelines</a></li>
-      <li><a href="#命名约定不涉及访问控制naming-conventions-are-not-access-control" id="markdown-toc-命名约定不涉及访问控制naming-conventions-are-not-access-control">命名约定不涉及访问控制/Naming Conventions Are Not Access Control</a></li>
+      <li><a href="#命名约定不是访问控制naming-conventions-are-not-access-control" id="markdown-toc-命名约定不是访问控制naming-conventions-are-not-access-control">命名约定不是访问控制/Naming Conventions Are Not Access Control</a></li>
       <li><a href="#标识符identifiers" id="markdown-toc-标识符identifiers">标识符/Identifiers</a></li>
       <li><a href="#构造器initializers" id="markdown-toc-构造器initializers">构造器/Initializers</a></li>
       <li><a href="#静态属性和类属性static-and-class-properties" id="markdown-toc-静态属性和类属性static-and-class-properties">静态属性和类属性/Static and Class Properties</a></li>
@@ -104,7 +103,7 @@ implemented.</p>
       <li><a href="#类型简称types-with-shorthand-names" id="markdown-toc-类型简称types-with-shorthand-names">类型简称/Types with Shorthand Names</a></li>
       <li><a href="#可选类型optional-types" id="markdown-toc-可选类型optional-types">可选类型/Optional Types</a></li>
       <li><a href="#错误类型error-types" id="markdown-toc-错误类型error-types">错误类型/Error Types</a></li>
-      <li><a href="#强制解包和强制擦除force-unwrapping-and-force-casts" id="markdown-toc-强制解包和强制擦除force-unwrapping-and-force-casts">强制解包和强制擦除/Force Unwrapping and Force Casts</a></li>
+      <li><a href="#强制解包和强制类型转换force-unwrapping-and-force-casts" id="markdown-toc-强制解包和强制类型转换force-unwrapping-and-force-casts">强制解包和强制类型转换/Force Unwrapping and Force Casts</a></li>
       <li><a href="#可选值隐式解包implicitly-unwrapped-optionals" id="markdown-toc-可选值隐式解包implicitly-unwrapped-optionals">可选值隐式解包/Implicitly Unwrapped Optionals</a></li>
       <li><a href="#访问等级access-levels" id="markdown-toc-访问等级access-levels">访问等级/Access Levels</a></li>
       <li><a href="#嵌套和命名空间nesting-and-namespacing" id="markdown-toc-嵌套和命名空间nesting-and-namespacing">嵌套和命名空间/Nesting and Namespacing</a></li>
@@ -115,9 +114,9 @@ implemented.</p>
       <li><a href="#元组模式tuple-patterns" id="markdown-toc-元组模式tuple-patterns">元组模式/Tuple Patterns</a></li>
       <li><a href="#数字和字符串字面量numeric-and-string-literals" id="markdown-toc-数字和字符串字面量numeric-and-string-literals">数字和字符串字面量/Numeric and String Literals</a></li>
       <li><a href="#playground-字面量playground-literals" id="markdown-toc-playground-字面量playground-literals">Playground 字面量/Playground Literals</a></li>
-      <li><a href="#捕获溢出运算trapping-vs-overflowing-arithmetic" id="markdown-toc-捕获溢出运算trapping-vs-overflowing-arithmetic">捕获溢出运算/Trapping vs. Overflowing Arithmetic</a></li>
+      <li><a href="#捕获-vs-溢出trapping-vs-overflowing-arithmetic" id="markdown-toc-捕获-vs-溢出trapping-vs-overflowing-arithmetic">捕获 vs 溢出/Trapping vs. Overflowing Arithmetic</a></li>
       <li><a href="#定义新运算符defining-new-operators" id="markdown-toc-定义新运算符defining-new-operators">定义新运算符/Defining New Operators</a></li>
-      <li><a href="#重载已存在运算符overloading-existing-operators" id="markdown-toc-重载已存在运算符overloading-existing-operators">重载已存在运算符/Overloading Existing Operators</a></li>
+      <li><a href="#重载现有运算符overloading-existing-operators" id="markdown-toc-重载现有运算符overloading-existing-operators">重载现有运算符/Overloading Existing Operators</a></li>
     </ul>
   </li>
   <li><a href="#文档注释documentation-comments" id="markdown-toc-文档注释documentation-comments">文档注释/Documentation Comments</a>    <ul>
@@ -129,7 +128,7 @@ implemented.</p>
     </ul>
   </li>
 </ul>
-<h2 id="源文件基础source-file-basics">源文件基础/Source File Basics</h2>
+<h2 id="源文件的基础要求source-file-basics">源文件的基础要求/Source File Basics</h2>
 
 <h3 id="文件名file-names">文件名/File Names</h3>
 
@@ -143,7 +142,7 @@ type. A file that extends an existing type with protocol conformance is named
 with a combination of the type name and the protocol name, joined with a plus
 (<code class="highlighter-rouge">+</code>) sign. For more complex situations, exercise your best judgment.</p>
 
-<p>通常来说，源文件的名字最好描述的是包含的主要内容。文件主要包含单个类型则命名为该类型名字。文件包含为已存在类型添加协议遵循的拓展则命名为类名和协议名的组合，通过加号（+）连接。对于更复杂的情况，最好由你自己判断。</p>
+<p>通常来说，源文件的名字最好描述包含的主要内容。如果文件主要包含单个类型，则用类型名命名文件。如果文件是为已存在类型添加新的协议遵循，则命名为类名和协议名的组合，通过加号（+）连接。对于更复杂的情况，最好由你自己判断。</p>
 
 <p>For example,</p>
 
@@ -151,18 +150,18 @@ with a combination of the type name and the protocol name, joined with a plus
 
 <ul>
   <li>A file containing a single type <code class="highlighter-rouge">MyType</code> is named <code class="highlighter-rouge">MyType.swift</code>.</li>
-  <li>文件中包含单个类型 <code class="highlighter-rouge">MyType</code> ，命名为 <code class="highlighter-rouge">MyType.swift</code>。</li>
+  <li>文件中包含单个类型 <code class="highlighter-rouge">MyType</code>，命名为 <code class="highlighter-rouge">MyType.swift</code>。</li>
   <li>A file containing a type <code class="highlighter-rouge">MyType</code> and some top-level helper functions is also
 named <code class="highlighter-rouge">MyType.swift</code>. (The top-level helpers are not the primary entity.)</li>
   <li>文件中包含类型 <code class="highlighter-rouge">MyType</code> 和一些顶层的工具函数，也命名为 <code class="highlighter-rouge">MyType.swift</code>。（顶层的工具函数不是主要的内容。）</li>
   <li>A file containing a single extension to a type <code class="highlighter-rouge">MyType</code> that adds conformance
 to a protocol <code class="highlighter-rouge">MyProtocol</code> is named <code class="highlighter-rouge">MyType+MyProtocol.swift</code>.</li>
-  <li>文件中包含单个为类型 <code class="highlighter-rouge">MyType</code> 添加 <code class="highlighter-rouge">MyProtocol</code> 协议遵循的拓展，命名为 <code class="highlighter-rouge">MyType+MyProtocol.swift</code>。</li>
+  <li>文件中包含单个扩展，为类型 <code class="highlighter-rouge">MyType</code> 添加 <code class="highlighter-rouge">MyProtocol</code> 协议遵循，命名为 <code class="highlighter-rouge">MyType+MyProtocol.swift</code>。</li>
   <li>A file containing multiple extensions to a type <code class="highlighter-rouge">MyType</code> that add
 conformances, nested types, or other functionality to a type can be named more
 generally, as long as it is prefixed with <code class="highlighter-rouge">MyType+</code>; for example,
 <code class="highlighter-rouge">MyType+Additions.swift</code>.</li>
-  <li>文件中包含多个为类型 <code class="highlighter-rouge">MyType</code> 添加协议遵循，嵌套类型或者其他功能的拓展，可以命名得更通用化，只要它的前缀是 <code class="highlighter-rouge">MyType+</code>；例如，<code class="highlighter-rouge">MyType+Additions.swift</code>。</li>
+  <li>文件中包含多个扩展，为类型 <code class="highlighter-rouge">MyType</code> 添加协议遵循、嵌套类型或者其他功能的拓展，可以使用更通用的命名，只要它的前缀是 <code class="highlighter-rouge">MyType+</code>；例如，<code class="highlighter-rouge">MyType+Additions.swift</code>。</li>
   <li>A file containing related declarations that are not otherwise scoped under a
 common type or namespace (such as a collection of global mathematical
 functions) can be named descriptively; for example, <code class="highlighter-rouge">Math.swift</code>.</li>
@@ -186,7 +185,7 @@ file. The implications are:</p>
 <ul>
   <li>All other whitespace characters in string and character literals are
 represented by their corresponding escape sequence.</li>
-  <li>所有其他在字符串或者字符字面量里的空白符都要用对应的转义字符表示。</li>
+  <li>字符串或者字符字面量里的所有其他空白符，要用对应的转义字符表示。</li>
   <li>Tab characters are not used for indentation.</li>
   <li>制表符不用于缩进。</li>
 </ul>
@@ -197,7 +196,7 @@ represented by their corresponding escape sequence.</li>
 <code class="highlighter-rouge">\'</code>, <code class="highlighter-rouge">\\</code>, and <code class="highlighter-rouge">\0</code>), that sequence is used rather than the equivalent Unicode
 (e.g., <code class="highlighter-rouge">\u{000a}</code>) escape sequence.</p>
 
-<p>任何字符中如果包含了特殊转义字符（<code class="highlighter-rouge">\t</code>, <code class="highlighter-rouge">\n</code>, <code class="highlighter-rouge">\r</code>, <code class="highlighter-rouge">\"</code>, <code class="highlighter-rouge">\'</code>, <code class="highlighter-rouge">\\</code> 和 <code class="highlighter-rouge">\0</code>），该转义字符会被直接使用，而不会是其等价的 Unicode 转义字符（例如：<code class="highlighter-rouge">\u{000a}</code>）。</p>
+<p>任何字符中如果包含了特殊转义字符（<code class="highlighter-rouge">\t</code>、<code class="highlighter-rouge">\n</code>、<code class="highlighter-rouge">\r</code>、<code class="highlighter-rouge">\"</code>、<code class="highlighter-rouge">\'</code>、<code class="highlighter-rouge">\\</code> 和 <code class="highlighter-rouge">\0</code>），直接使用该转义字符，不用其等价的 Unicode 转义字符（例如：<code class="highlighter-rouge">\u{000a}</code>）。</p>
 
 <h3 id="不可见字符和修饰符invisible-characters-and-modifiers">不可见字符和修饰符/Invisible Characters and Modifiers</h3>
 
@@ -213,7 +212,7 @@ attached to a character or characters that they modify. If such a Unicode scalar
 is present in isolation or is otherwise not modifying another character in the
 same string, it is written as a Unicode escape sequence.</p>
 
-<p>控制字符，组合字符，以及字符串里<em>会</em>影响可视化表达的异体字选择器当跟在其修改的字符后面则不转义。如果该 Unicode 标量单独使用或者没有修改同字符串中其他的字符，则用 Unicode 转义字符表示。</p>
+<p>控制字符、组合字符以及字符串里<em>会</em>影响可视化表达的异体字选择器，如果跟在其修改的字符后面则不转义。如果该 Unicode 标量单独使用或者没有修改同字符串中其他的字符，则用 Unicode 转义字符表示。</p>
 
 <p>The strings below are well-formed because the umlauts and variation selectors
 associate with neighboring characters in the string. The second example is in
@@ -229,7 +228,7 @@ specific combination is rendered as a single character.</p>
 <p>In the example below, the umlaut and variation selector are in strings by
 themselves, so they are escaped.</p>
 
-<p>下面的例子中，字符串里元音和异体字选择器只有它们自身，所以要被转义。</p>
+<p>下面的例子中，字符串里元音和异体字选择器是单独出现，所以要被转义。</p>
 
 <div class="language-swift good highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">let</span> <span class="nv">diaeresis</span> <span class="o">=</span> <span class="s">"</span><span class="se">\u{0308}</span><span class="s">"</span>
 <span class="k">let</span> <span class="nv">skinToneType6</span> <span class="o">=</span> <span class="s">"</span><span class="se">\u{1F3FF}</span><span class="s">"</span>
@@ -279,7 +278,7 @@ other Unicode code points.</p>
 <em>not preferred</em> because the text is harder to read and understand compared to
 the string above.</p>
 
-<p>下面的例子也是被允许的，因为它遵守了上面的规则，但它并不是 <code class="highlighter-rouge">最优选</code>，因为和上面的字符串相比，它更难以阅读和理解。</p>
+<p>下面的例子也是被允许的，因为它遵守了上面的规则，但<code class="highlighter-rouge">并不推荐</code>，因为和上面的字符串相比，它更难以阅读和理解。</p>
 
 <div class="language-swift good highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">let</span> <span class="nv">size</span> <span class="o">=</span> <span class="s">"</span><span class="se">\u{00DC}</span><span class="s">bergr</span><span class="se">\u{00F6}\u{00DF}</span><span class="s">e</span><span class="se">\n</span><span class="s">"</span>
 </code></pre></div></div>
@@ -297,7 +296,7 @@ ASCII range in both literal form and in escaped form.</p>
 that some programs might not handle non-ASCII characters properly. If that
 should happen, those programs are broken and must be fixed.</p>
 
-  <p><strong>题外话</strong>：永远别因为担心某些程序可能无法正确处理非 ASCII 码字符而降低代码的可读性。如果发生了，那些程序是无法被使用的，而且应该被修复。</p>
+  <p><strong>题外话</strong>：不要因为某些程序可能无法正确处理非 ASCII 码字符，就降低代码的可读性。如果遇到这种情况，应该被修复的是那个程序，不是你的代码。</p>
 </blockquote>
 
 <h2 id="源文件结构source-file-structure">源文件结构/Source File Structure</h2>
@@ -311,7 +310,7 @@ itself is sufficient and a file comment is only present if it provides
 additional useful information. File comments are allowed for files that contain
 multiple abstractions in order to document that grouping as a whole.</p>
 
-<p>描述源文件内容的注释是可选的。对只包含了单一抽象（例如一个类的声明）的文件并不建议用这种注释 — 这种情况下，抽象本身的文档注释就足够了，文件注释只有当提供了额外的有用信息时才需要。文件注释在文件中包含多个抽象时是允许的，为了对完整的分组进行注释。</p>
+<p>描述源文件内容的注释是可选的。对只包含了单一抽象（例如一个类的声明）的文件并不建议用这种注释——这种情况下，抽象本身的文档注释就足够了，文件注释只有当提供了额外的有用信息时才需要。如果文件中包含多个抽象，可以添加文件注释，对整体内容进行解释。</p>
 
 <h3 id="导入语句import-statements">导入语句/Import Statements</h3>
 
@@ -320,12 +319,12 @@ and nothing less. If a source file uses definitions from both <code class="highl
 <code class="highlighter-rouge">Foundation</code>, it imports both explicitly; it does not rely on the fact that some
 Apple frameworks transitively import others as an implementation detail.</p>
 
-<p>源文件中应该显式导入需要的顶层模块；不要多也不要少。如果源文件中同时使用了 <code class="highlighter-rouge">UIKit</code> 中的定义和 <code class="highlighter-rouge">Foundation</code> 中的定义，那么都进行显式导入；这和有些 Apple 框架已经在实现细节中导入其他框架并不冲突。</p>
+<p>源文件中应该显式导入需要的顶层模块；不要多也不要少。如果源文件中同时使用了 <code class="highlighter-rouge">UIKit</code> 中的定义和 <code class="highlighter-rouge">Foundation</code> 中的定义，那么都进行显式导入；即使有些 Apple 框架已经在实现细节中导入其他框架。</p>
 
 <p>Imports of whole modules are preferred to imports of individual declarations or
 submodules.</p>
 
-<p>优先考虑导入整个模块而非导入单个声明或者子模块。</p>
+<p>优先考虑导入整个模块，而非导入单个声明或者子模块。</p>
 
 <blockquote>
   <p>There are a number of reasons to avoid importing individual members:</p>
@@ -338,10 +337,10 @@ submodules.</p>
     <li>Existing automated tooling (such as Xcode’s migrator) are less likely to
 work well on code that imports individual members because they are
 considered corner cases.</li>
-    <li>现存地自动化工具（例如 Xcode 迁移器）不能很好地工作在导入单个成员的代码里，因为它们是边界情况。</li>
+    <li>现存地自动化工具（例如 Xcode 迁移器）很可能无法处理导入单个成员的代码，因为这不是常见用法。</li>
     <li>The prevailing style in Swift (based on official examples and community
 code) is to import entire modules.</li>
-    <li>目前流行的 Swift 代码风格（基于官方例子和社区代码）都是导入整个模块的。</li>
+    <li>目前流行的 Swift 代码风格（基于官方例子和社区代码）都是导入整个模块。</li>
   </ul>
 </blockquote>
 
@@ -349,7 +348,7 @@ code) is to import entire modules.</li>
 would otherwise pollute the global namespace with top-level definitions (such as
 C interfaces). Use your best judgment in these situations.</p>
 
-<p>当导入完整模块的顶层定义（例如 C 接口）会污染全局命名空间时，导入单个声明是允许的。在这些情况下，由你自己判断。</p>
+<p>如果导入完整模块的顶层定义（例如 C 接口）会污染全局命名空间，那导入单个声明是允许的。在这些情况下，由你自己判断应该如何导入。</p>
 
 <p>Imports of submodules are permitted if the submodule exports functionality that
 is not available when importing the top-level module. For example,
@@ -357,7 +356,7 @@ is not available when importing the top-level module. For example,
 methods that allow client code to subclass <code class="highlighter-rouge">UIGestureRecognizer</code>—those are
 not visible by importing <code class="highlighter-rouge">UIKit</code> alone.</p>
 
-<p>如果子模块的导出功能在只导入顶层模块时不可用，那么允许导入子模块。例如：<code class="highlighter-rouge">UIKit.UIGestureRecognizerSubclass</code> 必须要显式导入，以暴露继承 <code class="highlighter-rouge">UIGestureRecognizer</code> 时代码允许重写的方法  - 这在只导入 <code class="highlighter-rouge">UIKit</code> 时并不可见。</p>
+<p>如果子模块的导出功能在只导入顶层模块时不可用，那么允许导入子模块。例如：<code class="highlighter-rouge">UIKit.UIGestureRecognizerSubclass</code> 必须要显式导入，以暴露继承 <code class="highlighter-rouge">UIGestureRecognizer</code> 时代码允许重写的方法——这在只导入 <code class="highlighter-rouge">UIKit</code> 时并不可见。</p>
 
 <p>Import statements are not line-wrapped.</p>
 
@@ -367,7 +366,7 @@ not visible by importing <code class="highlighter-rouge">UIKit</code> alone.</p>
 grouped in the following fashion, with the imports in each group ordered
 lexicographically and with exactly one blank line between each group:</p>
 
-<p>导入语句放在除了注释以外的最前面。按以下方式分组，每组中的导入按照字母顺序排序，每组之间只有一个空行：</p>
+<p>在源文件中，导入语句放在除了注释以外的最前面。按以下方式分组，每组中的导入按照字母顺序排序，每组之间只有一个空行：</p>
 
 <ol>
   <li>
@@ -378,7 +377,7 @@ lexicographically and with exactly one blank line between each group:</p>
   <li>
     <p>Individual declaration imports (<code class="highlighter-rouge">class</code>, <code class="highlighter-rouge">enum</code>, <code class="highlighter-rouge">func</code>, <code class="highlighter-rouge">struct</code>, <code class="highlighter-rouge">var</code>)</p>
 
-    <p>单个声明的导入 (<code class="highlighter-rouge">class</code>, <code class="highlighter-rouge">enum</code>, <code class="highlighter-rouge">func</code>, <code class="highlighter-rouge">struct</code>, <code class="highlighter-rouge">var</code>)</p>
+    <p>单个声明的导入 (<code class="highlighter-rouge">class</code>、<code class="highlighter-rouge">enum</code>、<code class="highlighter-rouge">func</code>、<code class="highlighter-rouge">struct</code>、<code class="highlighter-rouge">var</code>)</p>
   </li>
   <li>
     <p>Modules imported with <code class="highlighter-rouge">@testable</code> (only present in test sources)</p>
@@ -403,7 +402,7 @@ lexicographically and with exactly one blank line between each group:</p>
 the type declaration is large. Exceptions are allowed when it makes sense to
 include multiple related types in a single file. For example,</p>
 
-<p>通常情况下，大部分源文件只包含一个顶层类型，特别是当类型声明很庞大时。除非在同一文件里包含多个相关类型是有意义的。例如，</p>
+<p>通常情况下，大部分源文件只包含一个顶层类型，特别是类型声明很庞大时。除非在同一文件里包含多个相关类型是有意义的。例如，</p>
 
 <ul>
   <li>
@@ -419,9 +418,7 @@ of the type and/or its helpers to only that file and not the rest of the
 module.</p>
   </li>
   <li>
-    <p>类型和它相关的轻量帮助类型可以定义在同一文件中。这种时候</p>
-
-    <p><code class="highlighter-rouge">fileprivate</code> 是很有用的，可以将类型和/或它帮助类的某些功能限制在那个文件中而非暴露给模块的其他地方。</p>
+    <p>类型和它相关的轻量帮助类型可以定义在同一文件中。这种时候 <code class="highlighter-rouge">fileprivate</code> 很有用，可以将类型和/或它帮助类的某些功能限制在那个文件中而非暴露给模块的其他地方。</p>
   </li>
 </ul>
 
@@ -430,14 +427,14 @@ the members of those types, can have a great effect on readability. However,
 there is no single correct recipe for how to do it; different files and
 different types may order their contents in different ways.</p>
 
-<p>在源文件中类型，变量和函数之间的顺序，和该类型成员的顺序，都会大大影响可读性。然而，如何组织它们并没有单一正确的法则；不同的文件和不同的类型可以用不同的方式组织它们内容的排序。</p>
+<p>在源文件中类型、变量和函数之间的顺序，和该类型成员的顺序，都会大大影响可读性。然而，如何组织它们并没有单一正确的法则；不同的文件和不同的类型可以用不同的方式组织它们内容的排序。</p>
 
 <p>What is important is that each file and type uses <em><strong>some</strong> logical order,</em>
 which its maintainer could explain if asked. For example, new methods are not
 just habitually added to the end of the type, as that would yield “chronological
 by date added” ordering, which is not a logical ordering.</p>
 
-<p>而重要的是，每一个文件和类型使用_<strong>同一</strong>排序逻辑_，以便维护者在被询问时可以解释清楚。例如，新的方法不能习惯性地加在类型的最后面，因为这只是顺从“日期递增地时间排序”，而不是有逻辑性的排序。</p>
+<p>重要的是，每一个文件和类型使用_<strong>同一</strong>排序逻辑_，并且维护者应该可以解释清楚这个逻辑。例如，新的方法不能习惯性地加在类型的最后面，因为这只是顺从“日期递增地时间排序”，而不是有逻辑性的排序。</p>
 
 <p>When deciding on the logical order of members, it can be helpful for readers and
 future writers (including yourself) to use <code class="highlighter-rouge">// MARK:</code> comments to provide
@@ -488,7 +485,7 @@ they appear sequentially with no other code in between.</p>
 can have a great effect on readability; you must use <em><strong>some</strong> logical
 organizational structure</em> that you could explain to a reviewer if asked.</p>
 
-<p>扩展可以将一个类型的功能组织到多个“单元”中。配合成员排序和所选择的组织结构/分组会对代码可读性有很大的帮助；你必须使用_<strong>某种</strong>_能给审查者解释的_逻辑结构_进行组织。</p>
+<p>扩展可以将一个类型的功能组织到多个“单元”中。配合成员排序和所选择的组织结构/分组，会对代码可读性有很大的帮助；你必须使用_<strong>某种</strong>_能给审查者解释的_逻辑结构_进行组织。</p>
 
 <h2 id="常规格式general-formatting">常规格式/General Formatting</h2>
 
@@ -510,7 +507,7 @@ that would exceed this limit must be line-wrapped as described in
 meaningful unit of text that should not be broken (for example, a long URL in
 a comment).</p>
 
-    <p>即便是遵循单行字符限制的行也不应该破坏文本中有意义的部分（例如，注释里的长 URL ）。</p>
+    <p>即便是遵循单行字符限制的行，也不应该破坏文本中有意义的部分（例如，注释里的长 URL ）。</p>
   </li>
   <li>
     <p><code class="highlighter-rouge">import</code> statements.</p>
@@ -529,7 +526,7 @@ a comment).</p>
 <p>In general, braces follow Kernighan and Ritchie (K&amp;R) style for non-empty
 blocks with exceptions for Swift-specific constructs and rules:</p>
 
-<p>通常来说，非空块的花括号遵循 Kernighan 和 Ritchie（K&amp;R）代码风格，除了 Swift 特殊结构和规则以外：</p>
+<p>通常来说，内容非空的花括号遵循 Kernighan 和 Ritchie（K&amp;R）代码风格，除了 Swift 特殊结构和规则以外：</p>
 
 <ul>
   <li>
@@ -537,13 +534,13 @@ blocks with exceptions for Swift-specific constructs and rules:</p>
 by application of the rules in <a href="#line-wrapping">Line-Wrapping</a>.</p>
   </li>
   <li>
-    <p>在开边花括号（<code class="highlighter-rouge">{</code>）之前<strong>不需要</strong>换行，<strong>除非</strong>是因为应用了 <a href="#line-wrapping">换行</a> 规则。</p>
+    <p>左花括号（<code class="highlighter-rouge">{</code>）之前<strong>不需要</strong>换行，<strong>除非</strong>是为了满足 <a href="#line-wrapping">换行</a> 规则。</p>
   </li>
   <li>
     <p>There <strong>is a</strong> line break after the opening brace (<code class="highlighter-rouge">{</code>), except</p>
   </li>
   <li>
-    <p>在开边花括号（<code class="highlighter-rouge">{</code>）之后<strong>需要</strong>换行，除了</p>
+    <p>左花括号（<code class="highlighter-rouge">{</code>）之后<strong>需要</strong>换行，除非满足下面的条件</p>
 
     <ul>
       <li>
@@ -551,14 +548,14 @@ by application of the rules in <a href="#line-wrapping">Line-Wrapping</a>.</p>
 as the curly brace, if it fits, and a line break follows the <code class="highlighter-rouge">in</code> keyword.</p>
       </li>
       <li>
-        <p>在闭包中，闭包的签名和花括号在同一行的情况下，如果合适，在 <code class="highlighter-rouge">in</code> 关键字后面换行。</p>
+        <p>在闭包中，如果长度足够，将闭包的签名和花括号在同一行，在 <code class="highlighter-rouge">in</code> 关键字后面换行。</p>
       </li>
       <li>
         <p>where it may be omitted as described in
 <a href="#one-statement-per-line">One Statement Per Line</a>.</p>
       </li>
       <li>
-        <p>当可以省略成 <a href="#one-statement-per-line">单行语句</a>。</p>
+        <p>可以省略成 <a href="#one-statement-per-line">单行语句</a>。</p>
       </li>
       <li>
         <p>empty blocks may be written as <code class="highlighter-rouge">{}</code>.</p>
@@ -574,7 +571,7 @@ be omitted as described in <a href="#one-statement-per-line">One Statement Per L
 or it completes an empty block.</p>
   </li>
   <li>
-    <p>在闭边花括号（<code class="highlighter-rouge">}</code>）之前<strong>需要</strong>换行，除了可以省略成 <a href="#one-statement-per-line">单行语句</a> 或用在空白块的情况。</p>
+    <p>右花括号（<code class="highlighter-rouge">}</code>）之前<strong>需要</strong>换行，除非可以省略成 <a href="#one-statement-per-line">单行语句</a> 或是空白块。</p>
   </li>
   <li>
     <p>There <strong>is a</strong> line break after the closing brace (<code class="highlighter-rouge">}</code>), <strong>if and only if</strong>
@@ -582,7 +579,7 @@ that brace terminates a statement or the body of a declaration. For example,
 an <code class="highlighter-rouge">else</code> block is written <code class="highlighter-rouge">} else {</code> with both braces on the same line.</p>
   </li>
   <li>
-    <p>闭边花括号（<code class="highlighter-rouge">}</code>）之后<strong>需要</strong>换行的情况，<strong>有且仅当</strong>该花括号用作终止语句或者作为声明体。例如，<code class="highlighter-rouge">else</code> 块写成 <code class="highlighter-rouge">} else {</code> 时两个花括号在同一行。</p>
+    <p>右花括号（<code class="highlighter-rouge">}</code>）之后<strong>需要</strong>换行的情况，<strong>有且仅当</strong>该花括号用作终止语句或者作为声明体。例如，<code class="highlighter-rouge">else</code> 块写成 <code class="highlighter-rouge">} else {</code> 时两个花括号在同一行。</p>
   </li>
 </ul>
 
@@ -615,7 +612,7 @@ string literal or a comment.</p>
 line break, except when the line ends with a block that also contains zero
 or one statements.</p>
 
-<p>每行<strong>最多</strong>一个语句，每个语句后换行，除非该行以只包含了 0 或 1 个语句的块结尾。</p>
+<p>每行<strong>最多</strong>一个语句，每个语句后换行，除非该行结尾的块中只有 0 或者 1 条语句。</p>
 
 <div class="language-swift good highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">guard</span> <span class="k">let</span> <span class="nv">value</span> <span class="o">=</span> <span class="n">value</span> <span class="k">else</span> <span class="p">{</span> <span class="k">return</span> <span class="mi">0</span> <span class="p">}</span>
 
@@ -646,7 +643,7 @@ work well for early-return and basic cleanup tasks, but less so when the body
 contains a function call with significant logic. When in doubt, write it as a
 multi-line statement.</p>
 
-<p>将块里包含的单个语句和块放在同一行总是允许的。由你自己判断是否将条件语句和它的执行体放在同一行中。例如，单行条件适合跟提前返回并进行简单收尾的代码放在一行，但是当执行体里包含了函数调用或者重要的逻辑就不太合适了。一旦纠结，使用多行语句。</p>
+<p>将块里包含的单个语句和块放在同一行总是允许的。由你自己判断是否将条件语句和它的执行体放在同一行中。例如，单行条件适合跟提前返回并进行简单收尾的代码放在一行，但是当执行体里包含了函数调用或者重要的逻辑就不太合适。如果不确定哪种更好，使用多行语句。</p>
 
 <h3 id="换行line-wrapping">换行/Line-Wrapping</h3>
 
@@ -691,7 +688,7 @@ breakable sequences are indicated in blue.</p>
     <p>The <strong>unbreakable</strong> token sequence up through the open angle bracket (<code class="highlighter-rouge">&lt;</code>)
 that begins the generic argument list.</p>
 
-    <p><strong>不可破坏</strong>标记符从开始直到标志范型实参列表开始的开边尖括号（<code class="highlighter-rouge">&lt;</code>）。</p>
+    <p><strong>不可破坏</strong>标记符从开始直到标志范型实参列表开始的左尖括号（<code class="highlighter-rouge">&lt;</code>）。</p>
   </li>
   <li>
     <p>The <strong>breakable</strong> list of generic arguments.</p>
@@ -713,7 +710,7 @@ arguments from the formal arguments.</p>
     <p>The <strong>unbreakable</strong> token-sequence from the closing parenthesis (<code class="highlighter-rouge">)</code>) up
 through the arrow (<code class="highlighter-rouge">-&gt;</code>) that precedes the return type.</p>
 
-    <p><strong>不可破坏</strong>标记符从闭边括号（<code class="highlighter-rouge">)</code>）到返回类型之前的箭头（<code class="highlighter-rouge">-&gt;</code>）。</p>
+    <p><strong>不可破坏</strong>标记符从右括号（<code class="highlighter-rouge">)</code>）到返回类型之前的箭头（<code class="highlighter-rouge">-&gt;</code>）。</p>
   </li>
   <li>
     <p>The <strong>breakable</strong> return type.</p>
@@ -764,7 +761,7 @@ at the same level as the original line.</p>
     <p>A continuation line that is part of a vertically-oriented comma-delimited
 list is indented exactly +2 from the original line.</p>
 
-    <p>作为垂直向逗号分隔列表一部分的后续行在原始行缩进的基础上+2。</p>
+    <p>作为垂直向逗号分隔列表一部分的后续行在原始行缩进的基础上 +2。</p>
   </li>
   <li>
     <p>When an open curly brace (<code class="highlighter-rouge">{</code>) follows a line-wrapped declaration or
@@ -773,7 +770,7 @@ line is indented at +2 from the original line. In that case, the brace is
 placed on its own line, to avoid the continuation lines from blending
 visually with the body of the subsequent block.</p>
 
-    <p>在换行的声明或者表达式后的开边花括号（<code class="highlighter-rouge">{</code>），除非该行的缩进是在原始行的基础上+2，都和最后的后续行在同一行。那种情况下，花括号另起一行，避免该行和随后块里的内容在视觉上有混淆。</p>
+    <p>在换行的声明或者表达式后的左花括号（<code class="highlighter-rouge">{</code>），都和最后的后续行在同一行，除非该行的缩进是在原始行的基础上 +2。如果是后者，花括号另起一行，避免该行和之后块里的内容在视觉上有混淆。</p>
 
     <div class="language-swift good highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="kd">public</span> <span class="kd">func</span> <span class="n">index</span><span class="o">&lt;</span><span class="kt">Elements</span><span class="p">:</span> <span class="kt">Collection</span><span class="p">,</span> <span class="kt">Element</span><span class="o">&gt;</span><span class="p">(</span>
   <span class="n">of</span> <span class="nv">element</span><span class="p">:</span> <span class="kt">Element</span><span class="p">,</span>
@@ -782,7 +779,7 @@ visually with the body of the subsequent block.</p>
 <span class="k">where</span>
   <span class="kt">Elements</span><span class="o">.</span><span class="kt">Element</span> <span class="o">==</span> <span class="kt">Element</span><span class="p">,</span>
   <span class="kt">Element</span><span class="p">:</span> <span class="kt">Equatable</span>
-<span class="p">{</span>  <span class="c1">// GOOD.</span>
+<span class="p">{</span>  <span class="c1">// 推荐</span>
   <span class="k">for</span> <span class="n">current</span> <span class="k">in</span> <span class="n">elements</span> <span class="p">{</span>
     <span class="c1">// ...</span>
   <span class="p">}</span>
@@ -795,7 +792,7 @@ visually with the body of the subsequent block.</p>
 <span class="p">)</span> <span class="o">-&gt;</span> <span class="kt">Elements</span><span class="o">.</span><span class="kt">Index</span><span class="p">?</span>
 <span class="k">where</span>
   <span class="kt">Elements</span><span class="o">.</span><span class="kt">Element</span> <span class="o">==</span> <span class="kt">Element</span><span class="p">,</span>
-  <span class="kt">Element</span><span class="p">:</span> <span class="kt">Equatable</span> <span class="p">{</span>  <span class="c1">// AVOID.</span>
+  <span class="kt">Element</span><span class="p">:</span> <span class="kt">Equatable</span> <span class="p">{</span>  <span class="c1">// 不推荐</span>
   <span class="k">for</span> <span class="n">current</span> <span class="k">in</span> <span class="n">elements</span> <span class="p">{</span>
     <span class="c1">// ...</span>
   <span class="p">}</span>
@@ -839,9 +836,9 @@ throughout the file. Specifically, it prevents the zig-zag effect that would be
 present if the arguments are indented based on opening parentheses, as is common
 in other languages:</p>
 
-<p>这个换行风格能确保通过缩进和换行让_读者_可以_快速容易地识别_声明的不同部分，并且在文件中的这些部分缩进风格应该保持一致。具体来说，这能避免实参基于开边括号缩进而出现的锯齿效应，这在其他语言里很常见：</p>
+<p>这个换行风格能确保，通过缩进和换行，_读者_可以_快速容易地识别_声明的不同部分，并且在文件中的这些部分缩进风格应该保持一致。具体来说，这能避免实参基于左括号缩进而出现的锯齿效应，这在其他语言里很常见：</p>
 
-<div class="language-swift bad highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="kd">public</span> <span class="kd">func</span> <span class="n">index</span><span class="o">&lt;</span><span class="kt">Elements</span><span class="p">:</span> <span class="kt">Collection</span><span class="p">,</span> <span class="kt">Element</span><span class="o">&gt;</span><span class="p">(</span><span class="n">of</span> <span class="nv">element</span><span class="p">:</span> <span class="kt">Element</span><span class="p">,</span>  <span class="c1">// AVOID.</span>
+<div class="language-swift bad highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="kd">public</span> <span class="kd">func</span> <span class="n">index</span><span class="o">&lt;</span><span class="kt">Elements</span><span class="p">:</span> <span class="kt">Collection</span><span class="p">,</span> <span class="kt">Element</span><span class="o">&gt;</span><span class="p">(</span><span class="n">of</span> <span class="nv">element</span><span class="p">:</span> <span class="kt">Element</span><span class="p">,</span>  <span class="c1">// 不推荐</span>
                                                  <span class="k">in</span> <span class="nv">collection</span><span class="p">:</span> <span class="kt">Elements</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kt">Elements</span><span class="o">.</span><span class="kt">Index</span><span class="p">?</span>
     <span class="k">where</span> <span class="kt">Elements</span><span class="o">.</span><span class="kt">Element</span> <span class="o">==</span> <span class="kt">Element</span><span class="p">,</span> <span class="kt">Element</span><span class="p">:</span> <span class="kt">Equatable</span> <span class="p">{</span>
   <span class="nf">doSomething</span><span class="p">()</span>
@@ -878,7 +875,7 @@ line-wrapping:</p>
 parenthesis (<code class="highlighter-rouge">)</code>) may place the parenthesis on the same line as the final
 argument <strong>or</strong> on its own line.</p>
 
-<p>协议里以闭边括号（<code class="highlighter-rouge">)</code>）结束的函数声明可以将括号和最后的实参放在同一行<strong>或者</strong>另起一行。</p>
+<p>协议里以右括号（<code class="highlighter-rouge">)</code>）结束的函数声明可以将括号和最后的实参放在同一行<strong>或者</strong>另起一行。</p>
 
 <div class="language-swift good highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="kd">public</span> <span class="kd">protocol</span> <span class="kt">ContrivedExampleDelegate</span> <span class="p">{</span>
   <span class="kd">func</span> <span class="nf">contrivedExample</span><span class="p">(</span>
@@ -916,7 +913,7 @@ to the declaration itself.</p>
 <p>However, <code class="highlighter-rouge">typealias</code>es or some other means are often a better way to simplify
 complex declarations whenever possible.</p>
 
-<p>然而，如果可以用 <code class="highlighter-rouge">typealias</code> 或其他手段简化复杂声明通常是更好的解决方法。</p>
+<p>然而，用 <code class="highlighter-rouge">typealias</code> 或其他手段简化复杂声明通常是更好的解决方法。</p>
 
 <h4 id="类型和拓展声明type-and-extension-declarations">类型和拓展声明/Type and Extension Declarations</h4>
 
@@ -925,7 +922,7 @@ complex declarations whenever possible.</p>
 superclasses in their inheritance list, but they are otherwise structurally
 similar).</p>
 
-<p>下面的例子同样适用于 <code class="highlighter-rouge">class</code>，<code class="highlighter-rouge">struct</code>，<code class="highlighter-rouge">enum</code>，<code class="highlighter-rouge">extension</code> 和 <code class="highlighter-rouge">protocol</code>（除了第一个的继承列表里有父类外，其余结构都是类似的）。</p>
+<p>下面的例子同样适用于 <code class="highlighter-rouge">class</code>、<code class="highlighter-rouge">struct</code>、<code class="highlighter-rouge">enum</code>、<code class="highlighter-rouge">extension</code> 和 <code class="highlighter-rouge">protocol</code>（除了第一个的继承列表里有父类外，其余结构都是类似的）。</p>
 
 <pre class="lw-container">
 <span class="lw-ub"><em>modifiers</em> class <em>Name</em></span>{
@@ -990,7 +987,7 @@ statement and ends with a closing parenthesis (<code class="highlighter-rouge">)
 closure), then the parenthesis may be placed <strong>either</strong> on the same line as the
 final argument <strong>or</strong> on its own line.</p>
 
-<p>和函数声明一样，如果函数调用的语句以闭边括号（<code class="highlighter-rouge">)</code>）结束（意味着没有尾随闭包），括号<strong>既可以</strong>和最后一个实参在同一行<strong>也可以</strong>另起一行。</p>
+<p>和函数声明一样，如果函数调用的语句以右括号（<code class="highlighter-rouge">)</code>）结束（意味着没有尾随闭包），括号<strong>既可以</strong>和最后一个实参在同一行<strong>也可以</strong>另起一行。</p>
 
 <div class="language-swift good highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">let</span> <span class="nv">index</span> <span class="o">=</span> <span class="nf">index</span><span class="p">(</span>
   <span class="nv">of</span><span class="p">:</span> <span class="n">veryLongElementVariableName</span><span class="p">,</span>
@@ -1023,7 +1020,7 @@ token following the control flow keyword. Additional continuation lines are
 indented at that same position if they are syntactically parallel elements, or
 in +2 increments from that position if they are syntactically nested.</p>
 
-<p>当控制流语句（例如 <code class="highlighter-rouge">if</code>,<code class="highlighter-rouge">gurad</code>,<code class="highlighter-rouge">while</code> 或 <code class="highlighter-rouge">for</code>）需要换行时，首个后续行的缩进和紧接着控制流关键字的元素保持一致。其余的后续行如果是语法上平级的元素，那么缩进也保持一致，如果语法上有嵌套层级，则在原来缩进基础上+2。</p>
+<p>当控制流语句（例如 <code class="highlighter-rouge">if</code>、<code class="highlighter-rouge">gurad</code>、<code class="highlighter-rouge">while</code> 或者 <code class="highlighter-rouge">for</code>）需要换行时，首个后续行的缩进和紧接着控制流关键字的元素保持一致。其余的后续行如果是语法上平级的元素，那么缩进也保持一致，如果语法上有嵌套层级，则在原来缩进基础上 +2。</p>
 
 <p>The open brace (<code class="highlighter-rouge">{</code>) preceding the body of the control flow statement can either
 be placed on the same line as the last continuation line or on the next line,
@@ -1031,7 +1028,7 @@ at the same indentation level as the beginning of the statement. For <code class
 statements, the <code class="highlighter-rouge">else {</code> must be kept together, either on the same line or on
 the next line.</p>
 
-<p>控制流语句执行体前面开边花括号（<code class="highlighter-rouge">{</code>）既可以和最后的条件同一行也可以另起一行，并和该语句缩进保持一致。对于 <code class="highlighter-rouge">guard</code> 语句， <code class="highlighter-rouge">else {</code> 必须连在一起，不管是在同一行中还是另起一行。</p>
+<p>控制流语句执行体前面的左花括号（<code class="highlighter-rouge">{</code>），既可以和最后的条件同一行，也可以另起一行并和该语句缩进保持一致。对于 <code class="highlighter-rouge">guard</code> 语句，<code class="highlighter-rouge">else {</code> 必须连在一起，不管是在同一行还是另起一行。</p>
 
 <div class="language-swift good highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">if</span> <span class="nf">aBooleanValueReturnedByAVeryLongOptionalThing</span><span class="p">()</span> <span class="o">&amp;&amp;</span>
    <span class="nf">aDifferentBooleanValueReturnedByAVeryLongOptionalThing</span><span class="p">()</span> <span class="o">&amp;&amp;</span>
@@ -1080,7 +1077,7 @@ the next line.</p>
 above), the second line (the one immediately following the first break) is
 indented exactly +2 from the original line.</p>
 
-<p>非函数调用（上面提到的）的其他表达式换行时，第二行（在第一个换行后的行）的缩进在原始行的基础上+2。</p>
+<p>非函数调用（上面列举的都是函数调用）的其他表达式换行时，第二行（在第一个换行后的行）的缩进在原始行的基础上 +2。</p>
 
 <p>When there are multiple continuation lines, indentation may be varied in
 increments of +2 as needed. In general, two continuation lines use the same
@@ -1089,7 +1086,7 @@ elements. However, if there are many continuation lines caused by long wrapped
 expressions, consider splitting them into multiple statements using temporary
 variables when possible.</p>
 
-<p>当有多个后续行时，缩进会根据需要在原来的基础上 +2 递增变化。通常来说，有且仅当两个后续行以语法上平级的元素开始时才使用相同的缩进。然而，如果因为很长的表达式产生了很多个后续行，考虑将它分隔成多个语句的可能性，并使用临时变量。</p>
+<p>当有多个后续行时，缩进会根据需要在原来的基础上 +2 递增变化。通常来说，当且仅当两个后续行以语法上平级的元素开始时，才使用相同的缩进。然而，如果因为很长的表达式产生了很多个后续行，考虑用临时变量将它分隔成多个语句。</p>
 
 <div class="language-swift good highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">let</span> <span class="nv">result</span> <span class="o">=</span> <span class="n">anExpression</span> <span class="o">+</span> <span class="n">thatIsMadeUpOf</span> <span class="o">*</span> <span class="n">aLargeNumber</span> <span class="o">+</span>
   <span class="n">ofTerms</span> <span class="o">/</span> <span class="n">andTherefore</span> <span class="o">%</span> <span class="n">mustBeWrapped</span> <span class="o">+</span> <span class="p">(</span>
@@ -1123,7 +1120,7 @@ places <strong>only</strong>:</p>
 as <code class="highlighter-rouge">if</code>, <code class="highlighter-rouge">guard</code>, <code class="highlighter-rouge">while</code>, or <code class="highlighter-rouge">switch</code>) from the expression that follows it
 if that expression starts with an open parenthesis (<code class="highlighter-rouge">(</code>).</p>
 
-    <p>条件或 switch 语句（例如 <code class="highlighter-rouge">if</code>，<code class="highlighter-rouge">guard</code>，<code class="highlighter-rouge">while</code> 或者 <code class="highlighter-rouge">switch</code>）开始的任何保留关键字要和它之后的表达式分隔开，如果该表达式是以开边括号（<code class="highlighter-rouge">(</code>）开始的。</p>
+    <p>条件或 switch 语句（例如 <code class="highlighter-rouge">if</code>、<code class="highlighter-rouge">guard</code>、<code class="highlighter-rouge">while</code> 或者 <code class="highlighter-rouge">switch</code>）开始的任何保留关键字要和它之后的表达式分隔开，如果该表达式以左括号（<code class="highlighter-rouge">(</code>）开始。</p>
 
     <div class="language-swift good highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">if</span> <span class="p">(</span><span class="n">x</span> <span class="o">==</span> <span class="mi">0</span> <span class="o">&amp;&amp;</span> <span class="n">y</span> <span class="o">==</span> <span class="mi">0</span><span class="p">)</span> <span class="o">||</span> <span class="n">z</span> <span class="o">==</span> <span class="mi">0</span> <span class="p">{</span>
   <span class="c1">// ...</span>
@@ -1140,7 +1137,7 @@ if that expression starts with an open parenthesis (<code class="highlighter-rou
 before any open curly brace (<code class="highlighter-rouge">{</code>), and after any open curly brace (<code class="highlighter-rouge">{</code>) that
 is followed by code on the same line.</p>
 
-    <p>在同一行代码后面的闭边花括号（<code class="highlighter-rouge">}</code>）之前，任何开边话括号（<code class="highlighter-rouge">{</code>）之前，后续代码在同一行的开边花括号（<code class="highlighter-rouge">{</code>）之后。</p>
+    <p>在同一行代码后面的右花括号（<code class="highlighter-rouge">}</code>）之前，任何左花括号（<code class="highlighter-rouge">{</code>）之前，后续代码在同一行的左花括号（<code class="highlighter-rouge">{</code>）之后。</p>
 
     <div class="language-swift good highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">let</span> <span class="nv">nonNegativeCubes</span> <span class="o">=</span> <span class="n">numbers</span><span class="o">.</span><span class="n">map</span> <span class="p">{</span> <span class="nv">$0</span> <span class="o">*</span> <span class="nv">$0</span> <span class="o">*</span> <span class="nv">$0</span> <span class="p">}</span><span class="o">.</span><span class="n">filter</span> <span class="p">{</span> <span class="nv">$0</span> <span class="o">&gt;=</span> <span class="mi">0</span> <span class="p">}</span>
 </code></pre></div>    </div>
@@ -1153,7 +1150,7 @@ is followed by code on the same line.</p>
     <p><em>On both sides</em> of any binary or ternary operator, including the
 “operator-like” symbols described below, with exceptions noted at the end:</p>
 
-    <p>在二元或者三元运算符的每一侧，包括下面描述的“类运算符”，除了最后的例外说明：</p>
+    <p>在二元或者三元运算符的每一侧，包括下面描述的“类运算符”，除了最后的例外：</p>
 
     <ol>
       <li>
@@ -1272,13 +1269,13 @@ tuple/array/dictionary literals.</p>
   <li>
     <p>After, but not before, the colon (<code class="highlighter-rouge">:</code>) in</p>
 
-    <p>冒号（<code class="highlighter-rouge">:</code>）的后面而不是前面用在</p>
+    <p>如果是下列场景，加在冒号（<code class="highlighter-rouge">:</code>）后面而不是前面</p>
 
     <ol>
       <li>
         <p>Superclass/protocol conformance lists and generic constraints.</p>
 
-        <p>父类/协议遵循列表和范型约束时。</p>
+        <p>父类/协议遵循列表和范型约束。</p>
 
         <div class="language-swift good highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="kd">struct</span> <span class="kt">HashTable</span><span class="p">:</span> <span class="kt">Collection</span> <span class="p">{</span>
   <span class="c1">// ...</span>
@@ -1301,7 +1298,7 @@ tuple/array/dictionary literals.</p>
       <li>
         <p>Function argument labels and tuple element labels.</p>
 
-        <p>函数实参标签和元组元素标签时。</p>
+        <p>函数实参标签和元组元素标签。</p>
 
         <div class="language-swift good highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">let</span> <span class="nv">tuple</span><span class="p">:</span> <span class="p">(</span><span class="nv">x</span><span class="p">:</span> <span class="kt">Int</span><span class="p">,</span> <span class="nv">y</span><span class="p">:</span> <span class="kt">Int</span><span class="p">)</span>
       
@@ -1325,7 +1322,7 @@ tuple/array/dictionary literals.</p>
       <li>
         <p>Variable/property declarations with explicit types.</p>
 
-        <p>变量/属性的类型显式声明时。</p>
+        <p>变量/属性的类型显式声明。</p>
 
         <div class="language-swift good highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">let</span> <span class="nv">number</span><span class="p">:</span> <span class="kt">Int</span> <span class="o">=</span> <span class="mi">5</span>
 </code></pre></div>        </div>
@@ -1337,7 +1334,7 @@ tuple/array/dictionary literals.</p>
       <li>
         <p>Shorthand dictionary type names.</p>
 
-        <p>字典类型缩写时。</p>
+        <p>字典类型缩写。</p>
 
         <div class="language-swift good highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">var</span> <span class="nv">nameAgeMap</span><span class="p">:</span> <span class="p">[</span><span class="kt">String</span><span class="p">:</span> <span class="kt">Int</span><span class="p">]</span> <span class="o">=</span> <span class="p">[]</span>
 </code></pre></div>        </div>
@@ -1349,7 +1346,7 @@ tuple/array/dictionary literals.</p>
       <li>
         <p>Dictionary literals.</p>
 
-        <p>字典字面量时。</p>
+        <p>字典字面量。</p>
 
         <div class="language-swift good highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">let</span> <span class="nv">nameAgeMap</span> <span class="o">=</span> <span class="p">[</span><span class="s">"Ed"</span><span class="p">:</span> <span class="mi">40</span><span class="p">,</span> <span class="s">"Timmy"</span><span class="p">:</span> <span class="mi">9</span><span class="p">]</span>
 </code></pre></div>        </div>
@@ -1364,7 +1361,7 @@ tuple/array/dictionary literals.</p>
     <p>At least two spaces before and exactly one space after the double slash
 (<code class="highlighter-rouge">//</code>) that begins an end-of-line comment.</p>
 
-    <p>双斜杠（<code class="highlighter-rouge">//</code>）用于开始行结束的注释时，双斜杠之前最少两个空格，之后正好一个空格。</p>
+    <p>行尾注释的双斜杠（<code class="highlighter-rouge">//</code>），双斜杠之前最少两个空格，之后只加一个空格。</p>
 
     <div class="language-swift good highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">let</span> <span class="nv">initialFactor</span> <span class="o">=</span> <span class="mi">2</span>  <span class="c1">// Warm up the modulator.</span>
 </code></pre></div>    </div>
@@ -1376,7 +1373,7 @@ tuple/array/dictionary literals.</p>
     <p>Outside, but not inside, the brackets of an array or dictionary literals and
 the parentheses of a tuple literal.</p>
 
-    <p>括号用于数组、字典或元组字面量时，括号外面而不是里面。</p>
+    <p>数组、字典或元组字面量定义，加在括号外面而不是里面。</p>
 
     <div class="language-swift good highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">let</span> <span class="nv">numbers</span> <span class="o">=</span> <span class="p">[</span><span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">3</span><span class="p">]</span>
 </code></pre></div>    </div>
@@ -1393,7 +1390,7 @@ the parentheses of a tuple literal.</p>
 variable number of additional spaces in your code with the goal of making
 certain tokens appear directly below certain other tokens on previous lines.</p>
 
-  <p><strong>术语说明：</strong>_水平对齐_是一种约定，通过在代码中添加不同数量的空格让某些元素直接显示在前面行中该类型的其他元素下面。</p>
+  <p><strong>术语说明：</strong>_水平对齐_是一种约定，通过在代码中添加不同数量的空格，让某些元素直接显示在前面行中该类型的其他元素下面。</p>
 </blockquote>
 
 <p>Horizontal alignment is forbidden except when writing obviously tabular data
@@ -1402,7 +1399,7 @@ where omitting the alignment would be harmful to readability. In other cases
 or <code class="highlighter-rouge">class</code>), horizontal alignment is an invitation for maintenance problems if a
 new member is introduced that requires every other member to be realigned.</p>
 
-<p>水平对齐是禁止的，除了在分明的表格数据里，省略会不利于可读性之外。其他情况下（例如，对 <code class="highlighter-rouge">struct</code> 或  <code class="highlighter-rouge">class</code> 里的存储属性声明的类型进行对齐）水平对齐会引起维护问题，因为在新的成员引入时其余所有的成员都需要重新对齐。</p>
+<p>水平对齐是禁止的，除非是明确的表格数据，此时不对齐会降低可读性。其他情况下（例如，对 <code class="highlighter-rouge">struct</code> 或 <code class="highlighter-rouge">class</code> 里的存储属性声明的类型进行对齐）水平对齐会引起维护问题，因为在新的成员引入时其余所有的成员都需要重新对齐。</p>
 
 <div class="language-swift good highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="kd">struct</span> <span class="kt">DataPoint</span> <span class="p">{</span>
   <span class="k">var</span> <span class="nv">value</span><span class="p">:</span> <span class="kt">Int</span>
@@ -1420,14 +1417,14 @@ new member is introduced that requires every other member to be realigned.</p>
 
 <p>A single blank line appears in the following locations:</p>
 
-<p>单独的空白行在以下这些情况下出现：</p>
+<p>在这些情况下使用单独的空白行：</p>
 
 <ol>
   <li>
     <p>Between consecutive members of a type: properties, initializers, methods,
 enum cases, and nested types, <strong>except that</strong>:</p>
 
-    <p>在类型中这些连续成员之间：属性，构造器，方法，枚举情况，嵌套类型，<strong>除了</strong>：</p>
+    <p>在类型中这些连续成员之间：属性、构造器、方法、枚举项、嵌套类型，<strong>除非</strong>：</p>
 
     <ol>
       <li>
@@ -1435,7 +1432,7 @@ enum cases, and nested types, <strong>except that</strong>:</p>
 enum cases whose declarations fit entirely on a single line. Such blank
 lines can be used to create <em>logical groupings</em> of these declarations.</p>
 
-        <p>两个连续的存储属性或者枚举里两个也完全适合声明在一行里的 case，之间空白行是可选的。这时候空白行可以用来将这些声明进行_逻辑分组_。</p>
+        <p>如果两个连续的存储属性，或者两个枚举项可以写在一行中，那空白行就是可选的。这时候空白行可以用来对这些声明进行_逻辑分组_。</p>
       </li>
       <li>
         <p>A blank line is optional between two extremely closely related properties
@@ -1444,19 +1441,19 @@ stored property and a related public computed property.</p>
       </li>
     </ol>
 
-    <p>不适用于前面规则，但两个属性非常相关，之间的空白行也是可选的。例如，一个私有的存储属性和它相关的公开计算属性。</p>
+    <p>不适用于前面规则，但两个属性有强关联，那之间的空白行也是可选的。例如，一个私有的存储属性和它相关的公开计算属性。</p>
   </li>
   <li>
     <p><em>Only as needed</em> between statements to organize code into logical
 subsections.</p>
 
-    <p><strong>只有需要</strong>用于组织代码进行逻辑分段的语句之间。</p>
+    <p>如果用于分割代码，<strong>只在需要的时候使用</strong>，根据逻辑对代码进行分割。</p>
   </li>
   <li>
     <p><em>Optionally</em> before the first member or after the last member of a type
 (neither is encouraged nor discouraged).</p>
 
-    <p>类型的第一个成员之前或者最后一个成员之后的空白行是_可选的_（不赞成也不反对）。</p>
+    <p>类型的第一个成员之前，或者最后一个成员之后的空白行是_可选的_（不赞成也不反对）。</p>
   </li>
   <li>
     <p>Anywhere explicitly required by other sections of this document.</p>
@@ -1469,14 +1466,14 @@ subsections.</p>
 you do use multiple consecutive blank lines, do so consistently throughout your
 code base.</p>
 
-<p>_多个_空白行是允许的，但不是必须的（不赞成）。如果你使用多个连续的空白行，那么在你的代码里应该贯彻到底。</p>
+<p>_多个_空白行是允许的，但不是必须的（不赞成）。如果使用多个连续的空白行，那么在你的代码里应该贯彻到底。</p>
 
 <h3 id="括号parentheses">括号/Parentheses</h3>
 
 <p>Parentheses are <strong>not</strong> used around the top-most expression that follows an
 <code class="highlighter-rouge">if</code>, <code class="highlighter-rouge">guard</code>, <code class="highlighter-rouge">while</code>, or <code class="highlighter-rouge">switch</code> keyword.</p>
 
-<p><code class="highlighter-rouge">if</code>，<code class="highlighter-rouge">guard</code>，<code class="highlighter-rouge">while</code> 或 <code class="highlighter-rouge">switch</code> 关键字后面的顶层表达式<strong>不需要</strong>使用括号。</p>
+<p><code class="highlighter-rouge">if</code>、<code class="highlighter-rouge">guard</code>、<code class="highlighter-rouge">while</code> 或 <code class="highlighter-rouge">switch</code> 关键字后面的顶层表达式<strong>不需要</strong>使用括号。</p>
 
 <div class="language-swift good highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">if</span> <span class="n">x</span> <span class="o">==</span> <span class="mi">0</span> <span class="p">{</span>
   <span class="nf">print</span><span class="p">(</span><span class="s">"x is zero"</span><span class="p">)</span>
@@ -1511,7 +1508,7 @@ table memorized.</p>
 <p>Non-documentation comments always use the double-slash format (<code class="highlighter-rouge">//</code>), never the
 C-style block format (<code class="highlighter-rouge">/* ... */</code>).</p>
 
-<p>非文档注释总是用双斜杠进行格式化（<code class="highlighter-rouge">//</code>），而不要使用 C 风格的块格式化（<code class="highlighter-rouge">/* ... */</code>）。</p>
+<p>非文档注释总是用双斜杠进行格式化（<code class="highlighter-rouge">//</code>），不要使用 C 风格的块格式化（<code class="highlighter-rouge">/* ... */</code>）。</p>
 
 <h3 id="属性properties">属性/Properties</h3>
 
@@ -1523,7 +1520,7 @@ C-style block format (<code class="highlighter-rouge">/* ... */</code>).</p>
 <p>With the exception of tuple destructuring, every <code class="highlighter-rouge">let</code> or <code class="highlighter-rouge">var</code> statement
 (whether a property or a local variable) declares exactly one variable.</p>
 
-<p>除了元组的解构时，每个 <code class="highlighter-rouge">let</code> 或者 <code class="highlighter-rouge">var</code> 语句（无论是属性或者局部变量）只声明一个变量。</p>
+<p>除了元组的解构，每个 <code class="highlighter-rouge">let</code> 或者 <code class="highlighter-rouge">var</code> 语句（无论是属性或者局部变量）只声明一个变量。</p>
 
 <div class="language-swift good highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">var</span> <span class="nv">a</span> <span class="o">=</span> <span class="mi">5</span>
 <span class="k">var</span> <span class="nv">b</span> <span class="o">=</span> <span class="mi">10</span>
@@ -1540,7 +1537,7 @@ C-style block format (<code class="highlighter-rouge">/* ... */</code>).</p>
 which they belong; the statements inside the case blocks are then indented +2
 spaces from that level.</p>
 
-<p>Case 语句的缩进和它们的 switch 语句保持_一致_;case 块里的语句在该缩进基础上+2空格。</p>
+<p>枚举项语句的缩进和它们的 switch 语句保持_一致_；枚举项块里的语句在该缩进基础上 +2 空格。</p>
 
 <div class="language-swift good highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">switch</span> <span class="n">order</span> <span class="p">{</span>
 <span class="k">case</span> <span class="o">.</span><span class="nv">ascending</span><span class="p">:</span>
@@ -1572,14 +1569,14 @@ spaces from that level.</p>
 <span class="p">}</span>
 </code></pre></div></div>
 
-<h3 id="枚举-caseenum-cases">枚举 Case/Enum Cases</h3>
+<h3 id="枚举项enum-cases">枚举项/Enum Cases</h3>
 
 <p>In general, there is only one <code class="highlighter-rouge">case</code> per line in an <code class="highlighter-rouge">enum</code>. The comma-delimited
 form may be used only when none of the cases have associated values or raw
 values, all cases fit on a single line, and the cases do not need further
 documentation because their meanings are obvious from their names.</p>
 
-<p>通常来说，在一个 <code class="highlighter-rouge">enum</code> 里每行只有一个 <code class="highlighter-rouge">case</code>。逗号分隔形式只能在 case 都没有关联值或者原始值时使用，所有 case 都能从名字明确其含义而不需要额外的注释，就可以写在同一行。</p>
+<p>通常来说，一个 <code class="highlighter-rouge">enum</code> 里每行只有一个 <code class="highlighter-rouge">case</code>。逗号分隔形式只能在枚举项都没有关联值或者原始值时使用，所有枚举项都能从名字明确其含义而不需要额外的注释，就可以写在同一行。</p>
 
 <div class="language-swift good highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="kd">public</span> <span class="kd">enum</span> <span class="kt">Token</span> <span class="p">{</span>
   <span class="k">case</span> <span class="n">comma</span>
@@ -1606,7 +1603,7 @@ documentation because their meanings are obvious from their names.</p>
 <p>When all cases of an <code class="highlighter-rouge">enum</code> must be <code class="highlighter-rouge">indirect</code>, the <code class="highlighter-rouge">enum</code> itself is declared
 <code class="highlighter-rouge">indirect</code> and the keyword is omitted on the individual cases.</p>
 
-<p>当 <code class="highlighter-rouge">enum</code> 里所有 case 都需要被声明为 <code class="highlighter-rouge">indirect</code> 时，该 <code class="highlighter-rouge">enum</code> 就声明为 <code class="highlighter-rouge">indirect</code>，单独 case 前面的关键字就可以省略。</p>
+<p>如果 <code class="highlighter-rouge">enum</code> 里所有枚举项都需要被声明为 <code class="highlighter-rouge">indirect</code>，那这个 <code class="highlighter-rouge">enum</code> 就声明为 <code class="highlighter-rouge">indirect</code>，单独枚举项前面的关键字可以省略。</p>
 
 <div class="language-swift good highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="kd">public</span> <span class="kd">indirect</span> <span class="kd">enum</span> <span class="kt">DependencyGraphNode</span> <span class="p">{</span>
   <span class="k">case</span> <span class="nf">userDefined</span><span class="p">(</span><span class="nv">dependencies</span><span class="p">:</span> <span class="p">[</span><span class="kt">DependencyGraphNode</span><span class="p">])</span>
@@ -1623,17 +1620,17 @@ documentation because their meanings are obvious from their names.</p>
 <p>When an <code class="highlighter-rouge">enum</code> case does not have associated values, empty parentheses are never
 present.</p>
 
-<p>当 <code class="highlighter-rouge">enum</code> 的 case 没有关联值时，不应该出现空的括号。</p>
+<p>当 <code class="highlighter-rouge">enum</code> 的枚举项没有关联值时，不应该出现空的括号。</p>
 
 <div class="language-swift good highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="kd">public</span> <span class="kd">enum</span> <span class="kt">BinaryTree</span><span class="o">&lt;</span><span class="kt">Element</span><span class="o">&gt;</span> <span class="p">{</span>
   <span class="kd">indirect</span> <span class="k">case</span> <span class="nf">node</span><span class="p">(</span><span class="nv">element</span><span class="p">:</span> <span class="kt">Element</span><span class="p">,</span> <span class="nv">left</span><span class="p">:</span> <span class="kt">BinaryTree</span><span class="p">,</span> <span class="nv">right</span><span class="p">:</span> <span class="kt">BinaryTree</span><span class="p">)</span>
-  <span class="k">case</span> <span class="n">empty</span>  <span class="c1">// GOOD.</span>
+  <span class="k">case</span> <span class="n">empty</span>  <span class="c1">// 推荐</span>
 <span class="p">}</span>
 </code></pre></div></div>
 
 <div class="language-swift bad highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="kd">public</span> <span class="kd">enum</span> <span class="kt">BinaryTree</span><span class="o">&lt;</span><span class="kt">Element</span><span class="o">&gt;</span> <span class="p">{</span>
   <span class="kd">indirect</span> <span class="k">case</span> <span class="nf">node</span><span class="p">(</span><span class="nv">element</span><span class="p">:</span> <span class="kt">Element</span><span class="p">,</span> <span class="nv">left</span><span class="p">:</span> <span class="kt">BinaryTree</span><span class="p">,</span> <span class="nv">right</span><span class="p">:</span> <span class="kt">BinaryTree</span><span class="p">)</span>
-  <span class="k">case</span> <span class="nf">empty</span><span class="p">()</span>  <span class="c1">// AVOID.</span>
+  <span class="k">case</span> <span class="nf">empty</span><span class="p">()</span>  <span class="c1">// 不推荐</span>
 <span class="p">}</span>
 </code></pre></div></div>
 
@@ -1641,12 +1638,12 @@ present.</p>
 explain if asked. If there is no obviously logical ordering, use a
 lexicographical ordering based on the cases’ names.</p>
 
-<p>枚举的 case 必须遵循一定的可解释排序逻辑。如果没有明显的排序逻辑，按照 case 名字的首字母排序。</p>
+<p>枚举项必须遵循一定的可解释排序逻辑。如果没有明显的排序逻辑，按照枚举项名字的首字母排序。</p>
 
 <p>In the following example, the cases are arranged in numerical order based on the
 underlying HTTP status code and blank lines are used to separate groups.</p>
 
-<p>在下面的例子中，case 根据其表示的 HTTP 状态码数字进行排序，并通过空行进行分组。</p>
+<p>在下面的例子中，枚举项根据其表示的 HTTP 状态码数字进行排序，并通过空行进行分组。</p>
 
 <div class="language-swift good highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="kd">public</span> <span class="kd">enum</span> <span class="kt">HTTPStatus</span><span class="p">:</span> <span class="kt">Int</span> <span class="p">{</span>
   <span class="k">case</span> <span class="n">ok</span> <span class="o">=</span> <span class="mi">200</span>
@@ -1665,7 +1662,7 @@ underlying HTTP status code and blank lines are used to separate groups.</p>
 ordered lexicographically, the meaningful groupings of related values has been
 lost.</p>
 
-<p>同样的枚举，下面这个版本的写法可读性就差一些。尽管 case 根据字母排序，但是却失去了对关联值含义的表达。</p>
+<p>同样的枚举，下面这个版本的写法可读性就差一些。尽管枚举项根据字母排序，但是却失去了对关联值含义的表达。</p>
 
 <div class="language-swift bad highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="kd">public</span> <span class="kd">enum</span> <span class="kt">HTTPStatus</span><span class="p">:</span> <span class="kt">Int</span> <span class="p">{</span>
   <span class="k">case</span> <span class="n">badRequest</span> <span class="o">=</span> <span class="mi">400</span>
@@ -1685,12 +1682,12 @@ name of their trailing closure argument. Doing so prevents using trailing
 closure syntax—when the label is not present, a call to the function with
 a trailing closure is ambiguous.</p>
 
-<p>函数重载时，不能出现两个重载_只有_尾随闭包的实参名字有区别的情况。</p>
+<p>函数重载时，不能出现两个_只有_尾随闭包的实参名字不同的重载。</p>
 
 <p>Consider the following example, which prohibits using trailing closure syntax to
 call <code class="highlighter-rouge">greet</code>:</p>
 
-<p>考虑下面的例子，这样会不允许用尾随闭包语法来调用 <code class="highlighter-rouge">greet</code>：</p>
+<p>考虑下面的例子，这种情况下无法使用尾随闭包语法来调用 <code class="highlighter-rouge">greet</code>：</p>
 
 <div class="language-swift bad highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="kd">func</span> <span class="nf">greet</span><span class="p">(</span><span class="n">enthusiastically</span> <span class="nv">nameProvider</span><span class="p">:</span> <span class="p">()</span> <span class="o">-&gt;</span> <span class="kt">String</span><span class="p">)</span> <span class="p">{</span>
   <span class="nf">print</span><span class="p">(</span><span class="s">"Hello, </span><span class="se">\(</span><span class="nf">nameProvider</span><span class="p">()</span><span class="se">)</span><span class="s">! It's a pleasure to see you!"</span><span class="p">)</span>
@@ -1700,13 +1697,15 @@ call <code class="highlighter-rouge">greet</code>:</p>
   <span class="nf">print</span><span class="p">(</span><span class="s">"Oh, look. It's </span><span class="se">\(</span><span class="nf">nameProvider</span><span class="p">()</span><span class="se">)</span><span class="s">."</span><span class="p">)</span>
 <span class="p">}</span>
 
-<span class="n">greet</span> <span class="p">{</span> <span class="s">"John"</span> <span class="p">}</span>  <span class="c1">// error: ambiguous use of 'greet'</span>
+<span class="n">greet</span> <span class="p">{</span> <span class="s">"John"</span> <span class="p">}</span>  
+<span class="c1">// error: ambiguous use of 'greet'</span>
+<span class="c1">// 错误：‘greet’ 使用上有歧义</span>
 </code></pre></div></div>
 
 <p>This example is fixed by differentiating some part of the function name other
 than the closure argument—in this case, the base name:</p>
 
-<p>这个例子可以用除闭包实参外函数名的一部分差异来区分——具体这种情况下，可以用函数的基础名字：</p>
+<p>要解决这个问题，可以改变函数名的一部分——在这个例子中，可以修改函数的基础名字：</p>
 
 <div class="language-swift good highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="kd">func</span> <span class="nf">greetEnthusiastically</span><span class="p">(</span><span class="n">_</span> <span class="nv">nameProvider</span><span class="p">:</span> <span class="p">()</span> <span class="o">-&gt;</span> <span class="kt">String</span><span class="p">)</span> <span class="p">{</span>
   <span class="nf">print</span><span class="p">(</span><span class="s">"Hello, </span><span class="se">\(</span><span class="nf">nameProvider</span><span class="p">()</span><span class="se">)</span><span class="s">! It's a pleasure to see you!"</span><span class="p">)</span>
@@ -1724,7 +1723,7 @@ than the closure argument—in this case, the base name:</p>
 trailing closure syntax; <em>all</em> are labeled and nested inside the argument
 list’s parentheses.</p>
 
-<p>当一个函数调用有多个闭包实参，那么_都不_使用尾随闭包语法调用；_都_需要写出标签并放在在实参列表的括号里。</p>
+<p>如果一个函数调用有多个闭包实参，那么_都不_使用尾随闭包语法调用；_都_需要写出标签并放在在实参列表的括号里。</p>
 
 <div class="language-swift good highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="kt">UIView</span><span class="o">.</span><span class="nf">animate</span><span class="p">(</span>
   <span class="nv">withDuration</span><span class="p">:</span> <span class="mf">0.5</span><span class="p">,</span>
@@ -1749,14 +1748,14 @@ list’s parentheses.</p>
 it is <em>always</em> called using trailing closure syntax, except in the following
 cases to resolve ambiguity or parsing errors:</p>
 
-<p>如果函数只有一个闭包实参并且是最后的实参，那么_永远_使用尾随闭包语法调用它，除了下面这些解决歧义或者分析错误的情况：</p>
+<p>如果函数只有一个闭包实参，并且它是最后的实参，那么_永远_使用尾随闭包语法调用它，除了下面这些解决歧义或者分析错误的情况：</p>
 
 <ol>
   <li>
     <p>As described above, labeled closure arguments must be used to disambiguate
 between two overloads with otherwise identical arguments lists.</p>
 
-    <p>如上面所描述，必须使用带标签的闭包参数来消除两个其他实参列表都相同的重载之间的歧义。</p>
+    <p>如上面所描述，必须使用带标签的闭包参数，来消除两个其他实参列表都相同的重载之间的歧义。</p>
   </li>
   <li>
     <p>Labeled closure arguments must be used in control flow statements where the
@@ -1781,6 +1780,7 @@ statement.</p>
 <span class="p">})</span>
 
 <span class="c1">// This example fails to compile.</span>
+<span class="c1">// 这个例子无法通过编译。</span>
 <span class="k">if</span> <span class="k">let</span> <span class="nv">firstActive</span> <span class="o">=</span> <span class="n">list</span><span class="o">.</span><span class="n">first</span> <span class="p">{</span> <span class="nv">$0</span><span class="o">.</span><span class="n">isActive</span> <span class="p">}</span> <span class="p">{</span>
   <span class="nf">process</span><span class="p">(</span><span class="n">firstActive</span><span class="p">)</span>
 <span class="p">}</span>
@@ -1804,19 +1804,19 @@ empty parentheses (<code class="highlighter-rouge">()</code>) after the function
 element is placed on its own line. Doing so produces cleaner diffs when items
 are added to those literals later.</p>
 
-<p>当数组和字典里字面量里每个元素独占一行时_需要_加上末尾逗号。这样做在这些字面量后续加入新的元素时会有更明显的区分。</p>
+<p>当数组和字典里字面量里每个元素独占一行时，_需要_加上末尾逗号。在这些字面量后续加入新的元素时，会有更明显的区分。</p>
 
 <div class="language-swift good highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">let</span> <span class="nv">configurationKeys</span> <span class="o">=</span> <span class="p">[</span>
   <span class="s">"bufferSize"</span><span class="p">,</span>
   <span class="s">"compression"</span><span class="p">,</span>
-  <span class="s">"encoding"</span><span class="p">,</span>                                    <span class="c1">// GOOD.</span>
+  <span class="s">"encoding"</span><span class="p">,</span>                                    <span class="c1">// 推荐</span>
 <span class="p">]</span>
 </code></pre></div></div>
 
 <div class="language-swift bad highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">let</span> <span class="nv">configurationKeys</span> <span class="o">=</span> <span class="p">[</span>
   <span class="s">"bufferSize"</span><span class="p">,</span>
   <span class="s">"compression"</span><span class="p">,</span>
-  <span class="s">"encoding"</span>                                     <span class="c1">// AVOID.</span>
+  <span class="s">"encoding"</span>                                     <span class="c1">// 不推荐</span>
 <span class="p">]</span>
 </code></pre></div></div>
 
@@ -1827,7 +1827,7 @@ hexadecimal, octal, and binary) use the underscore (<code class="highlighter-rou
 digits for readability when the literal has numeric value or when there exists a
 domain-specific grouping.</p>
 
-<p>当长数字字面量（十进制，十六进制，八进制和二进制）有数值或存在特定领域分组时建议使用下划线（<code class="highlighter-rouge">_</code>）对数字进行分组，但不强制。</p>
+<p>如果长数字字面量（十进制、十六进制、八进制和二进制）有数值或存在特定领域分组，建议使用下划线（<code class="highlighter-rouge">_</code>）对数字进行分组，但不强制。</p>
 
 <p>Recommended groupings are three digits for decimal (thousands separators), four
 digits for hexadecimal, four or eight digits for binary literals, or
@@ -1848,7 +1848,7 @@ written on their own line immediately before the declaration to which they
 apply, are lexicographically ordered, and are indented at the same level as the
 declaration.</p>
 
-<p>每个带参数的注解（例如 <code class="highlighter-rouge">@availability(…)</code> 或 <code class="highlighter-rouge">@objc(…)</code>）写在其适用声明的前面单独一行，并且按照首字母排序，缩进和声明保持一致。</p>
+<p>每个带参数的注解（例如 <code class="highlighter-rouge">@availability(…)</code> 或 <code class="highlighter-rouge">@objc(…)</code>）写在其适用声明的前面单独一行，按照首字母排序，缩进和声明保持一致。</p>
 
 <div class="language-swift good highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="kd">@available(iOS 9.0, *)</span>
 <span class="kd">public</span> <span class="kd">func</span> <span class="nf">coolNewFeature</span><span class="p">()</span> <span class="p">{</span>
@@ -1869,7 +1869,7 @@ line as the declaration would require a declaration to be wrapped that
 previously did not need to be wrapped, then the attribute is placed on its own
 line.</p>
 
-<p>不带参数的注解（例如不带参数的 <code class="highlighter-rouge">@objc</code> ，<code class="highlighter-rouge">@IBOutlet</code> 或者 <code class="highlighter-rouge">@NSManaged</code>）当且仅当不导致换行时_可以_按首字母排序与声明写在同一行。如果在声明的行增加该注解后导致需要换行的话，则将注解另起一行。</p>
+<p>不带参数的注解（例如不带参数的 <code class="highlighter-rouge">@objc</code>、<code class="highlighter-rouge">@IBOutlet</code> 或者 <code class="highlighter-rouge">@NSManaged</code>）当且仅当不导致换行时，_可以_按首字母排序与声明写在同一行。如果在声明的行增加该注解后导致需要换行的话，则将注解另起一行。</p>
 
 <div class="language-swift good highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="kd">public</span> <span class="kd">class</span> <span class="kt">MyViewController</span><span class="p">:</span> <span class="kt">UIViewController</span> <span class="p">{</span>
   <span class="kd">@IBOutlet</span> <span class="kd">private</span> <span class="k">var</span> <span class="nv">tableView</span><span class="p">:</span> <span class="kt">UITableView</span><span class="o">!</span>
@@ -1885,15 +1885,19 @@ line.</p>
 hosted on swift.org are considered part of this style guide and are followed as
 if they were repeated here in their entirety.</p>
 
-<p>这部分代码风格指南是参考 Apple 官方的 Swift 命名和 API 代码风格指南而成的，并且应该遵循那些在这里重复的部分。</p>
+<p>Apple 官方的 <a href="https://swift.org/documentation/api-design-guidelines/">Swift 命名和 API 代码风格指南</a> 也是本文档的一部分，同样需要遵循，这里不再重复其内容。</p>
 
-<h3 id="命名约定不涉及访问控制naming-conventions-are-not-access-control">命名约定不涉及访问控制/Naming Conventions Are Not Access Control</h3>
+<blockquote>
+  <p>译者注：这份文档的中文版是 SwiftGG 的长期维护项目之一，可以在 <a href="https://github.com/SketchK/the-swift-api-design-guidelines-in-chinese">这里</a> 阅读。</p>
+</blockquote>
+
+<h3 id="命名约定不是访问控制naming-conventions-are-not-access-control">命名约定不是访问控制/Naming Conventions Are Not Access Control</h3>
 
 <p>Restricted access control (<code class="highlighter-rouge">internal</code>, <code class="highlighter-rouge">fileprivate</code>, or <code class="highlighter-rouge">private</code>) is preferred
 for the purposes of hiding information from clients, rather than naming
 conventions.</p>
 
-<p>使用约定俗成的访问控制（<code class="highlighter-rouge">internal</code>，<code class="highlighter-rouge">fileprivate</code> 或 <code class="highlighter-rouge">private</code>）来达到隐藏信息的目的，而不要使用命名约定。</p>
+<p>使用约定俗成的访问控制（<code class="highlighter-rouge">internal</code>、<code class="highlighter-rouge">fileprivate</code> 或 <code class="highlighter-rouge">private</code>）来达到隐藏信息的目的，不要使用命名约定。</p>
 
 <p>Naming conventions (such as prefixing a leading underscore) are only used in
 rare situations when a declaration must be given higher visibility than is
@@ -1902,7 +1906,7 @@ example, a type that has a method that is only intended to be called by other
 parts of a library implementation that crosses module boundaries and must
 therefore be declared <code class="highlighter-rouge">public</code>.</p>
 
-<p>命名约定（例如下划线前缀）只有在声明必须用到更高的可见性来解决语言限制的罕见情况下使用——例如，类型有一个方法，只打算被另一个库的实现跨模块调用，导致必须被声明为 <code class="highlighter-rouge">public</code> 的情况下。</p>
+<p>命名约定（例如下划线前缀）只有在声明必须用到更高的可见性来解决语言限制的罕见情况下使用——例如，类型有一个方法，只打算被另一个库的实现跨模块调用，导致必须被声明为 <code class="highlighter-rouge">public</code>。</p>
 
 <h3 id="标识符identifiers">标识符/Identifiers</h3>
 
@@ -1927,13 +1931,13 @@ concepts) and are well understood by the team who owns the code.</p>
 have the same name as the property. Explicit <code class="highlighter-rouge">self.</code> is used during assignment
 to disambiguate them.</p>
 
-<p>为了更明确地表达，构造器实参和其直接对应的存储属性同名。在赋值的时候使用显式 <code class="highlighter-rouge">self.</code> 来消除歧义。</p>
+<p>为了代码可读性，构造器实参和其直接对应的存储属性同名。在赋值的时候使用显式 <code class="highlighter-rouge">self.</code> 来消除歧义。</p>
 
 <div class="language-swift good highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="kd">public</span> <span class="kd">struct</span> <span class="kt">Person</span> <span class="p">{</span>
   <span class="kd">public</span> <span class="k">let</span> <span class="nv">name</span><span class="p">:</span> <span class="kt">String</span>
   <span class="kd">public</span> <span class="k">let</span> <span class="nv">phoneNumber</span><span class="p">:</span> <span class="kt">String</span>
 
-  <span class="c1">// GOOD.</span>
+  <span class="c1">// 推荐</span>
   <span class="kd">public</span> <span class="nf">init</span><span class="p">(</span><span class="nv">name</span><span class="p">:</span> <span class="kt">String</span><span class="p">,</span> <span class="nv">phoneNumber</span><span class="p">:</span> <span class="kt">String</span><span class="p">)</span> <span class="p">{</span>
     <span class="k">self</span><span class="o">.</span><span class="n">name</span> <span class="o">=</span> <span class="n">name</span>
     <span class="k">self</span><span class="o">.</span><span class="n">phoneNumber</span> <span class="o">=</span> <span class="n">phoneNumber</span>
@@ -1945,7 +1949,7 @@ to disambiguate them.</p>
   <span class="kd">public</span> <span class="k">let</span> <span class="nv">name</span><span class="p">:</span> <span class="kt">String</span>
   <span class="kd">public</span> <span class="k">let</span> <span class="nv">phoneNumber</span><span class="p">:</span> <span class="kt">String</span>
 
-  <span class="c1">// AVOID.</span>
+  <span class="c1">// 不推荐</span>
   <span class="kd">public</span> <span class="nf">init</span><span class="p">(</span><span class="n">name</span> <span class="nv">otherName</span><span class="p">:</span> <span class="kt">String</span><span class="p">,</span> <span class="n">phoneNumber</span> <span class="nv">otherPhoneNumber</span><span class="p">:</span> <span class="kt">String</span><span class="p">)</span> <span class="p">{</span>
     <span class="n">name</span> <span class="o">=</span> <span class="n">otherName</span>
     <span class="n">phoneNumber</span> <span class="o">=</span> <span class="n">otherPhoneNumber</span>
@@ -1958,29 +1962,29 @@ to disambiguate them.</p>
 <p>Static and class properties that return instances of the declaring type are
 <em>not</em> suffixed with the name of the type.</p>
 
-<p>静态属性和类属性返回声明类型的实例时<strong>不需要</strong>加上该类型名字作后缀。</p>
+<p>静态属性和类属性返回声明类型的实例时，<strong>不需要</strong>加上该类型名字作后缀。</p>
 
 <div class="language-swift good highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="kd">public</span> <span class="kd">class</span> <span class="kt">UIColor</span> <span class="p">{</span>
-  <span class="kd">public</span> <span class="kd">class</span> <span class="k">var</span> <span class="nv">red</span><span class="p">:</span> <span class="kt">UIColor</span> <span class="p">{</span>                <span class="c1">// GOOD.</span>
+  <span class="kd">public</span> <span class="kd">class</span> <span class="k">var</span> <span class="nv">red</span><span class="p">:</span> <span class="kt">UIColor</span> <span class="p">{</span>                <span class="c1">// 推荐</span>
     <span class="c1">// ...</span>
   <span class="p">}</span>
 <span class="p">}</span>
 
 <span class="kd">public</span> <span class="kd">class</span> <span class="kt">URLSession</span> <span class="p">{</span>
-  <span class="kd">public</span> <span class="kd">class</span> <span class="k">var</span> <span class="nv">shared</span><span class="p">:</span> <span class="kt">URLSession</span> <span class="p">{</span>          <span class="c1">// GOOD.</span>
+  <span class="kd">public</span> <span class="kd">class</span> <span class="k">var</span> <span class="nv">shared</span><span class="p">:</span> <span class="kt">URLSession</span> <span class="p">{</span>          <span class="c1">// 推荐</span>
     <span class="c1">// ...</span>
   <span class="p">}</span>
 <span class="p">}</span>
 </code></pre></div></div>
 
 <div class="language-swift bad highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="kd">public</span> <span class="kd">class</span> <span class="kt">UIColor</span> <span class="p">{</span>
-  <span class="kd">public</span> <span class="kd">class</span> <span class="k">var</span> <span class="nv">redColor</span><span class="p">:</span> <span class="kt">UIColor</span> <span class="p">{</span>           <span class="c1">// AVOID.</span>
+  <span class="kd">public</span> <span class="kd">class</span> <span class="k">var</span> <span class="nv">redColor</span><span class="p">:</span> <span class="kt">UIColor</span> <span class="p">{</span>           <span class="c1">// 不推荐</span>
     <span class="c1">// ...</span>
   <span class="p">}</span>
 <span class="p">}</span>
 
 <span class="kd">public</span> <span class="kd">class</span> <span class="kt">URLSession</span> <span class="p">{</span>
-  <span class="kd">public</span> <span class="kd">class</span> <span class="k">var</span> <span class="nv">sharedSession</span><span class="p">:</span> <span class="kt">URLSession</span> <span class="p">{</span>   <span class="c1">// AVOID.</span>
+  <span class="kd">public</span> <span class="kd">class</span> <span class="k">var</span> <span class="nv">sharedSession</span><span class="p">:</span> <span class="kt">URLSession</span> <span class="p">{</span>   <span class="c1">// 不推荐</span>
     <span class="c1">// ...</span>
   <span class="p">}</span>
 <span class="p">}</span>
@@ -1991,14 +1995,14 @@ declaring type, the names <code class="highlighter-rouge">shared</code> and <cod
 guide does not require specific names for these; the author should choose a name
 that makes sense for the type.</p>
 
-<p>当静态属性或者类属性用于描述该声明类型的单例实例时，通常使用 <code class="highlighter-rouge">shared</code> 和 <code class="highlighter-rouge">default</code> 作为名字。这个代码风格指南不强制要求使用这些命名，作者可以自行选择对该类型有意义的名字。</p>
+<p>如果静态属性或者类属性用于描述该声明类型的单例实例，通常使用 <code class="highlighter-rouge">shared</code> 和 <code class="highlighter-rouge">default</code> 作为名字。本指南不强制要求使用这些命名，作者可以自行选择对该类型有意义的名字。</p>
 
 <h3 id="全局常量global-constants">全局常量/Global Constants</h3>
 
 <p>Like other variables, global constants are <code class="highlighter-rouge">lowerCamelCase</code>. Hungarian notation,
 such as a leading <code class="highlighter-rouge">g</code> or <code class="highlighter-rouge">k</code>, is not used.</p>
 
-<p>和其他变量类似，全局常量也使用 <code class="highlighter-rouge">lowerCamelCase(驼峰命名法)</code>。而不使用匈牙利命名法，例如以 <code class="highlighter-rouge">g</code> 或者 <code class="highlighter-rouge">k</code> 开头。</p>
+<p>和其他变量类似，全局常量也使用 <code class="highlighter-rouge">lowerCamelCase（驼峰命名法）</code>。不要使用匈牙利命名法，例如以 <code class="highlighter-rouge">g</code> 或者 <code class="highlighter-rouge">k</code> 开头。</p>
 
 <div class="language-swift good highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">let</span> <span class="nv">secondsPerMinute</span> <span class="o">=</span> <span class="mi">60</span>
 </code></pre></div></div>
@@ -2015,7 +2019,7 @@ such as a leading <code class="highlighter-rouge">g</code> or <code class="highl
 are named using the linguistic syntax described below, which is inspired by
 Cocoa’s protocols.</p>
 
-<p>代理协议和类似代理的协议（例如数据源协议）里的方法命名使用下面描述的口语化语法，这是受 Cocoa 框架里协议的命名启发而来。</p>
+<p>受 Cocoa 框架里协议的命名启发，代理协议和类似代理的协议（例如数据源协议）里的方法命名，使用下面描述的口语化语法。</p>
 
 <blockquote>
   <p>The term “delegate’s source object” refers to the object that invokes methods
@@ -2142,21 +2146,21 @@ also contains some good general guidance about such names.</p>
 ambiguity, and prefer implicitness over explicitness unless being explicit
 improves readability and/or reduces ambiguity.</p>
 
-<p>本章节中规则的通用主旨是：避免冗余，避免歧义，除了能明显提高可读性和/或减少歧义外尽量使用隐式而不是显式。</p>
+<p>本章节中规则的通用主旨是：避免冗余，避免歧义，除了能明显提高可读性和/或减少歧义外，尽量使用隐式而不是显式。</p>
 
 <h3 id="编译器警告compiler-warnings">编译器警告/Compiler Warnings</h3>
 
 <p>Code should compile without warnings when feasible. Any warnings that are able
 to be removed easily by the author must be removed.</p>
 
-<p>代码在编译时尽可能保持没有警告。任何可以简单去除的警告作者都应该去除。</p>
+<p>代码在编译时尽可能保持没有警告。在作者力所能及的范围内去除警告。</p>
 
 <p>A reasonable exception is deprecation warnings, where it may not be possible to
 immediately migrate to the replacement API, or where an API may be deprecated
 for external users but must still be supported inside a library during a
 deprecation period.</p>
 
-<p>在不可能马上迁移到替代 API 时或者在 API 对外部用户废弃但还需要继续对库内部支持的废弃时期，有理由的废弃警告可以例外。</p>
+<p>如果不能马上迁移到替代 API，或者在 API 对外部用户废弃但还需要继续对库内部支持时，有理由的废弃警告可以保留。</p>
 
 <h3 id="构造器initializers-1">构造器/Initializers</h3>
 
@@ -2165,12 +2169,12 @@ arguments for <code class="highlighter-rouge">var</code> properties and for any 
 values. When that initializer is suitable (that is, a <code class="highlighter-rouge">public</code> one is not
 needed), it is used and no explicit initializer is written.</p>
 
-<p>对于 <code class="highlighter-rouge">Struct</code>，Swift 会合成实参为 <code class="highlighter-rouge">var</code> 属性和缺少默认值的 <code class="highlighter-rouge">let</code> 属性的非公开逐一成员 <code class="highlighter-rouge">init</code>。如果该构造器已经足够（也就是说不需要 <code class="highlighter-rouge">public</code> 的话），直接使用而不需要书写显式的构造器。</p>
+<p>对于 <code class="highlighter-rouge">Struct</code>，Swift 会合成实参为 <code class="highlighter-rouge">var</code> 属性和缺少默认值的 <code class="highlighter-rouge">let</code> 属性的非公开逐一成员 <code class="highlighter-rouge">init</code>。如果该构造器已经足够（也就是说不需要 <code class="highlighter-rouge">public</code>），直接使用，不需要写显式的构造器。</p>
 
 <p>The initializers declared by the special <code class="highlighter-rouge">ExpressibleBy*Literal</code> compiler
 protocols are never called directly.</p>
 
-<p>遵循特殊的 <code class="highlighter-rouge">ExpressibleBy*Literal</code> 编译器协议而声明的构造器永远不应该直接调用。</p>
+<p>永远不要直接调用遵循特殊 <code class="highlighter-rouge">ExpressibleBy*Literal</code> 编译器协议的构造器。</p>
 
 <div class="language-swift good highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="kd">struct</span> <span class="kt">Kilometers</span><span class="p">:</span> <span class="kt">ExpressibleByIntegerLiteral</span> <span class="p">{</span>
   <span class="nf">init</span><span class="p">(</span><span class="n">integerLiteral</span> <span class="nv">value</span><span class="p">:</span> <span class="kt">Int</span><span class="p">)</span> <span class="p">{</span>
@@ -2178,8 +2182,8 @@ protocols are never called directly.</p>
   <span class="p">}</span>
 <span class="p">}</span>
 
-<span class="k">let</span> <span class="nv">k1</span><span class="p">:</span> <span class="kt">Kilometers</span> <span class="o">=</span> <span class="mi">10</span>                          <span class="c1">// GOOD.</span>
-<span class="k">let</span> <span class="nv">k2</span> <span class="o">=</span> <span class="mi">10</span> <span class="k">as</span> <span class="kt">Kilometers</span>                        <span class="c1">// ALSO GOOD.</span>
+<span class="k">let</span> <span class="nv">k1</span><span class="p">:</span> <span class="kt">Kilometers</span> <span class="o">=</span> <span class="mi">10</span>                          <span class="c1">// 推荐</span>
+<span class="k">let</span> <span class="nv">k2</span> <span class="o">=</span> <span class="mi">10</span> <span class="k">as</span> <span class="kt">Kilometers</span>                        <span class="c1">// 推荐</span>
 </code></pre></div></div>
 
 <div class="language-swift bad highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="kd">struct</span> <span class="kt">Kilometers</span><span class="p">:</span> <span class="kt">ExpressibleByIntegerLiteral</span> <span class="p">{</span>
@@ -2188,7 +2192,7 @@ protocols are never called directly.</p>
   <span class="p">}</span>
 <span class="p">}</span>
 
-<span class="k">let</span> <span class="nv">k</span> <span class="o">=</span> <span class="kt">Kilometers</span><span class="p">(</span><span class="nv">integerLiteral</span><span class="p">:</span> <span class="mi">10</span><span class="p">)</span>           <span class="c1">// AVOID.</span>
+<span class="k">let</span> <span class="nv">k</span> <span class="o">=</span> <span class="kt">Kilometers</span><span class="p">(</span><span class="nv">integerLiteral</span><span class="p">:</span> <span class="mi">10</span><span class="p">)</span>           <span class="c1">// 不推荐</span>
 </code></pre></div></div>
 
 <p>Explicitly calling <code class="highlighter-rouge">.init(...)</code> is allowed only when the receiver of the call is
@@ -2196,7 +2200,7 @@ a metatype variable. In direct calls to the initializer using the literal type
 name, <code class="highlighter-rouge">.init</code> is omitted. (<strong>Referring</strong> to the initializer directly by using
 <code class="highlighter-rouge">MyType.init</code> syntax to convert it to a closure is permitted.)</p>
 
-<p>只有当调用者是元类型变量时才允许明确调用  <code class="highlighter-rouge">.init(...)</code>  。使用字面量类型名字直接调用构造器时，省略 <code class="highlighter-rouge">.init</code>。（构造器使用 <code class="highlighter-rouge">MyType.init</code> 语法作为闭包进行<strong>引用</strong>是允许的。）</p>
+<p>只有当调用者是元类型变量时才允许明确调用 <code class="highlighter-rouge">.init(...)</code>。使用字面量类型名字直接调用构造器时，省略 <code class="highlighter-rouge">.init</code>。（构造器使用 <code class="highlighter-rouge">MyType.init</code> 语法作为闭包进行<strong>引用</strong>是允许的。）</p>
 
 <div class="language-swift good highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">let</span> <span class="nv">x</span> <span class="o">=</span> <span class="kt">MyType</span><span class="p">(</span><span class="n">arguments</span><span class="p">)</span>
 
@@ -2214,7 +2218,7 @@ name, <code class="highlighter-rouge">.init</code> is omitted. (<strong>Referrin
 <p>The <code class="highlighter-rouge">get</code> block for a read-only computed property is omitted and its body is
 directly nested inside the property declaration.</p>
 
-<p>只读计算属性的 <code class="highlighter-rouge">get</code> 块可以省略，并将执行体直接嵌套在属性声明里。</p>
+<p>只读计算属性的 <code class="highlighter-rouge">get</code> 块可以省略，将执行体直接嵌套在属性声明里。</p>
 
 <div class="language-swift good highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">var</span> <span class="nv">totalCost</span><span class="p">:</span> <span class="kt">Int</span> <span class="p">{</span>
   <span class="k">return</span> <span class="n">items</span><span class="o">.</span><span class="n">sum</span> <span class="p">{</span> <span class="nv">$0</span><span class="o">.</span><span class="n">cost</span> <span class="p">}</span>
@@ -2236,7 +2240,7 @@ long forms <code class="highlighter-rouge">Array&lt;Element&gt;</code>, <code cl
 are only written when required by the compiler; for example, the Swift parser
 requires <code class="highlighter-rouge">Array&lt;Element&gt;.Index</code> and does not accept <code class="highlighter-rouge">[Element].Index</code>.</p>
 
-<p>数组，字典和可选类型尽可能使用简写形式，也就是 <code class="highlighter-rouge">[Element]</code>，<code class="highlighter-rouge">[Key: Value]</code> 和 <code class="highlighter-rouge">Wrapped?</code>。完整形式 <code class="highlighter-rouge">Array&lt;Element&gt;</code>，<code class="highlighter-rouge">Dictionary&lt;Key, Value&gt;</code> 和 <code class="highlighter-rouge">Optional&lt;Wrapped&gt;</code> 只有在编译器需要时才使用，例如 Swift 语法分析程序不接受 <code class="highlighter-rouge">[Element].Index</code> 而需要用 <code class="highlighter-rouge">Array&lt;Element&gt;.Index</code>。</p>
+<p>数组、字典和可选类型尽可能使用简写形式，也就是 <code class="highlighter-rouge">[Element]</code>，<code class="highlighter-rouge">[Key: Value]</code> 和 <code class="highlighter-rouge">Wrapped?</code>。完整形式 <code class="highlighter-rouge">Array&lt;Element&gt;</code>，<code class="highlighter-rouge">Dictionary&lt;Key, Value&gt;</code> 和 <code class="highlighter-rouge">Optional&lt;Wrapped&gt;</code> 只有在编译器需要时才使用，例如 Swift 语法分析程序不接受 <code class="highlighter-rouge">[Element].Index</code> 而需要用 <code class="highlighter-rouge">Array&lt;Element&gt;.Index</code>。</p>
 
 <div class="language-swift good highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="kd">func</span> <span class="n">enumeratedDictionary</span><span class="o">&lt;</span><span class="kt">Element</span><span class="o">&gt;</span><span class="p">(</span>
   <span class="n">from</span> <span class="nv">values</span><span class="p">:</span> <span class="p">[</span><span class="kt">Element</span><span class="p">],</span>
@@ -2267,7 +2271,7 @@ the function signature <code class="highlighter-rouge">Void -&gt; Result</code> 
 arguments must be surrounded by parentheses, and <code class="highlighter-rouge">(Void)</code> has a different
 meaning: an argument list with a single empty-tuple argument.)</p>
 
-<p>空的实参列表永远写作 <code class="highlighter-rouge">()</code>，而不是 <code class="highlighter-rouge">Void</code>。（事实上， <code class="highlighter-rouge">Void -&gt; Result</code> 的函数签名在 Swift 里会报错，因为函数实参必须用括号包围，而 <code class="highlighter-rouge">(void)</code> 有着其他含义：单个空元组实参的实参列表。</p>
+<p>空的实参列表永远写作 <code class="highlighter-rouge">()</code>，而不是 <code class="highlighter-rouge">Void</code>。（事实上，<code class="highlighter-rouge">Void -&gt; Result</code> 的函数签名在 Swift 里会报错，因为函数实参必须用括号包围，而 <code class="highlighter-rouge">(void)</code> 有着其他含义：单个空元组实参的实参列表。）</p>
 
 <div class="language-swift good highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="kd">func</span> <span class="nf">doSomething</span><span class="p">()</span> <span class="p">{</span>
   <span class="c1">// ...</span>
@@ -2294,22 +2298,22 @@ of −1 when an element was not found in a collection). Sentinel values can
 easily and accidentally propagate through other layers of logic because the type
 system cannot distinguish between them and valid outcomes.</p>
 
-<p>在设计算法时避免哨兵值（例如使用 -1 的 “索引” 表示集合里找不到某个元素）。哨兵值容易被偶然传递到其它逻辑层，因为类型系统没办法将它们和合法结果进行区分。</p>
+<p>在设计算法时避免哨兵值（例如 <code class="highlighter-rouge">index</code> 是 -1 表示集合里找不到某个元素）。哨兵值容易被偶然传递到其它逻辑层，因为类型系统没办法将它们和合法结果进行区分。</p>
 
 <p><code class="highlighter-rouge">Optional</code> is used to convey a non-error result that is either a value or the
 absence of a value. For example, when searching a collection for a value, not
 finding the value is still a <strong>valid and expected</strong> outcome, not an error.</p>
 
-<p><code class="highlighter-rouge">Optional</code> 用于值和缺省值其中之一的表达，是非错误结果。例如：在集合中查询一个值时，值没有找到是一个<strong>合法并可预期</strong>的结果，而不是一个错误。</p>
+<p><code class="highlighter-rouge">Optional</code> 用于传递一个非错误的结果，要不有值，要不没有值。例如：在集合中查询一个值时，值没有找到是一个<strong>合法并可预期</strong>的结果，而不是一个错误。</p>
 
 <div class="language-swift good highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="kd">func</span> <span class="nf">index</span><span class="p">(</span><span class="n">of</span> <span class="nv">thing</span><span class="p">:</span> <span class="kt">Thing</span><span class="p">,</span> <span class="k">in</span> <span class="nv">things</span><span class="p">:</span> <span class="p">[</span><span class="kt">Thing</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="kt">Int</span><span class="p">?</span> <span class="p">{</span>
   <span class="c1">// ...</span>
 <span class="p">}</span>
 
 <span class="k">if</span> <span class="k">let</span> <span class="nv">index</span> <span class="o">=</span> <span class="nf">index</span><span class="p">(</span><span class="nv">of</span><span class="p">:</span> <span class="n">thing</span><span class="p">,</span> <span class="nv">in</span><span class="p">:</span> <span class="n">lotsOfThings</span><span class="p">)</span> <span class="p">{</span>
-  <span class="c1">// Found it.</span>
+  <span class="c1">// 找到了</span>
 <span class="p">}</span> <span class="k">else</span> <span class="p">{</span>
-  <span class="c1">// Didn't find it.</span>
+  <span class="c1">// 没找到</span>
 <span class="p">}</span>
 </code></pre></div></div>
 
@@ -2319,9 +2323,9 @@ finding the value is still a <strong>valid and expected</strong> outcome, not an
 
 <span class="k">let</span> <span class="nv">index</span> <span class="o">=</span> <span class="nf">index</span><span class="p">(</span><span class="nv">of</span><span class="p">:</span> <span class="n">thing</span><span class="p">,</span> <span class="nv">in</span><span class="p">:</span> <span class="n">lotsOfThings</span><span class="p">)</span>
 <span class="k">if</span> <span class="n">index</span> <span class="o">!=</span> <span class="o">-</span><span class="mi">1</span> <span class="p">{</span>
-  <span class="c1">// Found it.</span>
+  <span class="c1">// 找到了</span>
 <span class="p">}</span> <span class="k">else</span> <span class="p">{</span>
-  <span class="c1">// Didn't find it.</span>
+  <span class="c1">// 没找到</span>
 <span class="p">}</span>
 </code></pre></div></div>
 
@@ -2331,7 +2335,7 @@ reason that is clear to the client. (The domain-specific restriction is meant to
 exclude severe errors that are typically out of the user’s control to properly
 handle, such as out-of-memory errors.)</p>
 
-<p><code class="highlighter-rouge">Optional</code> 也用于表示单一而明确失败的错误哨兵，也就是当操作是因为使用者明确的单个特定领域原因而失败时。（限制在特定领域是为了排除那些用户明显无法正确处理的严重错误，例如内存不足错误。）</p>
+<p><code class="highlighter-rouge">Optional</code> 也用于表示单一而明确失败的错误哨兵，也就是当操作是因为使用者明确的单个特定领域原因而失败时。（限制在特定领域，是为了排除那些用户明显无法正确处理的严重错误，例如内存不足错误。）</p>
 
 <p>For example, converting a string to an integer would fail if the
 string does not represent a valid integer that fits into the type’s bit width:</p>
@@ -2349,7 +2353,7 @@ string does not represent a valid integer that fits into the type’s bit width:
 access the wrapped value are written as comparisons to <code class="highlighter-rouge">nil</code>. The following
 example is clear about the programmer’s intent:</p>
 
-<p>判断一个 <code class="highlighter-rouge">Optional</code> 是否非 <code class="highlighter-rouge">nil</code> 但不需要访问解包值时，条件语句用和 <code class="highlighter-rouge">nil</code> 比较的形式。下面的例子能清晰地表达程序意图：</p>
+<p>如果要判断一个 <code class="highlighter-rouge">Optional</code> 非 <code class="highlighter-rouge">nil</code> 但不需要访问解包值，可以直接和 <code class="highlighter-rouge">nil</code> 进行比较。下面的例子能清晰地表达程序意图：</p>
 
 <div class="language-swift good highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">if</span> <span class="n">value</span> <span class="o">!=</span> <span class="kc">nil</span> <span class="p">{</span>
   <span class="nf">print</span><span class="p">(</span><span class="s">"value was not nil"</span><span class="p">)</span>
@@ -2360,7 +2364,7 @@ example is clear about the programmer’s intent:</p>
 syntax, obfuscates the intent by appearing to unwrap the value and then
 immediately throw it away.</p>
 
-<p>这个例子里，如果利用 Swift 模式匹配和绑定语法，将值解包后马上丢弃，会混淆程序意图。</p>
+<p>这个例子里，用到了 Swift 模式匹配和绑定语法，将值解包后又马上丢弃，这就会让人产生误解（译者注：程序的目的是判断有没有值，但是这种写法看起来并不直观，好像有其他意图）。</p>
 
 <div class="language-swift bad highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">if</span> <span class="k">let</span> <span class="nv">_</span> <span class="o">=</span> <span class="n">value</span> <span class="p">{</span>
   <span class="nf">print</span><span class="p">(</span><span class="s">"value was not nil"</span><span class="p">)</span>
@@ -2371,7 +2375,7 @@ immediately throw it away.</p>
 
 <p>Error types are used when there are multiple possible error states.</p>
 
-<p>错误类型在错误有多种可能得状态时使用。</p>
+<p>错误类型在错误有多种可能的状态时使用。</p>
 
 <p>Throwing errors instead of merging them with the return type cleanly separates
 concerns in the API. Valid inputs and valid state produce valid outputs in the
@@ -2379,7 +2383,7 @@ result domain and are handled with standard sequential control flow. Invalid
 inputs and invalid state are treated as errors and are handled using the
 relevant syntactic constructs (<code class="highlighter-rouge">do</code>-<code class="highlighter-rouge">catch</code> and <code class="highlighter-rouge">try</code>). For example:</p>
 
-<p>将错误抛出而不是随着返回值返回可以更清晰地将问题从 API 里分离。合法输入和合法状态在结果域里产生合法输出，并通过标准的控制流进行处理。非法输入和非法状态应视作错误，并使用相关语法结构进行处理（<code class="highlighter-rouge">do</code>-<code class="highlighter-rouge">catch</code> 和 <code class="highlighter-rouge">try</code>）。例如：</p>
+<p>将错误抛出而不是随着返回值返回，可以更清晰地将问题从 API 里分离。合法输入和合法状态在结果域里产生合法输出，并通过标准的控制流进行处理。非法输入和非法状态应视作错误，并使用相关语法结构进行处理（<code class="highlighter-rouge">do</code>-<code class="highlighter-rouge">catch</code> 和 <code class="highlighter-rouge">try</code>）。例如：</p>
 
 <div class="language-swift good highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="kd">struct</span> <span class="kt">Document</span> <span class="p">{</span>
   <span class="kd">enum</span> <span class="kt">ReadError</span><span class="p">:</span> <span class="kt">Error</span> <span class="p">{</span>
@@ -2427,7 +2431,7 @@ state that immediate termination is the only reasonable action, it is better to
 use <code class="highlighter-rouge">do</code>-<code class="highlighter-rouge">catch</code> or <code class="highlighter-rouge">try?</code> and provide more context in the error message to
 assist debugging if the operation does fail.</p>
 
-<p>通常来说，除了下面的说明以外，强制-<code class="highlighter-rouge">try!</code> 是禁止的；它等同于对 <code class="highlighter-rouge">fatalError</code> 使用 <code class="highlighter-rouge">try</code> 但却没有有意义的信息。如果某个错误的发生意味着程序处在无法恢复的状态，那么立即终止是唯一合理的动作，这时使用 <code class="highlighter-rouge">do</code>-<code class="highlighter-rouge">catch</code> 或者 <code class="highlighter-rouge">try?</code> 并提供错误的更多上下文信息，可以更好地帮助调试。</p>
+<p>通常来说，除了下面的说明以外，<code class="highlighter-rouge">try!</code> 是禁止的；它等同于对 <code class="highlighter-rouge">fatalError</code> 使用 <code class="highlighter-rouge">try</code> 但却没有有意义的信息。如果某个错误的发生意味着程序处在无法恢复的状态，那么立即终止是唯一合理的动作，这时使用 <code class="highlighter-rouge">do</code>-<code class="highlighter-rouge">catch</code> 或者 <code class="highlighter-rouge">try?</code> 并提供错误的更多上下文信息，可以更好地帮助调试。</p>
 
 <blockquote>
   <p><strong>Exception:</strong> Force-<code class="highlighter-rouge">try!</code> is allowed in unit tests and test-only code. It is
@@ -2437,7 +2441,7 @@ this to mean a single expression that could be evaluated without context in
 the Swift REPL. For example, consider initializing a regular expression from a
 a string literal:</p>
 
-  <p><strong>例外：</strong>强制-<code class="highlighter-rouge">try!</code> 在单元测试和仅用于测试的代码是允许使用的。也可以在非测试代码里使用，在错误抛出非常明确只可能是由<strong>编程人员</strong>导致时；我们特别定义这种情况，是因为在 Swift REPL 里有些单个表达式没有上下文就无法被推断。例如，考虑通过字符串字面量来构造正则表达式的情况：</p>
+  <p><strong>例外：</strong><code class="highlighter-rouge">try!</code> 在单元测试和仅用于测试的代码中允许使用。如果确定错误抛出只可能由<strong>编程人员</strong>导致，也可以在非测试代码里使用；我们特别定义这种情况，是因为在 Swift REPL 里有些单个表达式没有上下文就无法被推断。例如，考虑通过字符串字面量来构造正则表达式的情况：</p>
 
   <div class="language-swift good highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">let</span> <span class="nv">regex</span> <span class="o">=</span> <span class="k">try!</span> <span class="kt">NSRegularExpression</span><span class="p">(</span><span class="nv">pattern</span><span class="p">:</span> <span class="s">"a*b+c?"</span><span class="p">)</span>
 </code></pre></div>  </div>
@@ -2453,25 +2457,27 @@ error handling logic here.</p>
 from user input, <code class="highlighter-rouge">try!</code> should <strong>not</strong> be used and errors should be handled
 gracefully.</p>
 
-  <p>如果上面 pattern 不是字面量，而是动态生成的或者是使用者传入的，则<strong>不</strong>应该使用 <code class="highlighter-rouge">try!</code> ，而应该更优雅地处理出现的错误。</p>
+  <p>如果上面 pattern 不是字面量，而是动态生成的或者是使用者传入的，则<strong>不</strong>应该使用 <code class="highlighter-rouge">try!</code>，应该更优雅地处理出现的错误。</p>
 </blockquote>
 
-<h3 id="强制解包和强制擦除force-unwrapping-and-force-casts">强制解包和强制擦除/Force Unwrapping and Force Casts</h3>
+<h3 id="强制解包和强制类型转换force-unwrapping-and-force-casts">强制解包和强制类型转换/Force Unwrapping and Force Casts</h3>
 
 <p>Force-unwrapping and force-casting are often code smells and are strongly
 discouraged. Unless it is extremely clear from surrounding code why such an
 operation is safe, a comment should be present that describes the invariant that
 ensures that the operation is safe. For example,</p>
 
-<p>强制解包和强制擦除通常意味着有代码异味和被强迫进行妥协。除非它能通过周围代码解释清楚该操作的安全性，并需要附加注释来描述这个操作是永远安全的。例如，</p>
+<p>强制解包和强制类型转换通常说明代码有问题，强烈不推荐。除非它能通过周围代码解释清楚该操作的安全性，并需要附加注释来描述这个操作是永远安全的。例如，</p>
 
 <div class="language-swift good highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">let</span> <span class="nv">value</span> <span class="o">=</span> <span class="nf">getSomeInteger</span><span class="p">()</span>
 
 <span class="c1">// ...intervening code...</span>
+<span class="c1">// ...无关代码...</span>
 
 <span class="c1">// This force-unwrap is safe because `value` is guaranteed to fall within the</span>
 <span class="c1">// valid enum cases because it came from some data source that only permits</span>
 <span class="c1">// those raw values.</span>
+<span class="c1">// 这里的强制解包是安全的，会保证传入的 `value` 是合法的，因为它的数据源只提供这些合法枚举项</span>
 <span class="k">return</span> <span class="kt">SomeEnum</span><span class="p">(</span><span class="nv">rawValue</span><span class="p">:</span> <span class="n">value</span><span class="p">)</span><span class="o">!</span>
 </code></pre></div></div>
 
@@ -2481,7 +2487,7 @@ without additional documentation. This keeps such code free of unnecessary
 control flow. In the event that <code class="highlighter-rouge">nil</code> is unwrapped or a cast operation is to
 an incompatible type, the test will fail which is the desired result.</p>
 
-  <p><strong>例外：</strong>在单元测试和仅用于测试的代码里允许没有附加注释的强制解包。这可以减少代码不必要的控制流。在 <code class="highlighter-rouge">nil</code> 被解包或者不合适的类型擦除发生时，测试也会按照预期而失败。</p>
+  <p><strong>例外：</strong>在单元测试和仅用于测试的代码里，允许使用没有注释的强制解包。这可以减少代码中不必要的控制流。在 <code class="highlighter-rouge">nil</code> 被解包或者不合适的类型擦除发生时，测试也会按照预期而失败。</p>
 </blockquote>
 
 <h3 id="可选值隐式解包implicitly-unwrapped-optionals">可选值隐式解包/Implicitly Unwrapped Optionals</h3>
@@ -2490,7 +2496,7 @@ an incompatible type, the test will fail which is the desired result.</p>
 whenever possible in favor of non-optional declarations or regular <code class="highlighter-rouge">Optional</code>
 types. Exceptions are described below.</p>
 
-<p>可选值隐式解包有潜在的不安全之处，当可以用非可选值声明或者习惯的 <code class="highlighter-rouge">Optional</code> 类型时就应该避免。除了下面描述的情况外。</p>
+<p>可选值隐式解包本身是不安全的，尽可能使用非可选值声明，或者使用常规的 <code class="highlighter-rouge">Optional</code> 类型。下面是一些特殊情况。</p>
 
 <p>User-interface objects whose lifetimes are based on the UI lifecycle instead of
 being strictly based on the lifetime of the owning object are allowed to use
@@ -2503,7 +2509,7 @@ properties regular optionals can put too much burden on the user to unwrap them
 because they are guaranteed to be non-nil and remain that way once the objects
 are ready for use.</p>
 
-<p>存活时间基于 UI 生命周期而不是严格基于持有关系的用户界面元素可以使用可选值显式解包。这种情况的例子包括连接 XIB 文件或 storyboard 中元素的 <code class="highlighter-rouge">@IBOutlet</code> 属性，显式初始化的属性，例如在 <code class="highlighter-rouge">prepareForSegue</code> 实现里调用的 view controller，还有在类生命周期以外时间点会被初始化的属性，例如在 view controller <code class="highlighter-rouge">viewDidLoad</code> 方法里的视图。这些属性如果用习惯的可选值会加重使用者解包的负担，因为它们能确保非空并且一旦已经准备好被使用就会一直保持在这种状态。</p>
+<p>存活时间基于 UI 生命周期而不是严格基于持有关系的用户界面元素，可以使用可选值显式解包。这种情况的例子包括连接 XIB 文件或 storyboard 中元素的 <code class="highlighter-rouge">@IBOutlet</code> 属性，外部初始化的属性（例如 view controller 调用的 <code class="highlighter-rouge">prepareForSegue</code> 实现），还有在类生命周期中初始化的属性（例如在 view controller <code class="highlighter-rouge">viewDidLoad</code> 方法里初始化的视图）。这些属性如果用可选值，会加重使用者解包的负担，因为它们能确保非空，并且一旦初始化完毕就会一直有值。</p>
 
 <div class="language-swift good highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="kd">class</span> <span class="kt">SomeViewController</span><span class="p">:</span> <span class="kt">UIViewController</span> <span class="p">{</span>
   <span class="kd">@IBOutlet</span> <span class="k">var</span> <span class="nv">button</span><span class="p">:</span> <span class="kt">UIButton</span><span class="o">!</span>
@@ -2526,14 +2532,14 @@ footprint of those implicitly unwrapped optionals as small as possible in your
 Swift code; that is, do not propagate them through multiple layers of your own
 abstractions.</p>
 
-<p>可选值隐式解包也会在 Swift 代码使用缺少恰当判空特性的 Objective-C API 时出现。如果可能，和该代码的拥有者商量添加上那些注解，该 API 在 Swift 就可以更清晰的引入。如果没有可能，尽可能尝试将这些可选值隐式解包在 Swift 代码中的影响缩小 ；也就是说，不要将它们扩散到多个你自己的抽象层。</p>
+<p>如果在 Swift 中使用不支持可空属性的 Objective-C API，也可能用到可选值隐式解包。如果可能的话，让代码的维护者进行修改，从而能在 Swift 中正常使用可选值。如果没有可能，尽可能缩小这些可选值隐式解包在 Swift 代码中的影响；也就是说，不要将它们扩散到多个你自己的抽象层中。</p>
 
 <p>Implicitly unwrapped optionals are also allowed in unit tests. This is for
 reasons similar to the UI object scenario above—the lifetime of test
 fixtures often begins not in the test’s initializer but in the <code class="highlighter-rouge">setUp()</code> method
 of a test so that they can be reset before the execution of each test.</p>
 
-<p>可选值隐式解包在单元测试也被允许。这和上面的 UI 元素情况理由差不多——测试里对象的生命周期通常不从测试构造器开始，而是从测试的 <code class="highlighter-rouge">setUp()</code> 方法开始，以便在每次测试执行前重置。</p>
+<p>可选值隐式解包在单元测试中可以使用。这和上面的 UI 元素情况理由差不多——测试里对象的生命周期通常不从测试构造器开始，而是从测试的 <code class="highlighter-rouge">setUp()</code> 方法开始，以便在每次测试执行前重置。</p>
 
 <h3 id="访问等级access-levels">访问等级/Access Levels</h3>
 
@@ -2542,13 +2548,13 @@ declarations, the default access level is <code class="highlighter-rouge">intern
 the default access level is the lesser of <code class="highlighter-rouge">internal</code> and the access level of the
 enclosing declaration.</p>
 
-<p>在声明里省略显式的访问等级是允许的。顶层声明的默认访问等级是 <code class="highlighter-rouge">internal</code>。嵌套的声明默认访问等级和其外层声明访问等级相同但不能高于 <code class="highlighter-rouge">internal</code> 。</p>
+<p>在声明里省略显式的访问等级是允许的。顶层声明的默认访问等级是 <code class="highlighter-rouge">internal</code>。嵌套的声明默认访问等级和其外层声明访问等级相同，但不能高于 <code class="highlighter-rouge">internal</code> 。</p>
 
 <p>Specifying an explicit access level at the file level on an extension is
 forbidden. Each member of the extension has its access level specified if it is
 different than the default.</p>
 
-<p>给文件级别的扩展指定显式访问等级是不允许的。拓展里的每一个成员如果不采用默认的访问等级则应该单独进行指定。</p>
+<p>给文件级别的扩展指定显式访问等级是不允许的。拓展里的每一个成员如果不采用默认的访问等级，则应该单独进行指定。</p>
 
 <div class="language-swift good highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="kd">extension</span> <span class="kt">String</span> <span class="p">{</span>
   <span class="kd">public</span> <span class="k">var</span> <span class="nv">isUppercase</span><span class="p">:</span> <span class="kt">Bool</span> <span class="p">{</span>
@@ -2579,7 +2585,7 @@ preferred (instead of naming conventions) to express scoped and hierarchical
 relationships among types when possible. For example, flag <code class="highlighter-rouge">enum</code>s or error
 types that are associated with a specific type are nested in that type.</p>
 
-<p>Swift 里允许嵌套 <code class="highlighter-rouge">enum</code>，<code class="highlighter-rouge">struct</code> 和 <code class="highlighter-rouge">class</code>，所以在可能时，嵌套更适合（比起命名约定）表示作用域和类型之间的分级关系。例如，在类型里嵌套特定类型的 <code class="highlighter-rouge">enum</code> 作标志或者错误类型。</p>
+<p>Swift 里允许嵌套 <code class="highlighter-rouge">enum</code>、<code class="highlighter-rouge">struct</code> 和 <code class="highlighter-rouge">class</code>，嵌套更适合（比起命名约定）表示作用域和类型之间的分级关系，因此推荐使用。例如，把类型相关的 <code class="highlighter-rouge">enum</code> 或者错误类型放到这个类型内部。</p>
 
 <div class="language-swift good highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="kd">class</span> <span class="kt">Parser</span> <span class="p">{</span>
   <span class="kd">enum</span> <span class="kt">Error</span><span class="p">:</span> <span class="kt">Swift</span><span class="o">.</span><span class="kt">Error</span> <span class="p">{</span>
@@ -2609,14 +2615,14 @@ types that are associated with a specific type are nested in that type.</p>
 versa, so this rule does not apply to situations such as the relationship
 between a controller class and its delegate protocol.</p>
 
-<p>Swift 目前还不支持嵌套协议在其它类型中，反之亦然，所以该规则不适用于解决例如控制器类型和它代理协议之间的关系。</p>
+<p>Swift 目前还不支持在其它类型中嵌套协议，反之亦然，所以该规则不适用于某些情况，例如控制器类型和它的代理协议。</p>
 
 <p>Declaring an <code class="highlighter-rouge">enum</code> without cases is the canonical way to define a “namespace”
 to group a set of related declarations, such as constants or helper functions.
 This <code class="highlighter-rouge">enum</code> automatically has no instances and does not require that extra
 boilerplate code be written to prevent instantiation.</p>
 
-<p>声明一个没有 case 的 <code class="highlighter-rouge">enum</code> 是定义用于相关声明分组的“命名空间”的公认方案，例如常量或者帮助方法。该 <code class="highlighter-rouge">enum</code> 会自然而然不存在实例并且不需要额外样板代码来避免可被实例化。</p>
+<p>如果要定一个“命名空间”来对互相关联的声明（例如常量或者帮助方法）就行分组，公认的做法是声明一个没有枚举项的 <code class="highlighter-rouge">enum</code>。该 <code class="highlighter-rouge">enum</code> 自然不存在实例，并且不需要额外的样板代码来避免被实例化。</p>
 
 <div class="language-swift good highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="kd">enum</span> <span class="kt">Dimensions</span> <span class="p">{</span>
   <span class="kd">static</span> <span class="k">let</span> <span class="nv">tileMargin</span><span class="p">:</span> <span class="kt">CGFloat</span> <span class="o">=</span> <span class="mi">8</span>
@@ -2640,7 +2646,7 @@ boilerplate code be written to prevent instantiation.</p>
 provides visual emphasis that the condition being tested is a special case that
 causes early exit from the enclosing scope.</p>
 
-<p><code class="highlighter-rouge">guard</code> 语句，比起条件相反的 <code class="highlighter-rouge">if</code> 语句，会更好地从视觉上强调该检查条件是导致从外层作用域提前退出的特例。</p>
+<p><code class="highlighter-rouge">guard</code> 语句，比起条件相反的 <code class="highlighter-rouge">if</code> 语句，会更好地从视觉上强调，该检查条件会导致从当前作用域提前退出。</p>
 
 <p>Furthermore, <code class="highlighter-rouge">guard</code> statements improve readability by eliminating extra levels
 of nesting (the “pyramid of doom”); failure conditions are closely coupled to
@@ -2694,7 +2700,7 @@ separated from their conditions by a great distance.</p>
 indentation when the entire body of the loop should only be executed in some
 cases (but see also the <code class="highlighter-rouge">for</code>-<code class="highlighter-rouge">where</code> discussion below.)</p>
 
-<p><code class="highlighter-rouge">guard</code>-<code class="highlighter-rouge">continue</code> 语句也可以避免循环的整个循环体只在某些情况下执行时缩进增加（但也可以看看下面 <code class="highlighter-rouge">for</code>-<code class="highlighter-rouge">where</code> 的讨论）。</p>
+<p>在循环语句中，<code class="highlighter-rouge">guard</code>-<code class="highlighter-rouge">continue</code> 语句也可以避免增加缩进，比如整个循环体只在某些情况下执行（不过要结合下面的 <code class="highlighter-rouge">for</code>-<code class="highlighter-rouge">where</code> 规范）。</p>
 
 <h3 id="for-where-循环for-where-loops"><code class="highlighter-rouge">for</code>-<code class="highlighter-rouge">where</code> 循环/<code class="highlighter-rouge">for</code>-<code class="highlighter-rouge">where</code> Loops</h3>
 
@@ -2702,7 +2708,7 @@ cases (but see also the <code class="highlighter-rouge">for</code>-<code class="
 condition of the element, the test is placed in the <code class="highlighter-rouge">where</code> clause of the <code class="highlighter-rouge">for</code>
 statement instead.</p>
 
-<p>当整个 <code class="highlighter-rouge">for</code> 循环体只包含了对元素的条件检查 <code class="highlighter-rouge">if</code> 块时，可以将该检查可以放在 <code class="highlighter-rouge">for</code> 语句里 <code class="highlighter-rouge">where</code> 分句中。</p>
+<p>当整个 <code class="highlighter-rouge">for</code> 循环体只包含对元素的条件检查 <code class="highlighter-rouge">if</code> 块，可以将该检查放在 <code class="highlighter-rouge">for</code> 语句的 <code class="highlighter-rouge">where</code> 分句中。</p>
 
 <div class="language-swift good highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">for</span> <span class="n">item</span> <span class="k">in</span> <span class="n">collection</span> <span class="k">where</span> <span class="n">item</span><span class="o">.</span><span class="n">hasProperty</span> <span class="p">{</span>
   <span class="c1">// ...</span>
@@ -2723,7 +2729,7 @@ statement instead.</p>
 <code class="highlighter-rouge">case</code> statements that do nothing but <code class="highlighter-rouge">fallthrough</code> to a <code class="highlighter-rouge">case</code> below are not
 allowed.</p>
 
-<p>当 <code class="highlighter-rouge">switch</code> 里的多个 <code class="highlighter-rouge">case	</code> 执行同样的语句时，这些 <code class="highlighter-rouge">case</code> 可以合并成一个范围或者逗号分隔的列表。声明多个 <code class="highlighter-rouge">case</code> 却不做任何事只 <code class="highlighter-rouge">fallthrough</code> 到下面 <code class="highlighter-rouge">case</code> 是不允许的。</p>
+<p>当 <code class="highlighter-rouge">switch</code> 里的多个 <code class="highlighter-rouge">case</code> 执行同样的语句时，这些 <code class="highlighter-rouge">case</code> 可以合并成一个范围或者逗号分隔的列表。声明多个 <code class="highlighter-rouge">case</code> 却不做任何事，只是 <code class="highlighter-rouge">fallthrough</code> 到后面的 <code class="highlighter-rouge">case</code> 是不允许的。</p>
 
 <div class="language-swift good highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">switch</span> <span class="n">value</span> <span class="p">{</span>
 <span class="k">case</span> <span class="mi">1</span><span class="p">:</span> <span class="nf">print</span><span class="p">(</span><span class="s">"one"</span><span class="p">)</span>
@@ -2748,7 +2754,7 @@ allowed.</p>
 <code class="highlighter-rouge">fallthrough</code> statement. Cases containing <em>additional</em> statements which then
 fallthrough to the next case are permitted.</p>
 
-<p>也就是说，不能有_只_执行 <code class="highlighter-rouge">fallthrough</code> 语句的 <code class="highlighter-rouge">case</code> 。包含_其余_语句再贯穿到下一个的 case 是允许的。</p>
+<p>也就是说，不能有_只_执行 <code class="highlighter-rouge">fallthrough</code> 语句的 <code class="highlighter-rouge">case</code>。包含_其余_语句再下落（fallthrough）到下一个 <code class="highlighter-rouge">case</code> 是允许的。</p>
 
 <h3 id="模式匹配pattern-matching">模式匹配/Pattern Matching</h3>
 
@@ -2769,6 +2775,7 @@ variable.</p>
 
 <span class="c1">// `label` is treated as a value here because it is not preceded by `let`, so</span>
 <span class="c1">// the pattern below matches only data points that have the label "goodbye".</span>
+<span class="c1">// 因为没有前置的 `let`，`label` 在这里是一个值，所以下面的模式匹配中只会匹配标签是“goodbye”的数据点。 </span>
 <span class="k">switch</span> <span class="kt">DataPoint</span><span class="o">.</span><span class="nf">labeled</span><span class="p">(</span><span class="s">"hello"</span><span class="p">,</span> <span class="mi">100</span><span class="p">)</span> <span class="p">{</span>
 <span class="k">case</span> <span class="o">.</span><span class="nf">labeled</span><span class="p">(</span><span class="n">label</span><span class="p">,</span> <span class="k">let</span> <span class="nv">value</span><span class="p">):</span>
   <span class="c1">// ...</span>
@@ -2778,6 +2785,8 @@ variable.</p>
 <span class="c1">// introduce a new binding (shadowing the local variable within the case) rather</span>
 <span class="c1">// than to match against the value of the local variable. Thus, this pattern</span>
 <span class="c1">// matches data points with any string label.</span>
+<span class="c1">// 每个单独的绑定使用前置 `let` 能清晰地表达引入了一个新的绑定（覆盖枚举项里的局部变量），而不是匹配局部变量的值。</span>
+<span class="c1">// 这样，这个模式匹配会将数据点和任意字符串标签匹配。</span>
 <span class="k">switch</span> <span class="kt">DataPoint</span><span class="o">.</span><span class="nf">labeled</span><span class="p">(</span><span class="s">"hello"</span><span class="p">,</span> <span class="mi">100</span><span class="p">)</span> <span class="p">{</span>
 <span class="k">case</span> <span class="o">.</span><span class="nf">labeled</span><span class="p">(</span><span class="k">let</span> <span class="nv">label</span><span class="p">,</span> <span class="k">let</span> <span class="nv">value</span><span class="p">):</span>
   <span class="c1">// ...</span>
@@ -2789,7 +2798,7 @@ the <code class="highlighter-rouge">label</code> variable above, that has been l
 the entire pattern and thus shadows the variable with a binding that applies to
 any string value:</p>
 
-<p>在下面的例子中，如果作者意图是使用上面的 <code class="highlighter-rouge">label</code> 变量进行匹配，那么就会因为 <code class="highlighter-rouge">let</code> 适用于整个模式匹配，从而该值会被任何绑定的字符串所覆盖。</p>
+<p>在下面的例子中，如果作者意图是使用上面的 <code class="highlighter-rouge">label</code> 变量进行匹配，那么就会因为 <code class="highlighter-rouge">let</code> 适用于整个模式匹配，导致该值会被任何绑定的字符串所覆盖。</p>
 
 <div class="language-swift bad highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">switch</span> <span class="kt">DataPoint</span><span class="o">.</span><span class="nf">labeled</span><span class="p">(</span><span class="s">"hello"</span><span class="p">,</span> <span class="mi">100</span><span class="p">)</span> <span class="p">{</span>
 <span class="k">case</span> <span class="kd">let</span> <span class="o">.</span><span class="nf">labeled</span><span class="p">(</span><span class="n">label</span><span class="p">,</span> <span class="n">value</span><span class="p">):</span>
@@ -2800,7 +2809,7 @@ any string value:</p>
 <p>Labels of tuple arguments and <code class="highlighter-rouge">enum</code> associated values are omitted when binding
 a value to a variable with the same name as the label.</p>
 
-<p>元组的实参标签和 <code class="highlighter-rouge">enum</code> 的关联值在用相同标签名字的变量来绑定值时可以被省略。</p>
+<p>元组的实参标签和 <code class="highlighter-rouge">enum</code> 的关联值在用相同标签名字的变量来绑定值时，可以被省略。</p>
 
 <div class="language-swift good highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="kd">enum</span> <span class="kt">BinaryTree</span><span class="o">&lt;</span><span class="kt">Element</span><span class="o">&gt;</span> <span class="p">{</span>
   <span class="kd">indirect</span> <span class="k">case</span> <span class="nf">subtree</span><span class="p">(</span><span class="nv">left</span><span class="p">:</span> <span class="kt">BinaryTree</span><span class="o">&lt;</span><span class="kt">Element</span><span class="o">&gt;</span><span class="p">,</span> <span class="nv">right</span><span class="p">:</span> <span class="kt">BinaryTree</span><span class="o">&lt;</span><span class="kt">Element</span><span class="o">&gt;</span><span class="p">)</span>
@@ -2818,7 +2827,7 @@ a value to a variable with the same name as the label.</p>
 <p>Including the labels adds noise that is redundant and lacking useful
 information:</p>
 
-<p>包含多余并缺乏有用信息的标签只会造成混淆：</p>
+<p>多余并缺乏有用信息的标签只会造成混淆：</p>
 
 <div class="language-swift bad highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">switch</span> <span class="n">treeNode</span> <span class="p">{</span>
 <span class="k">case</span> <span class="o">.</span><span class="nf">subtree</span><span class="p">(</span><span class="nv">left</span><span class="p">:</span> <span class="k">let</span> <span class="nv">left</span><span class="p">,</span> <span class="nv">right</span><span class="p">:</span> <span class="k">let</span> <span class="nv">right</span><span class="p">):</span>
@@ -2834,7 +2843,7 @@ information:</p>
 shuffle</em>) is only permitted if the left-hand side of the assignment is
 unlabeled.</p>
 
-<p>只有赋值表达式左侧没有标签的元组模式（有时候用_乱序元组_）变量赋值才被允许。</p>
+<p>只有赋值表达式左侧没有标签的元组模式（有时候用_乱序元组_），才允许进行元组模式变量赋值。</p>
 
 <div class="language-swift good highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nf">let</span> <span class="p">(</span><span class="n">a</span><span class="p">,</span> <span class="n">b</span><span class="p">)</span> <span class="o">=</span> <span class="p">(</span><span class="nv">y</span><span class="p">:</span> <span class="mi">4</span><span class="p">,</span> <span class="nv">x</span><span class="p">:</span> <span class="mf">5.0</span><span class="p">)</span>
 </code></pre></div></div>
@@ -2850,6 +2859,9 @@ confusing code.</p>
 <div class="language-swift bad highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c1">// This declares two variables, `Int`, which is a `Double` with value 5.0, and</span>
 <span class="c1">// `Double`, which is an `Int` with value 4.</span>
 <span class="c1">// `x` and `y` are not variables.</span>
+<span class="c1">// 这里声明了两个变量，一个是 `Int` 类型，但实际上是 5.0 的 `Double` 值，另一个是 `Double` 类型，</span>
+<span class="c1">// 但实际上是 4 的 `Int` 值。</span>
+<span class="c1">// `x` 和 `y` 不是变量。</span>
 <span class="nf">let</span> <span class="p">(</span><span class="nv">x</span><span class="p">:</span> <span class="kt">Int</span><span class="p">,</span> <span class="nv">y</span><span class="p">:</span> <span class="kt">Double</span><span class="p">)</span> <span class="o">=</span> <span class="p">(</span><span class="nv">y</span><span class="p">:</span> <span class="mi">4</span><span class="p">,</span> <span class="nv">x</span><span class="p">:</span> <span class="mf">5.0</span><span class="p">)</span>
 </code></pre></div></div>
 
@@ -2863,29 +2875,34 @@ literal <code class="highlighter-rouge">"x"</code> is neither <code class="highl
 can become any of those types depending on its context, falling back to <code class="highlighter-rouge">String</code>
 as a default.</p>
 
-<p>Swift 里的整型和字符串字面量没有固定类型。例如，<code class="highlighter-rouge">5</code> 本身不是一个 <code class="highlighter-rouge">Int</code>；它是能被 <code class="highlighter-rouge">ExpressibleByIntegerLiteral</code> 解释成任意类型的特殊字面量值，并且如果类型推断没有把它转换为更具体的类型，就会变成 <code class="highlighter-rouge">Int</code> 值。类似的，字面量<code class="highlighter-rouge">"x"</code>并不是 <code class="highlighter-rouge">String</code>， <code class="highlighter-rouge">Character</code> 或  <code class="highlighter-rouge">UnicodeScalar</code>，不过它可以根据上下文变成这些类型，默认情况是变成 <code class="highlighter-rouge">String</code>。</p>
+<p>Swift 里的整型和字符串字面量没有固定类型。例如，<code class="highlighter-rouge">5</code> 本身不是一个 <code class="highlighter-rouge">Int</code>；它能表示遵循 <code class="highlighter-rouge">ExpressibleByIntegerLiteral</code> 的任何类型，只有类型推断无法找到更明确的类型时，才会变成 <code class="highlighter-rouge">Int</code>。类似的，字面量 <code class="highlighter-rouge">"x"</code> 并不是 <code class="highlighter-rouge">String</code>、<code class="highlighter-rouge">Character</code> 或 <code class="highlighter-rouge">UnicodeScalar</code>，不过它可以根据上下文变成这些类型，默认情况是变成 <code class="highlighter-rouge">String</code>。</p>
 
 <p>Thus, when a literal is used to initialize a value of a type other than its
 default, and when that type cannot be inferred otherwise by context, specify the
 type explicitly in the declaration or use an <code class="highlighter-rouge">as</code> expression to coerce it.</p>
 
-<p>因此类型在使用默认以外的字面量方式构造值，并且该类型不能通过上下文推断更多信息时，需要在声明里用显式类型或者用 <code class="highlighter-rouge">as</code> 表达式来进行强制转换。</p>
+<p>因此类型在使用默认以外的字面量方式构造值，并且该类型不能通过上下文推断更多信息时，需要在声明里用显式类型，或者用 <code class="highlighter-rouge">as</code> 表达式来进行强制转换。</p>
 
 <div class="language-swift good highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c1">// Without a more explicit type, x1 will be inferred as type Int.</span>
+<span class="c1">// 没有更明确的类型，x1 会被推断为 Int 类型。</span>
 <span class="k">let</span> <span class="nv">x1</span> <span class="o">=</span> <span class="mi">50</span>
 
 <span class="c1">// These are explicitly type Int32.</span>
+<span class="c1">// 这些是明确的 Int32 类型。</span>
 <span class="k">let</span> <span class="nv">x2</span><span class="p">:</span> <span class="kt">Int32</span> <span class="o">=</span> <span class="mi">50</span>
 <span class="k">let</span> <span class="nv">x3</span> <span class="o">=</span> <span class="mi">50</span> <span class="k">as</span> <span class="kt">Int32</span>
 
 <span class="c1">// Without a more explicit type, y1 will be inferred as type String.</span>
+<span class="c1">// 没有更明确的类型，y1 会被推断为 String 类型。</span>
 <span class="k">let</span> <span class="nv">y1</span> <span class="o">=</span> <span class="s">"a"</span>
 
 <span class="c1">// These are explicitly type Character.</span>
+<span class="c1">// 这些是明确的 Character 类型。</span>
 <span class="k">let</span> <span class="nv">y2</span><span class="p">:</span> <span class="kt">Character</span> <span class="o">=</span> <span class="s">"a"</span>
 <span class="k">let</span> <span class="nv">y3</span> <span class="o">=</span> <span class="s">"a"</span> <span class="k">as</span> <span class="kt">Character</span>
 
 <span class="c1">// These are explicitly type UnicodeScalar.</span>
+<span class="c1">// 这些是明确的 UnicodeScalar 类型。</span>
 <span class="k">let</span> <span class="nv">y4</span><span class="p">:</span> <span class="kt">UnicodeScalar</span> <span class="o">=</span> <span class="s">"a"</span>
 <span class="k">let</span> <span class="nv">y5</span> <span class="o">=</span> <span class="s">"a"</span> <span class="k">as</span> <span class="kt">UnicodeScalar</span>
 
@@ -2894,6 +2911,7 @@ type explicitly in the declaration or use an <code class="highlighter-rouge">as<
 <span class="p">}</span>
 <span class="c1">// Inference also occurs for function arguments, so 50 is a UInt8 without</span>
 <span class="c1">// explicitly coercion.</span>
+<span class="c1">// 函数实参也可以推断，所以 50 是 UInt 但不需要强制明确。</span>
 <span class="nf">writeByte</span><span class="p">(</span><span class="mi">50</span><span class="p">)</span>
 </code></pre></div></div>
 
@@ -2903,34 +2921,42 @@ string is coerced to a character. So while the following examples emit errors,
 they are “good” because the errors are caught at compile-time and for the right
 reasons.</p>
 
-<p>如果字面量的强制转换不合理，编译器会抛出合适的错误，例如，数字不属于整型类型或者强制转换为字符的多字符的字符串时。所以下面例子抛出错误是“好”事，因为这些错误在编译期就找到了正确的错因。</p>
+<p>如果字面量的强制转换不合理，编译器会抛出对应的错误，例如，将不是整数的数字转换成整数，或者将一个字符串转换成字符。所以下面例子抛出错误是“好”事，因为这些错误在编译期就找到了正确的原因。</p>
 
 <div class="language-swift good highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c1">// error: integer literal '9223372036854775808' overflows when stored into 'Int64'</span>
+<span class="c1">// 错误：整型字面量 ‘9223372036854775808’ 存储为 ‘Int64’ 里会溢出</span>
 <span class="k">let</span> <span class="nv">a</span> <span class="o">=</span> <span class="mh">0x8000_0000_0000_0000</span> <span class="k">as</span> <span class="kt">Int64</span>
 
 <span class="c1">// error: cannot convert value of type 'String' to type 'Character' in coercion</span>
+<span class="c1">// 错误：无法将“String”类型的值强制转换为“Character”</span>
 <span class="k">let</span> <span class="nv">b</span> <span class="o">=</span> <span class="s">"ab"</span> <span class="k">as</span> <span class="kt">Character</span>
 </code></pre></div></div>
 
 <p>Using initializer syntax for these types of coercions can lead to misleading
 compiler errors, or worse, hard-to-debug runtime errors.</p>
 
-<p>这些类型使用构造器语法进行强制转换的话会产生易误导的编译器错误，或者可能更糟糕，产生难调试的运行时错误。</p>
+<p>如果使用构造器语法对这些类型进行强制转换，会产生易误导的编译器错误，也可能更糟，产生难调试的运行时错误。</p>
 
 <div class="language-swift bad highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c1">// This first tries to create an `Int` (signed) from the literal and then</span>
 <span class="c1">// convert it to a `UInt64`. Even though this literal fits into a `UInt64`, it</span>
 <span class="c1">// doesn't fit into an `Int` first, so it doesn't compile.</span>
+<span class="c1">// 这里首先尝试通过字面量创建一个 `Int`(有符号的)，然后转换为 `UInt64`。尽管这个字面量能存入 `UInt64`，</span>
+<span class="c1">// 但它在第一步无法存入 `Int`，所以这里无法通过编译。</span>
 <span class="k">let</span> <span class="nv">a1</span> <span class="o">=</span> <span class="kt">UInt64</span><span class="p">(</span><span class="mh">0x8000_0000_0000_0000</span><span class="p">)</span>
 
 <span class="c1">// This invokes `Character.init(_: String)`, thus creating a `String` "a" at</span>
 <span class="c1">// runtime (which involves a slow heap allocation), extracting the character</span>
 <span class="c1">// from it, and then releasing it. This is significantly slower than a proper</span>
 <span class="c1">// coercion.</span>
+<span class="c1">// 这里调用 `Character.init(_: String)`，因此会在运行时创建一个 `String` 的“a”（会涉及到耗时的堆分配），</span>
+<span class="c1">// 从中提取字符，然后再释放掉它。这比恰当的强制指定耗时明显。</span>
 <span class="k">let</span> <span class="nv">b</span> <span class="o">=</span> <span class="kt">Character</span><span class="p">(</span><span class="s">"a"</span><span class="p">)</span>
 
 <span class="c1">// As above, this creates a `String` and then `Character.init(_: String)`</span>
 <span class="c1">// attempts to extract the single character from it. This fails a precondition</span>
 <span class="c1">// check and traps at runtime.</span>
+<span class="c1">// 和上面类似，这里会创建一个 `String` 并且使用 `Character.init(_: String)` 尝试从中提取单个字符。</span>
+<span class="c1">// 这会因此先决条件在运行时发生错误。</span>
 <span class="k">let</span> <span class="nv">c</span> <span class="o">=</span> <span class="kt">Character</span><span class="p">(</span><span class="s">"ab"</span><span class="p">)</span>
 </code></pre></div></div>
 
@@ -2940,7 +2966,7 @@ compiler errors, or worse, hard-to-debug runtime errors.</p>
 <code class="highlighter-rouge">#imageLiteral(...)</code>, and <code class="highlighter-rouge">#fileLiteral(...)</code> are forbidden in non-playground
 production code. They are permitted in playground sources.</p>
 
-<p>会进行图形渲染的 playground 字面量 <code class="highlighter-rouge">#colorLiteral(...)</code>，<code class="highlighter-rouge">#imageLiteral(...)</code> 和 <code class="highlighter-rouge">#fileLiteral(...)</code> 在非 playground 的代码里是禁止的。它们只允许在 playground 源码里。</p>
+<p>禁止在非 playground 的代码中使用会进行图形渲染的 playground 字面量：<code class="highlighter-rouge">#colorLiteral(...)</code>、<code class="highlighter-rouge">#imageLiteral(...)</code> 和 <code class="highlighter-rouge">#fileLiteral(...)</code>。它们只允许出现在 playground 源码里。</p>
 
 <div class="language-swift good highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">let</span> <span class="nv">color</span> <span class="o">=</span> <span class="kt">UIColor</span><span class="p">(</span><span class="nv">red</span><span class="p">:</span> <span class="mf">1.0</span><span class="p">,</span> <span class="nv">green</span><span class="p">:</span> <span class="mf">1.0</span><span class="p">,</span> <span class="nv">blue</span><span class="p">:</span> <span class="mf">1.0</span><span class="p">,</span> <span class="nv">alpha</span><span class="p">:</span> <span class="mf">1.0</span><span class="p">)</span>
 </code></pre></div></div>
@@ -2948,21 +2974,23 @@ production code. They are permitted in playground sources.</p>
 <div class="language-swift bad highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">let</span> <span class="nv">color</span> <span class="o">=</span> <span class="err">#</span><span class="nf">colorLiteral</span><span class="p">(</span><span class="nv">red</span><span class="p">:</span> <span class="mf">1.0</span><span class="p">,</span> <span class="nv">green</span><span class="p">:</span> <span class="mf">1.0</span><span class="p">,</span> <span class="nv">blue</span><span class="p">:</span> <span class="mf">1.0</span><span class="p">,</span> <span class="nv">alpha</span><span class="p">:</span> <span class="mf">1.0</span><span class="p">)</span>
 </code></pre></div></div>
 
-<h3 id="捕获溢出运算trapping-vs-overflowing-arithmetic">捕获溢出运算/Trapping vs. Overflowing Arithmetic</h3>
+<h3 id="捕获-vs-溢出trapping-vs-overflowing-arithmetic">捕获 vs 溢出/Trapping vs. Overflowing Arithmetic</h3>
 
 <p>The standard (trapping-on-overflow) arithmetic and bitwise operators (<code class="highlighter-rouge">+</code>, <code class="highlighter-rouge">-</code>,
 <code class="highlighter-rouge">*</code>, <code class="highlighter-rouge">&lt;&lt;</code>, and <code class="highlighter-rouge">&gt;&gt;</code>) are used for most normal operations, rather than the
 masking operations (preceded by <code class="highlighter-rouge">&amp;</code>). Trapping on overflow is safer because it
 prevents bad data from propagating through other layers of the system.</p>
 
-<p>标准（捕获溢出）运算和二元运算符（<code class="highlighter-rouge">+</code>，<code class="highlighter-rouge">-</code>，<code class="highlighter-rouge">*</code>，<code class="highlighter-rouge">&lt;&lt;</code> 和 <code class="highlighter-rouge">&gt;&gt;</code>）大部分用于普通操作，而非掩码操作（前置 <code class="highlighter-rouge">&amp;</code>）。捕获溢出会更加安全，因为它防止错误数据被传递到系统的其他层级。</p>
+<p>标准（捕获溢出）运算和二元运算符（<code class="highlighter-rouge">+</code>、<code class="highlighter-rouge">-</code>、<code class="highlighter-rouge">*</code>、<code class="highlighter-rouge">&lt;&lt;</code> 和 <code class="highlighter-rouge">&gt;&gt;</code>）大部分用于普通操作，而非掩码操作（前置 <code class="highlighter-rouge">&amp;</code>）。捕获溢出会更加安全，因为它防止错误数据被传递到系统的其他层级。</p>
 
 <div class="language-swift good highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c1">// GOOD. Overflow will not cause the balance to go negative.</span>
+<span class="c1">// 推荐。溢出不会导致 balance 为负。</span>
 <span class="k">let</span> <span class="nv">newBankBalance</span> <span class="o">=</span> <span class="n">oldBankBalance</span> <span class="o">+</span> <span class="n">recentHugeProfit</span>
 </code></pre></div></div>
 
 <div class="language-swift bad highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c1">// AVOID. Overflow will cause the balance to go negative if the summands are</span>
 <span class="c1">// large.</span>
+<span class="c1">// 不推荐。如果加数太大，溢出会导致 balance 为负。</span>
 <span class="k">let</span> <span class="nv">newBankBalance</span> <span class="o">=</span> <span class="n">oldBankBalance</span> <span class="o">&amp;+</span> <span class="n">recentHugeProfit</span>
 </code></pre></div></div>
 
@@ -2970,11 +2998,12 @@ prevents bad data from propagating through other layers of the system.</p>
 necessary for correctness) in problem domains that use modular arithmetic, such
 as cryptography, big-integer implementations, hash functions, and so forth.</p>
 
-<p>掩码操作比较少见，但在模数运算的问题领域是允许的（事实上为了正确性是必要的），例如加密，大整型实现，哈希函数等等。</p>
+<p>掩码操作比较少见，但在模数运算的问题领域是允许的（事实上为了正确性是必要的），例如加密、大整数实现、哈希函数等等。</p>
 
 <div class="language-swift good highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">var</span> <span class="nv">hashValue</span><span class="p">:</span> <span class="kt">Int</span> <span class="p">{</span>
   <span class="c1">// GOOD. What matters here is the distribution of the bit pattern rather than</span>
   <span class="c1">// the actual numeric value.</span>
+  <span class="c1">// 推荐。这里强调的是位的分布，而非实际的数值。</span>
   <span class="k">return</span> <span class="n">foo</span><span class="o">.</span><span class="n">hashValue</span> <span class="o">&amp;+</span> <span class="mi">31</span> <span class="o">*</span> <span class="p">(</span><span class="n">bar</span><span class="o">.</span><span class="n">hashValue</span> <span class="o">&amp;+</span> <span class="mi">31</span> <span class="o">&amp;*</span> <span class="n">baz</span><span class="o">.</span><span class="n">hashValue</span><span class="p">)</span>
 <span class="p">}</span>
 </code></pre></div></div>
@@ -2982,6 +3011,7 @@ as cryptography, big-integer implementations, hash functions, and so forth.</p>
 <div class="language-swift bad highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">var</span> <span class="nv">hashValue</span><span class="p">:</span> <span class="kt">Int</span> <span class="p">{</span>
   <span class="c1">// INCORRECT. This will trap arbitrarily and unpredictably depending on the</span>
   <span class="c1">// hash values of the individual terms.</span>
+  <span class="c1">// 不正确。这可能随时出错，并且在不经意间依赖单个成员的哈希值。</span>
   <span class="k">return</span> <span class="n">foo</span><span class="o">.</span><span class="n">hashValue</span> <span class="o">+</span> <span class="mi">31</span> <span class="o">*</span> <span class="p">(</span><span class="n">bar</span><span class="o">.</span><span class="n">hashValue</span> <span class="o">+</span> <span class="mi">31</span> <span class="o">*</span> <span class="n">baz</span><span class="o">.</span><span class="n">hashValue</span><span class="p">)</span>
 <span class="p">}</span>
 </code></pre></div></div>
@@ -3001,7 +3031,7 @@ optimized builds.</p>
 readability of code because such operators often lack the historical context of
 the more common ones built into the standard library.</p>
 
-<p>不理智地使用自定义运算符会显著影响代码可读性，因为这样的运算符比起标准库中更常用的运算符，通常缺乏历史背景。</p>
+<p>不理智地使用自定义运算符会显著影响代码可读性，因为比起标准库中更常用的运算符，这样的运算符缺乏共识，不容易被理解。</p>
 
 <p>In general, defining custom operators should be avoided. However, it is allowed
 when an operator has a clear and well-defined meaning in the problem domain
@@ -3011,7 +3041,7 @@ multiplication operator defined by Swift (not including the masking version), a
 numeric matrix library may define additional operators to support other
 operations like cross product and dot product.</p>
 
-<p>通常来说，应该避免自定义运算符。然而，当一个运算符在问题领域中有清晰和含义良好的定义，并且使用它会比函数调用显著提高代码的可读性时，是允许的。例如，<code class="highlighter-rouge">*</code> 在 Swift 里只定义为乘法运算符（不包含掩码版本）， 数学矩阵库可能会定义额外的运算符来支持其他运算比如叉乘和点乘。</p>
+<p>通常来说，应该避免定义自定义运算符。然而，当一个运算符在问题领域中有清晰和含义良好的定义，并且使用它会比函数调用显著提高代码的可读性时，可以使用。例如，<code class="highlighter-rouge">*</code> 在 Swift 里只定义为乘法运算符（不包含掩码版本）。数学矩阵库可能会定义额外的运算符来支持其他运算比如叉乘和点乘。</p>
 
 <p>An example of a prohibited use case is defining custom <code class="highlighter-rouge">&lt;~~</code> and <code class="highlighter-rouge">~~&gt;</code> operators
 to decode and encode JSON data. Such operators are not native to the problem
@@ -3019,7 +3049,7 @@ domain of processing JSON and even an experienced Swift engineer would have
 difficulty understanding the purpose of the code without seeking out
 documentation of those operators.</p>
 
-<p>禁止用法其中一种例子是定义自定义 <code class="highlighter-rouge">&lt;~~</code> 和 <code class="highlighter-rouge">~~&gt;</code> 运算符来解码和编码 JSON 数据。这样的运算符不是 JSON 领域问题的原生处理方式，甚至连有经验的 Swift 工程师在没有这些运算符文档的情况下也可能会对这种处理代码有着不同的理解。</p>
+<p>自定义 <code class="highlighter-rouge">&lt;~~</code> 和 <code class="highlighter-rouge">~~&gt;</code> 运算符来解码和编码 JSON 数据就是典型的禁止用法。这样的运算符不是 JSON 领域问题的原生处理方式，哪怕是有经验的 Swift 工程师，在没有运算符文档的情况下也可能会对这种处理代码有着不同的理解。</p>
 
 <p>If you must use third-party code of unquestionable value that provides an API
 only available through custom operators, you are <strong>strongly encouraged</strong> to
@@ -3027,16 +3057,16 @@ consider writing a wrapper that defines more readable methods that delegate to
 the custom operators. This will significantly reduce the learning curve required
 to understand how such code works for new teammates and other code reviewers.</p>
 
-<p>如果你一定要让没问题的值使用第三方代码里只提供了自定义运算符形式的 API，<strong>强烈建议</strong>你编写一个包装器，定义可读性更好的方法作为该自定义运算符的代理。对团队新成员或者其他代码审查者来说，这会显著降低理解这样的代码是如何工作的学习曲线。</p>
+<p>如果你必须使用第三方代码里的自定义运算符，那<strong>强烈建议</strong>你编写一个包装器，定义可读性更好的方法，作为该自定义运算符的代理。对团队新成员或者其他代码审查者来说，这会显著降低学习曲线，更快的理解代码原理。</p>
 
-<h3 id="重载已存在运算符overloading-existing-operators">重载已存在运算符/Overloading Existing Operators</h3>
+<h3 id="重载现有运算符overloading-existing-operators">重载现有运算符/Overloading Existing Operators</h3>
 
 <p>Overloading operators is permitted when your use of the operator is semantically
 equivalent to the existing uses in the standard library. Examples of permitted
 use cases are implementing the operator requirements for <code class="highlighter-rouge">Equatable</code> and
 <code class="highlighter-rouge">Hashable</code>, or defining a new <code class="highlighter-rouge">Matrix</code> type that supports arithmetic operations.</p>
 
-<p>用语义上和标准库中已存在等同的重载运算符是允许的。允许的例子是为 <code class="highlighter-rouge">Equatable</code> 和 <code class="highlighter-rouge">Hashable</code> 实现运算符要求，或者定义新的 <code class="highlighter-rouge">Matrix</code> 类型来支持算数运算。</p>
+<p>用语义上和标准库中已存在等同的重载运算符是允许的。例子之一是实现 <code class="highlighter-rouge">Equatable</code> 和 <code class="highlighter-rouge">Hashable</code> 的运算符要求，或者定义新的 <code class="highlighter-rouge">Matrix</code> 类型来支持算数运算。</p>
 
 <p>If you wish to overload an existing operator with a meaning other than its
 natural meaning, follow the guidance in
@@ -3052,7 +3082,7 @@ and <code class="highlighter-rouge">+</code> to build an ad hoc regular expressi
 strong enough readability benefits compared to simply representing the entire
 regular expression as a string.</p>
 
-<p>禁止更改运算符含义的一种例子是重载 <code class="highlighter-rouge">*</code> 和 <code class="highlighter-rouge">+</code> 来构建特定正则表达式的 API。这样的 API 没有比简单用字符串表示整个正则表达式的方式可读性强很多。</p>
+<p>禁止更改运算符含义的一种例子是重载 <code class="highlighter-rouge">*</code> 和 <code class="highlighter-rouge">+</code> 来构建特定正则表达式的 API。相比简单的用字符串表示整个正则表达式，这样的 API 并没有提高可读性。</p>
 
 <h2 id="文档注释documentation-comments">文档注释/Documentation Comments</h2>
 
@@ -3107,7 +3137,7 @@ describes the declaration. (This sentence may span multiple lines, but if it
 spans too many lines, the author should consider whether the summary can be
 simplified and details moved to a new paragraph.)</p>
 
-<p>文档注释的开始使用简短的<strong>一句话</strong>概括来描述声明。（这句话可以跨行，但如果跨了很多行，作者应该考虑是否可以将概况简化并将细节移到新的段落中。）</p>
+<p>文档注释的开始使用简短的<strong>一句话</strong>概括来描述声明。（这句话可以跨行，但如果跨了很多行，作者应该考虑是否可以将概况简化，并将细节移到新的段落中。）</p>
 
 <p>If more detail is needed than can be stated in the summary, additional
 paragraphs (each separated by a blank line) are added after it.</p>
@@ -3155,7 +3185,7 @@ appears with an empty description. When a description does not fit on a single
 line, continuation lines are indented 2 spaces in from the position of the
 hyphen starting the tag.</p>
 
-<p>对形参，返回值和函数抛出的错误按照 <code class="highlighter-rouge">Parameter(s)</code>，<code class="highlighter-rouge">Returns</code> 和 <code class="highlighter-rouge">Throws</code> 标签的顺序清晰地写下文档。不要出现空白的描述。当一个描述需要换行时，续行的缩进在开始的标记连字符基础上加上 2 个空格。</p>
+<p>对形参，返回值和函数抛出的错误按照 <code class="highlighter-rouge">Parameter(s)</code>、<code class="highlighter-rouge">Returns</code> 和 <code class="highlighter-rouge">Throws</code> 标签的顺序清晰地写下文档。不要出现空白的描述。当一个描述需要换行时，续行的缩进在开始的标记连字符基础上加 2 个空格。</p>
 
 <p>The recommended way to write documentation comments in Xcode is to place the
 text cursor on the declaration and press <strong>Command + Option + /</strong>. This will
@@ -3173,7 +3203,7 @@ would only repeat what has already been said.</p>
 terminated with a period, even when they are phrases instead of complete
 sentences.</p>
 
-<p><code class="highlighter-rouge">Parameter(s)</code>，<code class="highlighter-rouge">Returns</code> 和 <code class="highlighter-rouge">Throws</code> 标签后面跟着的内容需要以句号结尾，即使它们只是短语而不是完整的句子。</p>
+<p><code class="highlighter-rouge">Parameter(s)</code>、<code class="highlighter-rouge">Returns</code> 和 <code class="highlighter-rouge">Throws</code> 标签后面跟着的内容需要以句号结尾，即使它们只是短语而不是完整的句子。</p>
 
 <p>When a method takes a single argument, the singular inline form of the
 <code class="highlighter-rouge">Parameter</code> tag is used. When a method takes multiple arguments, the grouped
@@ -3208,7 +3238,7 @@ nested list with only its name as the tag.</p>
 <code class="highlighter-rouge">Parameters</code> for a single parameter or the singular form <code class="highlighter-rouge">Parameter</code> for
 multiple parameters.</p>
 
-<p>下面的例子是错误的，因为它们对单个形参使用复数形式 <code class="highlighter-rouge">Parameters</code> 或者对多个形参使用单数形式 <code class="highlighter-rouge">Parameter</code>。</p>
+<p>下面的例子是错误的，因为它们对单个形参使用复数形式 <code class="highlighter-rouge">Parameters</code>，或者对多个形参使用单数形式 <code class="highlighter-rouge">Parameter</code>。</p>
 
 <div class="language-swift bad highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c1">/// Returns the output generated by executing a command.</span>
 <span class="c1">///</span>
@@ -3266,7 +3296,7 @@ that should be rendered in boldface.</li>
 declaration, and every open or public member of such a declaration, with
 specific exceptions noted below:</p>
 
-<p>最起码，每个 open 或 public 声明和里面的每个 open 或 public 成员都应该有文档注释，除了下面的说明以外：</p>
+<p>最起码，每个 open 或 public 声明和里面的每个 open 或 public 成员都应该有文档注释，除了下面的情况：</p>
 
 <ul>
   <li>
@@ -3275,7 +3305,7 @@ self-explanatory from their name. Cases with associated values, however,
 should document what those values mean if it is not obvious.</p>
   </li>
   <li>
-    <p><code class="highlighter-rouge">enum</code> 里单个的 case 的名字如果已经可以自解释则通常不需要注释。有关联值的 Case 如果值的含义不明确，那么不管怎样都应该注释。</p>
+    <p><code class="highlighter-rouge">enum</code> 里单个的枚举项名字如果已经可以自解释，则通常不需要注释。有关联值的枚举项如果值的含义不明确，那么不管怎样都应该注释。</p>
   </li>
   <li>
     <p>A documentation comment is not always present on a declaration that overrides
@@ -3289,9 +3319,9 @@ documentation for the override be a mere copy of the base declaration’s
 documentation.</p>
   </li>
   <li>
-    <p>继承父类的声明，协议要求的实现或者提供协议要求的默认实现的扩展声明可以不需要文档注释。</p>
+    <p>覆盖父类的声明、协议要求的实现或者提供协议要求的默认实现的扩展声明。</p>
 
-    <p>继承声明里用来描述继承后的新表现的注释是可以接受的。任何情况下都不应该出现单纯拷贝父声明文档的注释。</p>
+    <p>覆盖声明可以添加注释来描述新行为。但是任何情况下都不应该单纯拷贝基类的声明文档。</p>
   </li>
   <li>
     <p>A documentation comment is not always present on test classes and test
@@ -3328,7 +3358,7 @@ writing in order to sort the values, but that is not the only possible use of
 that conformance and client code could use it for other purposes in the
 future.</p>
 
-    <p>下面的例子则更微妙一些，但这是一个注释无法拓展的例子，因为这个拓展或者类型一致性在以后可能会变化。这个 <code class="highlighter-rouge">Comparable</code> 可能是在编写对该类型值的排序代码时加上的，但这不是一致性的唯一可能用途，并且使用者可能在以后其他用途代码里会依赖它。</p>
+    <p>下面的例子更微妙一些，但这是一个注释无法拓展的例子，因为这个拓展或者类型一致性在以后可能会变化。这个 <code class="highlighter-rouge">Comparable</code> 可能是在编写对该类型值的排序代码时加上的，但这不是一致性的唯一可能用途，并且使用者可能在以后其他用途代码里会依赖它。</p>
 
     <div class="language-swift highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c1">/// Make `Candidate` comparable so that they can be sorted.</span>
 <span class="kd">extension</span> <span class="kt">Candidate</span><span class="p">:</span> <span class="kt">Comparable</span> <span class="p">{</span>
@@ -3357,16 +3387,9 @@ documentation as an opportunity to define the term.</p>
 
   </main>
 
-  <footer class="site-footer">
-
-  <div class="wrapper">
-
-  </div>
-
-</footer>
-
-
-  <script src="https://swift.org/assets/javascripts/application.js"></script>
+  <script type="text/javascript">
+    
+  </script>
 </body>
 
 </html>
