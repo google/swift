@@ -1,6 +1,6 @@
 ---
 layout: page
-title: Swift Style Guide 中文版
+title: Google Swift Style Guide 中文版
 ---
 <!-- {% comment %}
 The width of <pre> elements on this page is carefully regulated, so we
