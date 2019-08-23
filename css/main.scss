@@ -63,3 +63,25 @@ pre.lw-container-numbered {
     background-color: #FFE0B2;
     border: 1px solid #FFB74D;
 }
+
+main {
+    margin-left: 0!important;
+    margin: 50px auto!important;
+}
+
+pre {
+    display: block!important;
+    overflow-x: auto!important;
+}
+
+h2 {
+    word-break: break-all;
+}
+
+@media only screen and (max-width: 400px) {
+    pre:before {
+        float: none!important;
+        position: absolute!important;
+        right: 4px!important;
+    }
+}

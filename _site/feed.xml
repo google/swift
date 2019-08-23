@@ -4,10 +4,10 @@
     <title>Google Swift Style Guide 中文版</title>
     <description>Google's Swift style guide.
 </description>
-    <link>http://stage.swift.gg/google-swift-style-guide-in-chinese//google-swift-style-guide-in-chinese/</link>
-    <atom:link href="http://stage.swift.gg/google-swift-style-guide-in-chinese//google-swift-style-guide-in-chinese/feed.xml" rel="self" type="application/rss+xml"/>
-    <pubDate>Sun, 18 Aug 2019 21:24:06 -0700</pubDate>
-    <lastBuildDate>Sun, 18 Aug 2019 21:24:06 -0700</lastBuildDate>
+    <link>http://localhost:4000/swift-style/</link>
+    <atom:link href="http://localhost:4000/swift-style/feed.xml" rel="self" type="application/rss+xml"/>
+    <pubDate>Wed, 21 Aug 2019 07:56:53 -0700</pubDate>
+    <lastBuildDate>Wed, 21 Aug 2019 07:56:53 -0700</lastBuildDate>
     <generator>Jekyll v3.7.3</generator>
     
   </channel>
