@@ -3426,6 +3426,3 @@ may have no idea what the term "canonical name" means in that context. Use the
 documentation as an opportunity to define the term. 
 
 但是，*不*要用这个例外来证明可以省略某些正常读者可能需要的相关信息。例如，对于 `canonicalName` 名字的属性，不要省略注释（只有合理的时候才可以只写 `/// The canonical name.`），因为正常读者可能不知道术语“规范名字”在上下文中的含义。 使用注释是定义该术语的好机会。
-
-
-<a href="https://github.com/SwiftGGTeam/google-swift-style-guide-in-chinese"><img width="149" height="149" src="https://github.blog/wp-content/uploads/2008/12/forkme_right_darkblue_121621.png?resize=149%2C149" class="attachment-full size-full" alt="Fork me on GitHub" data-recalc-dims="1"></a>
