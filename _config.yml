@@ -10,8 +10,8 @@ title: Google Swift Style Guide 中文版
 description: > # > means to ignore newlines until the next unindented line
   Google's Swift style guide.
 timezone: America/Los_Angeles
-baseurl: "/google-swift-style-guide-in-chinese"
-url: "http://stage.swift.gg/google-swift-style-guide-in-chinese/"
+baseurl: "/"
+url: "http://pages.swift.gg/"
 
 exclude: [config.ru, Gemfile, Gemfile.lock, Procfile, vendor, README.md]
 
