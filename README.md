@@ -1,6 +1,6 @@
 # Google Swift Style Guide 中文版[长期维护项目]
 
-这是 [Google Swift Style Guide 中文版]() 的网站源码，[英文原版]() 基于 [Swift.org](https://swift.org/) 上的文档。
+这是 [Google Swift Style Guide 中文版](http://pages.swift.gg/google-swift-style-guide-in-chinese/) 的网站源码。
 
 ## 原文地址
 
