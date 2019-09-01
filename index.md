@@ -169,7 +169,7 @@ import func Darwin.C.isatty
 
 在源文件中类型、变量和函数之间的顺序，和该类型成员的顺序，都会大大影响可读性。然而，如何组织它们并没有单一正确的法则；不同的文件和不同的类型可以用不同的方式组织它们内容的排序。
 
-重要的是，每一个文件和类型使用_**同一**排序逻辑_，并且维护者应该可以解释清楚这个逻辑。例如，新的方法不能习惯性地加在类型的最后面，因为这只是顺从“日期递增地时间排序”，而不是有逻辑性的排序。
+重要的是，每一个文件和类型使用***同一****排序逻辑* ，并且维护者应该可以解释清楚这个逻辑。例如，新的方法不能习惯性地加在类型的最后面，因为这只是顺从“日期递增地时间排序”，而不是有逻辑性的排序。
 
 当决定成员的排序逻辑后，使用 `// MARK:` 注释对该分组提供描述，对阅读者和将来的编码者（包括你自己）是很有帮助的。这种注释也会被 Xcode 理解并在源码窗口的导航栏中提供书签。（类似的还有 `// MARK: -`，在描述之前使用一个连字符的话， Xcode 会在菜单元素前插入一条分隔线。）例如，
 
@@ -205,7 +205,7 @@ class MovieRatingViewController: UITableViewController {
 
 ### 扩展
 
-扩展可以将一个类型的功能组织到多个“单元”中。配合成员排序和所选择的组织结构/分组，会对代码可读性有很大的帮助；你必须使用_**某种**_能给审查者解释的_逻辑结构_进行组织。
+扩展可以将一个类型的功能组织到多个“单元”中。配合成员排序和所选择的组织结构/分组，会对代码可读性有很大的帮助；你必须使用***某种***能给审查者解释的*逻辑结构*进行组织。
 
 ## 常规格式
 
@@ -345,7 +345,7 @@ public func index<Elements: Collection, Element>(of element: Element, in collect
    ~~~ swift
    public func index<Elements: Collection, Element>(
      of element: Element,
-  in collection: Elements
+    in collection: Elements
    ) -> Elements.Index?
    where
      Elements.Element == Element,
@@ -381,7 +381,7 @@ public func index<Elements: Collection, Element>(of element: Element, in collect
 
 具体例子见下面相关段落的内容。
 
-这个换行风格能确保，通过缩进和换行，_读者_可以_快速容易地识别_声明的不同部分，并且在文件中的这些部分缩进风格应该保持一致。具体来说，这能避免实参基于左括号缩进而出现的锯齿效应，这在其他语言里很常见：
+这个换行风格能确保，通过缩进和换行，*读者*可以*快速容易地识别*声明的不同部分，并且在文件中的这些部分缩进风格应该保持一致。具体来说，这能避免实参基于左括号缩进而出现的锯齿效应，这在其他语言里很常见：
 
 ~~~ swift
 public func index<Elements: Collection, Element>(of element: Element,  // 不推荐
@@ -610,7 +610,7 @@ let result = anExpression + thatIsMadeUpOf * aLargeNumber +
 
 ### 水平空格
 
-> **术语说明：**在这个章节，_水平空格_指的是_内部_空格。这些规则不适用于行开始时需要或禁止的额外空格。
+> **术语说明：**在这个章节，*水平空格*指的是*内部*空格。这些规则不适用于行开始时需要或禁止的额外空格。
 
 根据语言要求或其他代码风格的规则，除了字面量和注释外的单个 Unicode 空格**只能**在下面这些情况出现：
 
@@ -640,6 +640,7 @@ if (x == 0 && y == 0) || z == 0 {
    ~~~ swift
    let nonNegativeCubes = numbers.map { $0 * $0 * $0 } .filter { $0 >= 0 }
    let nonNegativeCubes = numbers.map{$0 * $0 * $0}.filter{$0 >= 0}
+   ~~~
 ~~~
    {:.bad}
    
@@ -647,18 +648,18 @@ if (x == 0 && y == 0) || z == 0 {
    
 1. `=` 运算符用在赋值，变量/属性的构造过程以及函数里的默认实参时。
       
-~~~ swift
+​~~~ swift
       var x = 5
    
    func sum(_ numbers: [Int], initialValue: Int = 0) {
        // ...
    }
-      ~~~
+~~~
       {:.good}
       
       ~~~ swift
       var x=5
-   
+       
       func sum(_ numbers: [Int], initialValue: Int=0) {
        // ...
    }
@@ -668,9 +669,9 @@ if (x == 0 && y == 0) || z == 0 {
    2. And 符号（`&`）用在协议组合类型时。
    
       ~~~ swift
-   func sayHappyBirthday(to person: NameProviding & AgeProviding) {
+      func sayHappyBirthday(to person: NameProviding & AgeProviding) {
         // ...
-   }
+      }
       ~~~
       {:.good}
       
@@ -678,51 +679,51 @@ if (x == 0 && y == 0) || z == 0 {
    func sayHappyBirthday(to person: NameProviding&AgeProviding) {
        // ...
       }
-      ~~~
+   ~~~
       {:.bad}
-      
+
 3. 运算符用在函数声明/实现时。
    
       ~~~ swift
    static func == (lhs: MyType, rhs: MyType) -> Bool {
         // ...
       }
-      ~~~
+   ~~~
     {:.good}
-      
+   
    ~~~ swift
    static func ==(lhs: MyType, rhs: MyType) -> Bool {
      // ...
       }
-      ~~~
+   ~~~
       {:.bad}
-      
+   
    4. 箭头（`->`）用在函数的返回类型之前时。
    
    ~~~ swift
    func sum(_ numbers: [Int]) -> Int {
         // ...
       }
-      ~~~
+   ~~~
       {:.good}
-      
+   
    ~~~ swift
       func sum(_ numbers: [Int])->Int {
         // ...
       }
-      ~~~
+   ~~~
       {:.bad}
-      
+   
    5. **例外：**点（`.`）用在引用值和类型成员时两侧都没有空格。
       
    ~~~ swift
       let width = view.bounds.width
-      ~~~
+   ~~~
       {:.good}
-      
+   
       ~~~ swift
       let width = view . bounds . width
-   ~~~
+      ~~~
       {:.bad}
    
    6. **例外：**`..<` 或者 `…` 运算符用在范围表达式时两侧都没空格。
@@ -733,7 +734,7 @@ if (x == 0 && y == 0) || z == 0 {
       }
       
       let substring = string[index..<string.endIndex]
-      ~~~
+~~~
    {:.good}
       
       ~~~ swift
@@ -744,21 +745,21 @@ if (x == 0 && y == 0) || z == 0 {
       let substring = string[index ..< string.endIndex]
       ~~~
       {:.bad}
-   
+
 4. 逗号（`,`）用在形参列表和元组/数组/字典字面量时，在逗号后面而不是前面。
    
 ~~~ swift
    let numbers = [1, 2, 3]
-   ~~~
+~~~
    {:.good}
-   
+
    ~~~ swift
    let numbers = [1,2,3]
    let numbers = [1 ,2 ,3]
    let numbers = [1 , 2 , 3]
    ~~~
    {:.bad}
-   
+
 5. 如果是下列场景，加在冒号（`:`）后面而不是前面
 
    1. 父类/协议遵循列表和范型约束。
@@ -790,6 +791,8 @@ struct HashTable: Collection {
       ~~~ swift
 let tuple: (x: Int, y: Int)
       
+      ~~~
+   
    func sum(_ numbers: [Int]) {
         // ...
    }
@@ -809,7 +812,7 @@ let tuple: (x: Int, y: Int)
       }
       ~~~
       {:.bad}
-      
+   
    3. 变量/属性的类型显式声明。
    
       ~~~ swift
@@ -820,11 +823,11 @@ let tuple: (x: Int, y: Int)
    ~~~ swift
    let number:Int = 5
    let number : Int = 5
-      ~~~
+   ~~~
       {:.bad}
-      
-   4. 字典类型缩写。
 
+   4. 字典类型缩写。
+   
       ~~~ swift
    var nameAgeMap: [String: Int] = []
       ~~~
@@ -833,9 +836,9 @@ let tuple: (x: Int, y: Int)
    ~~~ swift
    var nameAgeMap: [String:Int] = []
    var nameAgeMap: [String : Int] = []
-      ~~~
+   ~~~
    {:.bad}
-      
+   
    5. 字典字面量。
    
       ~~~ swift
@@ -853,21 +856,21 @@ let tuple: (x: Int, y: Int)
    
 ~~~ swift
    let initialFactor = 2  // Warm up the modulator.
-   ~~~
+~~~
    {:.good}
-   
+
    ~~~ swift
    let initialFactor = 2 //    Warm up the modulator.
    ~~~
    {:.bad}
-   
+
 7. 数组、字典或元组字面量定义，加在括号外面而不是里面。
    
 ~~~ swift
    let numbers = [1, 2, 3]
-   ~~~
+~~~
    {:.good}
-   
+
    ~~~ swift
    let numbers = [ 1, 2, 3 ]
    ~~~
@@ -875,7 +878,7 @@ let tuple: (x: Int, y: Int)
 
 ### 水平对齐
 
-> **术语说明：**_水平对齐_是一种约定，通过在代码中添加不同数量的空格，让某些元素直接显示在前面行中该类型的其他元素下面。
+> **术语说明：***水平对齐*是一种约定，通过在代码中添加不同数量的空格，让某些元素直接显示在前面行中该类型的其他元素下面。
 
 水平对齐是禁止的，除非是明确的表格数据，此时不对齐会降低可读性。其他情况下（例如，对 `struct` 或 `class` 里的存储属性声明的类型进行对齐）水平对齐会引起维护问题，因为在新的成员引入时其余所有的成员都需要重新对齐。
 
@@ -901,17 +904,17 @@ struct DataPoint {
 
 1. 在类型中这些连续成员之间：属性、构造器、方法、枚举项、嵌套类型，**除非**：
    
-1. 如果两个连续的存储属性，或者两个枚举项可以写在一行中，那空白行就是可选的。这时候空白行可以用来对这些声明进行_逻辑分组_。
-      
+1. 如果两个连续的存储属性，或者两个枚举项可以写在一行中，那空白行就是可选的。这时候空白行可以用来对这些声明进行*逻辑分组*。
+   
    2. 不适用于前面规则，但两个属性有强关联，那之间的空白行也是可选的。例如，一个私有的存储属性和它相关的公开计算属性。
    
 2. 如果用于分割代码，**只在需要的时候使用**，根据逻辑对代码进行分割。
    
-3. 类型的第一个成员之前，或者最后一个成员之后的空白行是_可选的_（不赞成也不反对）。
+3. 类型的第一个成员之前，或者最后一个成员之后的空白行是*可选的*（不赞成也不反对）。
    
 4. 本文档中其他章节中明确要求的地方。
 
-_多个_空白行是允许的，但不是必须的（不赞成）。如果使用多个连续的空白行，那么在你的代码里应该贯彻到底。
+*多个*空白行是允许的，但不是必须的（不赞成）。如果使用多个连续的空白行，那么在你的代码里应该贯彻到底。
 
 ### 括号
 
@@ -968,7 +971,7 @@ var a = 5, b = 10
 
 ### Switch 语句
 
-枚举项语句的缩进和它们的 switch 语句保持_一致_；枚举项块里的语句在该缩进基础上 +2 空格。
+枚举项语句的缩进和它们的 switch 语句保持*一致*；枚举项块里的语句在该缩进基础上 +2 空格。
 
 ~~~ swift
 switch order {
@@ -1108,7 +1111,7 @@ public enum HTTPStatus: Int {
 
 ### 尾随闭包
 
-函数重载时，不能出现两个_只有_尾随闭包的实参名字不同的重载。
+函数重载时，不能出现两个*只有*尾随闭包的实参名字不同的重载。
 
 考虑下面的例子，这种情况下无法使用尾随闭包语法来调用 `greet`：
 
@@ -1142,7 +1145,7 @@ greetApathetically { "not John" }
 ~~~
 {:.good}
 
-如果一个函数调用有多个闭包实参，那么_都不_使用尾随闭包语法调用；_都_需要写出标签并放在在实参列表的括号里。
+如果一个函数调用有多个闭包实参，那么*都不*使用尾随闭包语法调用；*都*需要写出标签并放在在实参列表的括号里。
 
 ~~~ swift
 UIView.animate(
@@ -1167,7 +1170,7 @@ UIView.animate(
 ~~~
 {:.bad}
 
-如果函数只有一个闭包实参，并且它是最后的实参，那么_永远_使用尾随闭包语法调用它，除了下面这些解决歧义或者分析错误的情况：
+如果函数只有一个闭包实参，并且它是最后的实参，那么*永远*使用尾随闭包语法调用它，除了下面这些解决歧义或者分析错误的情况：
 
 1. 如上面所描述，必须使用带标签的闭包参数，来消除两个其他实参列表都相同的重载之间的歧义。
    
@@ -1197,7 +1200,7 @@ if let firstActive = list.first { $0.isActive } {
 ~~~
 {:.bad}
 
-如果函数调用使用的是尾随闭包语法且没有其他实参，函数名后面的空括号（`()`）_永远不_要出现。
+如果函数调用使用的是尾随闭包语法且没有其他实参，函数名后面的空括号（`()`）*永远不*要出现。
 
 ~~~ swift
 let squares = [1, 2, 3].map { $0 * $0 }
@@ -1212,7 +1215,7 @@ let squares = [1, 2, 3].map() { $0 * $0 }
 
 ### 末尾逗号
 
-当数组和字典里字面量里每个元素独占一行时，_需要_加上末尾逗号。在这些字面量后续加入新的元素时，会有更明显的区分。
+当数组和字典里字面量里每个元素独占一行时，*需要*加上末尾逗号。在这些字面量后续加入新的元素时，会有更明显的区分。
 
 ~~~ swift
 let configurationKeys = [
@@ -1259,7 +1262,7 @@ public func coolNewFeature() {
 ~~~
 {:.bad}
 
-不带参数的注解（例如不带参数的 `@objc`、`@IBOutlet` 或者 `@NSManaged`）当且仅当不导致换行时，_可以_按首字母排序与声明写在同一行。如果在声明的行增加该注解后导致需要换行的话，则将注解另起一行。
+不带参数的注解（例如不带参数的 `@objc`、`@IBOutlet` 或者 `@NSManaged`）当且仅当不导致换行时，*可以*按首字母排序与声明写在同一行。如果在声明的行增加该注解后导致需要换行的话，则将注解另起一行。
 
 ~~~ swift
 public class MyViewController: UIViewController {
@@ -1912,11 +1915,11 @@ default: break
 ~~~
 {:.bad}
 
-也就是说，不能有_只_执行 `fallthrough` 语句的 `case`。包含_其余_语句再下落（fallthrough）到下一个 `case` 是允许的。
+也就是说，不能有*只*执行 `fallthrough` 语句的 `case`。包含*其余*语句再下落（fallthrough）到下一个 `case` 是允许的。
 
 ### 模式匹配
 
-_每个_模式匹配元素前面都有单独的 `let` 和 `var` 关键字。适用于整个匹配模式的前置简写 `let`/`var` 是禁止的，因为当匹配模式的值本身是个变量时，会引入非预期行为。
+*每个*模式匹配元素前面都有单独的 `let` 和 `var` 关键字。适用于整个匹配模式的前置简写 `let`/`var` 是禁止的，因为当匹配模式的值本身是个变量时，会引入非预期行为。
 
 ~~~ swift
 enum DataPoint {
@@ -1982,7 +1985,7 @@ case .leaf(element: let element):
 
 ### 元组模式
 
-只有赋值表达式左侧没有标签的元组模式（有时候用_乱序元组_），才允许进行元组模式变量赋值。
+只有赋值表达式左侧没有标签的元组模式（有时候用*乱序元组*），才允许进行元组模式变量赋值。
 
 ~~~ swift
 let (a, b) = (y: 4, x: 5.0)
@@ -2283,10 +2286,10 @@ func execute(command: String, stdin: String) -> String {
 强烈建议使用 [Apple 标记格式](https://developer.apple.com/library/content/documentation/Xcode/Reference/xcode_markup_formatting_ref/) 来添加富文本到文档中。这种标记有助于区分注释里的特征引用（例如形参名字）和描述性文本，并且可以被 Xcode 和其他文档生成工具渲染。下面列出一些常用指令的示例。
 
 * 段落以 `///` 开始的单一空白行分隔。
-* 以*\*单星号\**和_\_单下划线\__包围的文本会被渲染成斜体/斜型。
-* 以**\*\*双星号\*\***和__\_\_双下划线\_\___包围的文本会被渲染成粗体。
+* 以*\*单星号\**和*\_单下划线\_*包围的文本会被渲染成斜体/斜型。
+* 以**\*\*双星号\*\***和**\_\_双下划线\_\_**包围的文本会被渲染成粗体。
 * 符号名或者内联代码以 `` `反引号` ``包围。
-* 多行代码（例如作为用例）以三个反引号（` ``` `）的行开头和结束。
+* 多行代码（例如作为用例）以三个反引号（` ```  `）的行开头和结束。
 
 ### 注释的位置
 
