@@ -2544,6 +2544,10 @@ EmittedMembersRequest::evaluate(Evaluator &evaluator,
   forceConformance(Context.getProtocol(KnownProtocolKind::Encodable));
   forceConformance(Context.getProtocol(KnownProtocolKind::Hashable));
   forceConformance(Context.getProtocol(KnownProtocolKind::Differentiable));
+  // SWIFT_ENABLE_TENSORFLOW
+  forceConformance(
+      Context.getProtocol(KnownProtocolKind::EuclideanDifferentiable));
+  // SWIFT_ENABLE_TENSORFLOW END
 
   // If the class conforms to Encodable or Decodable, even via an extension,
   // the CodingKeys enum is synthesized as a member of the type itself.
