@@ -217,7 +217,11 @@ void PrettyStackTraceClangType::print(llvm::raw_ostream &out) const {
     out << "NULL clang type!\n";
     return;
   }
-  TheType->dump(out);
+  // DWA FIXME: dump now takes a clang AST context as a second parameter and I
+  // don't know where to find one.
+  //
+  // TheType->dump(out);
+  TheType->dump();
 }
 
 void PrettyStackTraceTypeRepr::print(llvm::raw_ostream &out) const {
