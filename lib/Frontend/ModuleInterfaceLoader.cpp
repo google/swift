@@ -1304,6 +1304,18 @@ InterfaceSubContextDelegateImpl::InterfaceSubContextDelegateImpl(
     if (Opts.DetailedRecord) {
       genericSubInvocation.getClangImporterOptions().DetailedPreprocessingRecord = true;
     }
+
+    // SWIFT_ENABLE_TENSORFLOW
+    // If the ClangModuleLoader is using an InMemoryOutputFileSystem, the
+    // subinstance loader should use it as well, as files written to the file
+    // system may not be visible to read, causing subinvocations to fail loading
+    // dependencies.
+    auto &Instance = clangImporter->getClangInstance();
+    if (Instance.getInMemoryOutputFileSystem()) {
+      genericSubInvocation.getClangImporterOptions().InMemoryOutputFileSystem =
+          Instance.getInMemoryOutputFileSystem();
+    }
+    // SWIFT_ENABLE_TENSORFLOW END
   }
 
   // Tell the genericSubInvocation to serialize dependency hashes if asked to do so.
