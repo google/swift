@@ -181,11 +181,18 @@ private:
   /// been validated.
   llvm::SetVector<ValueDecl *> UnvalidatedDeclsWithOpaqueReturnTypes;
 
+// SWIFT_ENABLE_TENSORFLOW
+// For TensorFlow, keep `Decls` public because SwiftCodeCompletion needs it.
+public:
+// SWIFT_ENABLE_TENSORFLOW END
   /// The list of top-level declarations in the source file. This is \c None if
   /// they have not yet been parsed.
   /// FIXME: Once addTopLevelDecl/prependTopLevelDecl
   /// have been removed, this can become an optional ArrayRef.
   Optional<std::vector<Decl *>> Decls;
+// SWIFT_ENABLE_TENSORFLOW
+private:
+// SWIFT_ENABLE_TENSORFLOW END
 
   using SeparatelyImportedOverlayMap =
     llvm::SmallDenseMap<ModuleDecl *, llvm::SmallPtrSet<ModuleDecl *, 1>>;
@@ -692,8 +699,8 @@ struct DenseMapInfo<swift::SourceFile::ImportedModuleDesc> {
                               StringRefDMI::getTombstoneKey());
   }
   static inline unsigned getHashValue(const ImportedModuleDesc &import) {
-    return combineHashValue(ImportedModuleDMI::getHashValue(import.module),
-           combineHashValue(ImportOptionsDMI::getHashValue(import.importOptions),
+    return detail::combineHashValue(ImportedModuleDMI::getHashValue(import.module),
+           detail::combineHashValue(ImportOptionsDMI::getHashValue(import.importOptions),
                             StringRefDMI::getHashValue(import.filename)));
   }
   static bool isEqual(const ImportedModuleDesc &a,
