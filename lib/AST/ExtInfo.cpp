@@ -27,7 +27,11 @@ static void assertIsFunctionType(const clang::Type *type) {
     llvm::raw_svector_ostream os(buf);
     os << "Expected a Clang function type wrapped in a pointer type or "
        << "a block pointer type but found:\n";
-    type->dump(os);
+    // DWA FIXME: dump now takes a clang AST context as a second parameter and I
+    // don't know where to find one.
+    //
+    // type->dump(os); 
+    type->dump();
     llvm_unreachable(os.str().data());
   }
 #endif
@@ -59,7 +63,11 @@ void ClangTypeInfo::printType(ClangModuleLoader *cml,
 
 void ClangTypeInfo::dump(llvm::raw_ostream &os) const {
   if (type) {
-    type->dump(os);
+    // DWA FIXME: dump now takes a clang AST context as a second parameter and I
+    // don't know where to find one.
+    //
+    // type->dump(os); 
+    type->dump();
   } else {
     os << "<nullptr>";
   }
