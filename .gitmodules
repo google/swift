@@ -1,0 +1,104 @@
+[submodule "CMake"]
+	path = CMake
+	url = git@github.com:Kitware/CMake
+[submodule "PythonKit"]
+	path = PythonKit
+	url = git@github.com:pvieito/PythonKit
+[submodule "Yams"]
+	path = Yams
+	url = git@github.com:jpsim/Yams
+[submodule "cmark"]
+	path = cmark
+	url = git@github.com:apple/swift-cmark
+[submodule "curl"]
+	path = curl
+	url = git@github.com:curl/curl
+[submodule "indexstore-db"]
+	path = indexstore-db
+	url = git@github.com:apple/indexstore-db
+[submodule "infrastructure"]
+	path = infrastructure
+	url = git@github.com:compnerd/toolchain-infrastructure
+[submodule "llbuild"]
+	path = llbuild
+	url = git@github.com:apple/swift-llbuild
+[submodule "llvm-project"]
+	path = llvm-project
+	url = git@github.com:dabrahams/llvm-project
+	branch = swift/tensorflow-stage
+[submodule "mergebot"]
+	path = mergebot
+	url = git@github.com:compnerd/mergebot
+[submodule "ninja"]
+	path = ninja
+	url = git@github.com:ninja-build/ninja
+[submodule "sourcekit-lsp"]
+	path = sourcekit-lsp
+	url = git@github.com:apple/sourcekit-lsp
+[submodule "swift"]
+	path = swift
+	url = git@github.com:google/swift
+	branch = tensorflow-stage
+[submodule "swift-argument-parser"]
+	path = swift-argument-parser
+	url = git@github.com:apple/swift-argument-parser
+[submodule "swift-benchmark"]
+	path = swift-benchmark
+	url = git@github.com:google/swift-benchmark
+[submodule "swift-build"]
+	path = swift-build
+	url = git@github.com:compnerd/swift-build
+[submodule "swift-corelibs-foundation"]
+	path = swift-corelibs-foundation
+	url = git@github.com:apple/swift-corelibs-foundation
+[submodule "swift-corelibs-libdispatch"]
+	path = swift-corelibs-libdispatch
+	url = git@github.com:apple/swift-corelibs-libdispatch
+[submodule "swift-corelibs-xctest"]
+	path = swift-corelibs-xctest
+	url = git@github.com:apple/swift-corelibs-xctest
+[submodule "swift-driver"]
+	path = swift-driver
+	url = git@github.com:apple/swift-driver
+[submodule "swift-jupyter"]
+	path = swift-jupyter
+	url = git@github.com:google/swift-jupyter
+[submodule "swift-log"]
+	path = swift-log
+	url = git@github.com:apple/swift-log
+[submodule "swift-nio"]
+	path = swift-nio
+	url = git@github.com:apple/swift-nio
+[submodule "swift-numerics"]
+	path = swift-numerics
+	url = git@github.com:apple/swift-numerics
+[submodule "swift-package-manager"]
+	path = swift-package-manager
+	url = git@github.com:apple/swift-package-manager
+[submodule "swift-protobuf"]
+	path = swift-protobuf
+	url = git@github.com:apple/swift-protobuf
+[submodule "swift-syntax"]
+	path = swift-syntax
+	url = git@github.com:apple/swift-syntax
+[submodule "swift-tools-support-core"]
+	path = swift-tools-support-core
+	url = git@github.com:apple/swift-tools-support-core
+[submodule "swift-win32"]
+	path = swift-win32
+	url = git@github.com:compnerd/swift-win32
+[submodule "swift-xcode-playground-support"]
+	path = swift-xcode-playground-support
+	url = git@github.com:apple/swift-xcode-playground-support
+[submodule "tensorflow"]
+	path = tensorflow
+	url = git@github.com:tensorflow/tensorflow
+[submodule "tensorflow-swift-apis"]
+	path = tensorflow-swift-apis
+	url = git@github.com:tensorflow/swift-apis
+[submodule "tensorflow-swift-models"]
+	path = tensorflow-swift-models
+	url = git@github.com:tensorflow/swift-models
+[submodule "zlib"]
+	path = zlib
+	url = git@github.com:madler/zlib
