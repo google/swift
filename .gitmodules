@@ -1,27 +1,35 @@
 [submodule "CMake"]
 	path = CMake
 	url = git@github.com:Kitware/CMake
+	branch = master
 [submodule "PythonKit"]
 	path = PythonKit
 	url = git@github.com:pvieito/PythonKit
+	branch = master
 [submodule "Yams"]
 	path = Yams
 	url = git@github.com:jpsim/Yams
+	branch = master
 [submodule "cmark"]
 	path = cmark
 	url = git@github.com:apple/swift-cmark
+	branch = master
 [submodule "curl"]
 	path = curl
 	url = git@github.com:curl/curl
+	branch = master
 [submodule "indexstore-db"]
 	path = indexstore-db
 	url = git@github.com:apple/indexstore-db
+	branch = master
 [submodule "infrastructure"]
 	path = infrastructure
 	url = git@github.com:compnerd/toolchain-infrastructure
+	branch = master
 [submodule "llbuild"]
 	path = llbuild
 	url = git@github.com:apple/swift-llbuild
+	branch = master
 [submodule "llvm-project"]
 	path = llvm-project
 	url = git@github.com:dabrahams/llvm-project
@@ -29,12 +37,15 @@
 [submodule "mergebot"]
 	path = mergebot
 	url = git@github.com:compnerd/mergebot
+	branch = master
 [submodule "ninja"]
 	path = ninja
 	url = git@github.com:ninja-build/ninja
+	branch = master
 [submodule "sourcekit-lsp"]
 	path = sourcekit-lsp
 	url = git@github.com:apple/sourcekit-lsp
+	branch = master
 [submodule "swift"]
 	path = swift
 	url = git@github.com:google/swift
@@ -42,63 +53,84 @@
 [submodule "swift-argument-parser"]
 	path = swift-argument-parser
 	url = git@github.com:apple/swift-argument-parser
+	branch = master
 [submodule "swift-benchmark"]
 	path = swift-benchmark
 	url = git@github.com:google/swift-benchmark
+	branch = master
 [submodule "swift-build"]
 	path = swift-build
 	url = git@github.com:compnerd/swift-build
+	branch = master
 [submodule "swift-corelibs-foundation"]
 	path = swift-corelibs-foundation
 	url = git@github.com:apple/swift-corelibs-foundation
+	branch = master
 [submodule "swift-corelibs-libdispatch"]
 	path = swift-corelibs-libdispatch
 	url = git@github.com:apple/swift-corelibs-libdispatch
+	branch = master
 [submodule "swift-corelibs-xctest"]
 	path = swift-corelibs-xctest
 	url = git@github.com:apple/swift-corelibs-xctest
+	branch = master
 [submodule "swift-driver"]
 	path = swift-driver
 	url = git@github.com:apple/swift-driver
+	branch = master
 [submodule "swift-jupyter"]
 	path = swift-jupyter
 	url = git@github.com:google/swift-jupyter
+	branch = master
 [submodule "swift-log"]
 	path = swift-log
 	url = git@github.com:apple/swift-log
+	branch = main
 [submodule "swift-nio"]
 	path = swift-nio
 	url = git@github.com:apple/swift-nio
+	branch = master
 [submodule "swift-numerics"]
 	path = swift-numerics
 	url = git@github.com:apple/swift-numerics
+	branch = master
 [submodule "swift-package-manager"]
 	path = swift-package-manager
 	url = git@github.com:apple/swift-package-manager
+	branch = master
 [submodule "swift-protobuf"]
 	path = swift-protobuf
 	url = git@github.com:apple/swift-protobuf
+	branch = master
 [submodule "swift-syntax"]
 	path = swift-syntax
 	url = git@github.com:apple/swift-syntax
+	branch = master
 [submodule "swift-tools-support-core"]
 	path = swift-tools-support-core
 	url = git@github.com:apple/swift-tools-support-core
+	branch = master
 [submodule "swift-win32"]
 	path = swift-win32
 	url = git@github.com:compnerd/swift-win32
+	branch = master
 [submodule "swift-xcode-playground-support"]
 	path = swift-xcode-playground-support
 	url = git@github.com:apple/swift-xcode-playground-support
+	branch = master
 [submodule "tensorflow"]
 	path = tensorflow
 	url = git@github.com:tensorflow/tensorflow
+	branch = master
 [submodule "tensorflow-swift-apis"]
 	path = tensorflow-swift-apis
 	url = git@github.com:tensorflow/swift-apis
+	branch = master
 [submodule "tensorflow-swift-models"]
 	path = tensorflow-swift-models
 	url = git@github.com:tensorflow/swift-models
+	branch = master
 [submodule "zlib"]
 	path = zlib
 	url = git@github.com:madler/zlib
+	branch = master
