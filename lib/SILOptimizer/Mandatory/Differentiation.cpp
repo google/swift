@@ -467,10 +467,10 @@ static SILValue reapplyFunctionConversion(
 ///
 /// Returns `None` on failure, signifying that a diagnostic has been emitted
 /// using `invoker`.
-static Optional<std::pair<SILValue, SILAutoDiffIndices>>
+static Optional<std::pair<SILValue, AutoDiffConfig>>
 emitDerivativeFunctionReference(
     DifferentiationTransformer &transformer, SILBuilder &builder,
-    SILAutoDiffIndices desiredIndices, AutoDiffDerivativeFunctionKind kind,
+    AutoDiffConfig desiredConfig, AutoDiffDerivativeFunctionKind kind,
     SILValue original, DifferentiationInvoker invoker,
     SmallVectorImpl<AllocStackInst *> &newBuffersToDealloc) {
   ADContext &context = transformer.getContext();
@@ -491,7 +491,7 @@ emitDerivativeFunctionReference(
     if (diffableFnType->isDifferentiable()) {
       auto paramIndices =
           diffableFnType->getDifferentiabilityParameterIndices();
-      for (auto i : desiredIndices.parameters->getIndices()) {
+      for (auto i : desiredConfig.parameterIndices->getIndices()) {
         if (!paramIndices->contains(i)) {
           context.emitNondifferentiabilityError(
               original, invoker,
@@ -508,7 +508,7 @@ emitDerivativeFunctionReference(
         derivativeFn =
             builder.emitCopyValueOperation(original.getLoc(), derivativeFn);
       builder.emitEndBorrowOperation(original.getLoc(), borrowedDiffFunc);
-      return std::make_pair(derivativeFn, desiredIndices);
+      return std::make_pair(derivativeFn, desiredConfig);
     }
   }
 
@@ -519,8 +519,8 @@ emitDerivativeFunctionReference(
     auto *originalFn = originalFRI->getReferencedFunctionOrNull();
     assert(originalFn);
     auto originalFnTy = originalFn->getLoweredFunctionType();
-    auto *desiredParameterIndices = desiredIndices.parameters;
-    auto *desiredResultIndices = desiredIndices.results;
+    auto *desiredParameterIndices = desiredConfig.parameterIndices;
+    auto *desiredResultIndices = desiredConfig.resultIndices;
     // NOTE(TF-893): Extending capacity is necessary when `originalFnTy` has
     // parameters corresponding to captured variables.
     // TODO: If posssible, change `autodiff::getLoweredParameterIndices` to
@@ -554,7 +554,7 @@ emitDerivativeFunctionReference(
       // Check and diagnose non-differentiable arguments.
       auto originalFnTy = originalFn->getLoweredFunctionType();
       for (unsigned paramIndex : range(originalFnTy->getNumParameters())) {
-        if (desiredIndices.isWrtParameter(paramIndex) &&
+        if (desiredConfig.isWrtParameter(paramIndex) &&
             !originalFnTy->getParameters()[paramIndex]
                  .getSILStorageInterfaceType()
                  .isDifferentiable(context.getModule())) {
@@ -660,14 +660,13 @@ emitDerivativeFunctionReference(
         loc, witnessKind, minimalWitness);
     auto convertedRef = reapplyFunctionConversion(
         context, derivativeFnRef, originalFRI, original, builder, loc,
-        newBuffersToDealloc, desiredIndices.parameters, desiredIndices.results,
+        newBuffersToDealloc, desiredConfig.parameterIndices,
+        desiredConfig.resultIndices,
         derivativeFnRef->getType()
             .getASTType()
             ->castTo<SILFunctionType>()
             ->getSubstGenericSignature());
-    return std::make_pair(
-        convertedRef, SILAutoDiffIndices(minimalWitness->getParameterIndices(),
-                                         minimalWitness->getResultIndices()));
+    return std::make_pair(convertedRef, minimalWitness->getConfig());
   }
 
   // Handle `witness_method`.
@@ -688,18 +687,18 @@ emitDerivativeFunctionReference(
     // an error.
     IndexSubset *minimalASTParamIndices = nullptr;
     auto minimalConfig = findMinimalDerivativeConfiguration(
-        requirementDecl, desiredIndices.parameters, minimalASTParamIndices);
+        requirementDecl, desiredConfig.parameterIndices,
+        minimalASTParamIndices);
     if (!minimalConfig) {
       context.emitNondifferentiabilityError(
           original, invoker,
           diag::autodiff_member_subset_indices_not_differentiable);
       return None;
     }
-    auto minimalIndices = minimalConfig->getSILAutoDiffIndices();
     // Emit a `witness_method` instruction for the derivative function.
     auto originalType = witnessMethod->getType().castTo<SILFunctionType>();
     auto assocType = originalType->getAutoDiffDerivativeFunctionType(
-        minimalIndices.parameters, minimalIndices.results, kind,
+        minimalConfig->parameterIndices, minimalConfig->resultIndices, kind,
         context.getTypeConverter(),
         LookUpConformanceInModule(builder.getModule().getSwiftModule()));
     auto *autoDiffFuncId = AutoDiffDerivativeFunctionIdentifier::get(
@@ -711,8 +710,9 @@ emitDerivativeFunctionReference(
         SILType::getPrimitiveObjectType(assocType));
     auto convertedRef = reapplyFunctionConversion(
         context, ref, witnessMethod, original, builder, loc,
-        newBuffersToDealloc, desiredIndices.parameters, desiredIndices.results);
-    return std::make_pair(convertedRef, minimalIndices);
+        newBuffersToDealloc, desiredConfig.parameterIndices,
+        desiredConfig.resultIndices);
+    return std::make_pair(convertedRef, *minimalConfig);
   }
 
   // Handle `class_method`.
@@ -733,18 +733,17 @@ emitDerivativeFunctionReference(
     // an error.
     IndexSubset *minimalASTParamIndices = nullptr;
     auto minimalConfig = findMinimalDerivativeConfiguration(
-        methodDecl, desiredIndices.parameters, minimalASTParamIndices);
+        methodDecl, desiredConfig.parameterIndices, minimalASTParamIndices);
     if (!minimalConfig) {
       context.emitNondifferentiabilityError(
           original, invoker,
           diag::autodiff_member_subset_indices_not_differentiable);
       return None;
     }
-    auto minimalIndices = minimalConfig->getSILAutoDiffIndices();
     // Emit a `class_method` instruction for the derivative function.
     auto originalType = classMethod->getType().castTo<SILFunctionType>();
     auto assocType = originalType->getAutoDiffDerivativeFunctionType(
-        minimalIndices.parameters, minimalIndices.results, kind,
+        minimalConfig->parameterIndices, minimalConfig->resultIndices, kind,
         context.getTypeConverter(),
         LookUpConformanceInModule(builder.getModule().getSwiftModule()));
     auto *autoDiffFuncId = AutoDiffDerivativeFunctionIdentifier::get(
@@ -756,8 +755,8 @@ emitDerivativeFunctionReference(
         SILType::getPrimitiveObjectType(assocType));
     auto convertedRef = reapplyFunctionConversion(
         context, ref, classMethod, original, builder, loc, newBuffersToDealloc,
-        desiredIndices.parameters, desiredIndices.results);
-    return std::make_pair(convertedRef, minimalIndices);
+        desiredConfig.parameterIndices, desiredConfig.resultIndices);
+    return std::make_pair(convertedRef, *minimalConfig);
   }
 
   // Emit the general opaque function error.
@@ -781,7 +780,7 @@ static SILFunction *createEmptyVJP(ADContext &context, SILFunction *original,
 
   auto &module = context.getModule();
   auto originalTy = original->getLoweredFunctionType();
-  auto indices = witness->getSILAutoDiffIndices();
+  auto config = witness->getConfig();
 
   // === Create an empty VJP. ===
   Mangle::ASTMangler mangler;
@@ -798,7 +797,8 @@ static SILFunction *createEmptyVJP(ADContext &context, SILFunction *original,
   if (vjpCanGenSig && !vjpCanGenSig->areAllParamsConcrete())
     vjpGenericEnv = vjpCanGenSig->getGenericEnvironment();
   auto vjpType = originalTy->getAutoDiffDerivativeFunctionType(
-      indices.parameters, indices.results, AutoDiffDerivativeFunctionKind::VJP,
+      config.parameterIndices, config.resultIndices,
+      AutoDiffDerivativeFunctionKind::VJP,
       module.Types, LookUpConformanceInModule(module.getSwiftModule()),
       vjpCanGenSig,
       /*isReabstractionThunk*/ original->isThunk() == IsReabstractionThunk);
@@ -826,7 +826,7 @@ static SILFunction *createEmptyJVP(ADContext &context, SILFunction *original,
 
   auto &module = context.getModule();
   auto originalTy = original->getLoweredFunctionType();
-  auto indices = witness->getSILAutoDiffIndices();
+  auto config = witness->getConfig();
 
   // === Create an empty JVP. ===
   Mangle::ASTMangler mangler;
@@ -843,7 +843,8 @@ static SILFunction *createEmptyJVP(ADContext &context, SILFunction *original,
   if (jvpCanGenSig && !jvpCanGenSig->areAllParamsConcrete())
     jvpGenericEnv = jvpCanGenSig->getGenericEnvironment();
   auto jvpType = originalTy->getAutoDiffDerivativeFunctionType(
-      indices.parameters, indices.results, AutoDiffDerivativeFunctionKind::JVP,
+      config.parameterIndices, config.resultIndices,
+      AutoDiffDerivativeFunctionKind::JVP,
       module.Types, LookUpConformanceInModule(module.getSwiftModule()),
       jvpCanGenSig,
       /*isReabstractionThunk*/ original->isThunk() == IsReabstractionThunk);
@@ -1016,10 +1017,10 @@ static SILValue promoteCurryThunkApplicationToDifferentiableFunction(
     return nullptr;
 
   // Create a new curry thunk.
-  SILAutoDiffIndices desiredIndices(parameterIndices, resultIndices);
+  AutoDiffConfig desiredConfig(parameterIndices, resultIndices);
   // TODO(TF-685): Use more principled mangling for thunks.
   auto newThunkName = "AD__" + thunk->getName().str() +
-                      "__differentiable_curry_thunk_" + desiredIndices.mangle();
+                      "__differentiable_curry_thunk_" + desiredConfig.mangle();
 
   // Construct new curry thunk type with `@differentiable` function
   // result.
@@ -1102,13 +1103,13 @@ SILValue DifferentiationTransformer::promoteToDifferentiableFunction(
           *this, dfi, builder, loc, invoker))
     return diffFn;
 
-  SILAutoDiffIndices desiredIndices(parameterIndices, resultIndices);
+  AutoDiffConfig desiredConfig(parameterIndices, resultIndices);
   SmallVector<SILValue, 2> derivativeFns;
   SmallVector<AllocStackInst *, 2> newBuffersToDealloc;
   for (auto derivativeFnKind : {AutoDiffDerivativeFunctionKind::JVP,
                                 AutoDiffDerivativeFunctionKind::VJP}) {
     auto derivativeFnAndIndices = emitDerivativeFunctionReference(
-        *this, builder, desiredIndices, derivativeFnKind, origFnOperand,
+        *this, builder, desiredConfig, derivativeFnKind, origFnOperand,
         invoker, newBuffersToDealloc);
     // Show an error at the operator, highlight the argument, and show a note
     // at the definition site of the argument.
@@ -1124,16 +1125,16 @@ SILValue DifferentiationTransformer::promoteToDifferentiableFunction(
     //   parameters (using `.zero` for the dropped parameters).
     // - For VJPs: the thunked VJP returns a pullback that drops the unused
     //   tangent values.
-    auto actualIndices = derivativeFnAndIndices->second;
+    auto actualConfig = derivativeFnAndIndices->second;
     // NOTE: `desiredIndices` may come from a partially-applied function and
     // have smaller capacity than `actualIndices`. We expect this logic to go
     // away when we support `@differentiable` partial apply.
     // if (actualIndices != desiredIndices) { // TODO: Re-enable.
     auto extendedDesiredParameterIndices =
-        desiredIndices.parameters->extendingCapacity(
-            astCtx, actualIndices.parameters->getCapacity());
-    if (!actualIndices.parameters->equals(extendedDesiredParameterIndices) ||
-        !actualIndices.results->equals(desiredIndices.results)) {
+        desiredConfig.parameterIndices->extendingCapacity(
+            astCtx, actualConfig.parameterIndices->getCapacity());
+    if (!actualConfig.parameterIndices->equals(extendedDesiredParameterIndices)
+        || !actualConfig.resultIndices->equals(desiredConfig.resultIndices)) {
       // Destroy the already emitted derivative function reference because it
       // is no longer used.
       builder.emitDestroyValueOperation(loc, derivativeFn);
@@ -1157,15 +1158,15 @@ SILValue DifferentiationTransformer::promoteToDifferentiableFunction(
         return nullptr;
       }
       // Create the parameter subset thunk.
-      assert(actualIndices.parameters->isSupersetOf(
+      assert(actualConfig.parameterIndices->isSupersetOf(
           extendedDesiredParameterIndices));
       SILFunction *thunk;
       SubstitutionMap interfaceSubs;
       SILOptFunctionBuilder fb(transform);
       std::tie(thunk, interfaceSubs) =
           getOrCreateSubsetParametersThunkForDerivativeFunction(
-              fb, origFnOperand, derivativeFn, derivativeFnKind, desiredIndices,
-              actualIndices);
+              fb, origFnOperand, derivativeFn, derivativeFnKind, desiredConfig,
+              actualConfig);
       auto *thunkFRI = builder.createFunctionRef(loc, thunk);
       if (auto genSig =
               thunk->getLoweredFunctionType()->getSubstGenericSignature()) {
