@@ -2122,7 +2122,9 @@ bool ContextualFailure::diagnoseAsError() {
     }
 
     if (isExpr<AssignExpr>(anchor)) {
-      emitDiagnostic(diag::cannot_convert_assign, getFromType(), getToType());
+      auto diagnostic = emitDiagnostic(diag::cannot_convert_assign,
+                                       getFromType(), getToType());
+      tryIntegerCastFixIts(diagnostic);
       return true;
     }
 
@@ -2731,6 +2733,15 @@ bool ContextualFailure::tryIntegerCastFixIts(
   auto fromType = getFromType();
   auto toType = getToType();
 
+  auto anchor = getAnchor();
+  auto exprRange = getSourceRange();
+
+  if (auto *assignment = getAsExpr<AssignExpr>(anchor)) {
+    toType = toType->lookThroughAllOptionalTypes();
+    anchor = assignment->getSrc();
+    exprRange = assignment->getSrc()->getSourceRange();
+  }
+
   if (!isIntegerType(fromType) || !isIntegerType(toType))
     return false;
 
@@ -2749,8 +2760,8 @@ bool ContextualFailure::tryIntegerCastFixIts(
     return parenE->getSubExpr();
   };
 
-  if (auto *anchor = getAsExpr(getAnchor())) {
-    if (Expr *innerE = getInnerCastedExpr(anchor)) {
+  if (auto *expr = getAsExpr(anchor)) {
+    if (Expr *innerE = getInnerCastedExpr(expr)) {
       Type innerTy = getType(innerE);
       if (TypeChecker::isConvertibleTo(innerTy, toType, getDC())) {
         // Remove the unnecessary cast.
@@ -2765,7 +2776,6 @@ bool ContextualFailure::tryIntegerCastFixIts(
   std::string convWrapBefore = toType.getString();
   convWrapBefore += "(";
   std::string convWrapAfter = ")";
-  SourceRange exprRange = getSourceRange();
   diagnostic.fixItInsert(exprRange.Start, convWrapBefore);
   diagnostic.fixItInsertAfter(exprRange.End, convWrapAfter);
   return true;
