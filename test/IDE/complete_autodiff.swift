@@ -11,8 +11,8 @@ struct Complete1 : DifferentiableRequirements {
   func f#^COMPLETE1^#
 }
 
-// COMPLETE1-LABEL: Begin completions
-// COMPLETE1: func f(_ x: Float) -> Float
+// COMPLETE1-LABEL: Begin completions, 1 items
+// COMPLETE1: Keyword[throws]/None: throws; name=throws
 // COMPLETE1: End completions
 
 struct Complete2 : DifferentiableRequirements {
