@@ -840,6 +840,7 @@ void Serializer::writeBlockInfoBlock() {
   BLOCK_RECORD(index_block, DECL_MEMBER_NAMES);
   BLOCK_RECORD(index_block, DECL_FINGERPRINTS);
   BLOCK_RECORD(index_block, ORDERED_TOP_LEVEL_DECLS);
+  BLOCK_RECORD(index_block, EXPORTED_PRESPECIALIZATION_DECLS);
 
   BLOCK(DECL_MEMBER_TABLES_BLOCK);
   BLOCK_RECORD(decl_member_tables_block, DECL_MEMBERS);
@@ -2230,8 +2231,8 @@ static SmallVector<Type, 4> collectDependenciesFromType(Type ty) {
 class Serializer::DeclSerializer : public DeclVisitor<DeclSerializer> {
   Serializer &S;
   DeclID id;
+  SmallVectorImpl<DeclID> &exportedPrespecializationDecls;
   bool didVerifyAttrs = false;
-
   template <typename DeclKind>
   void verifyAttrSerializable(const DeclKind *D) {
     ::verifyAttrSerializable(D);
@@ -2928,7 +2929,10 @@ class Serializer::DeclSerializer : public DeclVisitor<DeclSerializer> {
   }
 
 public:
-  DeclSerializer(Serializer &S, DeclID id) : S(S), id(id) {}
+  DeclSerializer(Serializer &S, DeclID id,
+                 SmallVectorImpl<DeclID> &exportedPrespecializationDecls)
+      : S(S), id(id),
+        exportedPrespecializationDecls(exportedPrespecializationDecls) {}
   ~DeclSerializer() {
     assert(didVerifyAttrs);
   }
@@ -2941,7 +2945,22 @@ public:
     if (auto *value = dyn_cast<ValueDecl>(D))
       writeDiscriminatorsIfNeeded(value);
 
+    if (auto *afd = dyn_cast<AbstractFunctionDecl>(D)) {
+      noteUseOfExportedPrespecialization(afd);
+    }
+
     DeclVisitor<DeclSerializer>::visit(const_cast<Decl *>(D));
+  }
+
+  void noteUseOfExportedPrespecialization(const AbstractFunctionDecl *afd) {
+    for (auto *A : afd->getAttrs().getAttributes<SpecializeAttr>()) {
+      auto *SA = cast<SpecializeAttr>(A);
+      if (!SA->isExported())
+        continue;
+      if (auto *targetFunctionDecl = SA->getTargetFunctionDecl(afd)) {
+        exportedPrespecializationDecls.push_back(S.addDeclRef(afd));
+      }
+    }
   }
 
   /// If this gets referenced, we forgot to handle a decl.
@@ -3871,7 +3890,9 @@ void Serializer::writeASTBlockEntity(const Decl *D) {
 
   assert(!D->hasClangNode() && "imported decls should use cross-references");
 
-  DeclSerializer(*this, DeclsToSerialize.addRef(D)).visit(D);
+  DeclSerializer(*this, DeclsToSerialize.addRef(D),
+                 exportedPrespecializationDecls)
+      .visit(D);
 }
 
 #define SIMPLE_CASE(TYPENAME, VALUE) \
@@ -5306,6 +5327,11 @@ void Serializer::writeAST(ModuleOrSourceFile DC) {
     index_block::OrderedDeclsLayout OrderedDecls(Out);
     OrderedDecls.emit(ScratchRecord, index_block::ORDERED_TOP_LEVEL_DECLS,
                       orderedTopLevelDecls);
+
+    index_block::OrderedDeclsLayout ExportedPrespecializationDecls(Out);
+    ExportedPrespecializationDecls.emit(
+        ScratchRecord, index_block::EXPORTED_PRESPECIALIZATION_DECLS,
+        exportedPrespecializationDecls);
 
     index_block::ObjCMethodTableLayout ObjCMethodTable(Out);
     writeObjCMethodTable(ObjCMethodTable, objcMethods);
