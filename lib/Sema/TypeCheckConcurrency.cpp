@@ -113,8 +113,15 @@ static bool checkAsyncHandler(FuncDecl *func, bool diagnose) {
   return false;
 }
 
-void swift::addAsyncNotes(FuncDecl *func) {
-  func->diagnose(diag::note_add_async_to_function, func->getName());
+void swift::addAsyncNotes(AbstractFunctionDecl const* func) {
+  assert(func);
+  if (!isa<DestructorDecl>(func))
+    func->diagnose(diag::note_add_async_to_function, func->getName());
+    // TODO: we need a source location for effects attributes so that we 
+    // can also emit a fix-it that inserts 'async' in the right place for func.
+    // It's possibly a bit tricky to get the right source location from
+    // just the AbstractFunctionDecl, but it's important to circle-back
+    // to this.
 
   if (func->canBeAsyncHandler()) {
     func->diagnose(
@@ -604,6 +611,24 @@ findMemberReference(Expr *expr) {
   return None;
 }
 
+/// Return true if the callee of an ApplyExpr is async
+///
+/// Note that this must be called after the implicitlyAsync flag has been set,
+/// or implicitly async calls will not return the correct value.
+static bool isAsyncCall(const ApplyExpr *call) {
+  if (call->implicitlyAsync())
+    return true;
+
+  // Effectively the same as doing a
+  // `cast_or_null<FunctionType>(call->getFn()->getType())`, check the
+  // result of that and then checking `isAsync` if it's defined.
+  Type funcTypeType = call->getFn()->getType();
+  if (!funcTypeType)
+    return false;
+  FunctionType *funcType = funcTypeType->castTo<FunctionType>();
+  return funcType->isAsync();
+}
+
 namespace {
   /// Check for adherence to the actor isolation rules, emitting errors
   /// when actor-isolated declarations are used in an unsafe manner.
@@ -672,6 +697,11 @@ namespace {
         return { true, expr };
       }
 
+      if (auto inout = dyn_cast<InOutExpr>(expr)) {
+        if (!applyStack.empty())
+          diagnoseInOutArg(applyStack.back(), inout, false);
+      }
+
       if (auto lookup = dyn_cast<LookupExpr>(expr)) {
         checkMemberReference(lookup->getBase(), lookup->getMember(),
                              lookup->getLoc());
@@ -713,10 +743,21 @@ namespace {
         Expr *fn = call->getFn()->getValueProvidingExpr();
         if (auto memberRef = findMemberReference(fn)) {
           checkMemberReference(
-              call->getArg(), memberRef->first, memberRef->second, 
+              call->getArg(), memberRef->first, memberRef->second,
               /*isEscapingPartialApply=*/false, /*maybeImplicitAsync=*/true);
 
           call->getArg()->walk(*this);
+
+          if (applyStack.size() >= 2) {
+            ApplyExpr *outerCall = applyStack[applyStack.size() - 2];
+            if (isAsyncCall(outerCall)) {
+              // This call is a partial application within an async call.
+              // If the partial application take a value inout, it is bad.
+              if (InOutExpr *inoutArg = dyn_cast<InOutExpr>(
+                      call->getArg()->getSemanticsProvidingExpr()))
+                diagnoseInOutArg(outerCall, inoutArg, true);
+            }
+          }
 
           // manual clean-up since normal traversal is skipped
           assert(applyStack.back() == dyn_cast<ApplyExpr>(expr));
@@ -853,6 +894,59 @@ namespace {
       return true;
     }
 
+    /// Diagnose an inout argument passed into an async call
+    ///
+    /// \returns true if we diagnosed the entity, \c false otherwise.
+    bool diagnoseInOutArg(const ApplyExpr *call, const InOutExpr *arg,
+                          bool isPartialApply) {
+      // check that the call is actually async
+      if (!isAsyncCall(call))
+        return false;
+
+      Expr *subArg = arg->getSubExpr();
+      if (LookupExpr *baseArg = dyn_cast<LookupExpr>(subArg)) {
+        while (LookupExpr *nextLayer = dyn_cast<LookupExpr>(baseArg->getBase()))
+          baseArg = nextLayer;
+        // subArg: the actual property being passed inout
+        // baseArg: the property in the actor who's property is being passed
+        // inout
+
+        auto memberDecl = baseArg->getMember().getDecl();
+        auto isolation = ActorIsolationRestriction::forDeclaration(memberDecl);
+        switch (isolation) {
+        case ActorIsolationRestriction::Unrestricted:
+        case ActorIsolationRestriction::LocalCapture:
+        case ActorIsolationRestriction::Unsafe:
+        case ActorIsolationRestriction::GlobalActor: // TODO: handle global
+                                                     // actors
+          break;
+        case ActorIsolationRestriction::ActorSelf: {
+          if (isPartialApply) {
+            // The partially applied InoutArg is a property of actor. This can
+            // really only happen when the property is a struct with a mutating
+            // async method.
+            if (auto partialApply = dyn_cast<ApplyExpr>(call->getFn())) {
+              ValueDecl *fnDecl =
+                  cast<DeclRefExpr>(partialApply->getFn())->getDecl();
+              ctx.Diags.diagnose(
+                  call->getLoc(), diag::actor_isolated_mutating_func,
+                  fnDecl->getName(), memberDecl->getDescriptiveKind(),
+                  memberDecl->getName());
+              return true;
+            }
+          } else {
+            ctx.Diags.diagnose(
+                subArg->getLoc(), diag::actor_isolated_inout_state,
+                memberDecl->getDescriptiveKind(), memberDecl->getName(),
+                call->implicitlyAsync());
+            return true;
+          }
+        }
+        }
+      }
+      return false;
+    }
+
     /// Get the actor isolation of the innermost relevant context.
     ActorIsolation getInnermostIsolatedContext(const DeclContext *constDC) {
       // Retrieve the actor isolation for a declaration somewhere in our
@@ -942,8 +1036,9 @@ namespace {
         return false;
       };
 
+      auto declContext = getDeclContext();
       switch (auto contextIsolation =
-                  getInnermostIsolatedContext(getDeclContext())) {
+                  getInnermostIsolatedContext(declContext)) {
       case ActorIsolation::ActorInstance:
         if (inspectForImplicitlyAsync())
           return false;
@@ -980,16 +1075,66 @@ namespace {
           return false;
 
         ctx.Diags.diagnose(
-            loc, diag::global_actor_from_independent_context,
-            value->getDescriptiveKind(), value->getName(), globalActor);
+            loc, diag::global_actor_from_nonactor_context,
+            value->getDescriptiveKind(), value->getName(), globalActor,
+            /*actorIndependent=*/true);
         noteIsolatedActorMember(value);
         return true;
 
-      case ActorIsolation::Unspecified:
-        // Okay no matter what, but still must inspect for implicitly async.
-        inspectForImplicitlyAsync();
-        return false;
-      }
+      case ActorIsolation::Unspecified: {
+        // NOTE: we must always inspect for implicitlyAsync
+        bool implicitlyAsyncCall = inspectForImplicitlyAsync();
+        bool didEmitDiagnostic = false;
+
+        auto emitError = [&](bool justNote = false) {
+          didEmitDiagnostic = true;
+          if (!justNote) {
+            ctx.Diags.diagnose(
+              loc, diag::global_actor_from_nonactor_context,
+              value->getDescriptiveKind(), value->getName(), globalActor,
+              /*actorIndependent=*/false);
+          }
+          noteIsolatedActorMember(value);
+        };
+        
+        if (AbstractFunctionDecl const* fn = 
+            dyn_cast_or_null<AbstractFunctionDecl>(declContext->getAsDecl())) {
+          bool isAsyncContext = fn->isAsyncContext();
+
+          if (implicitlyAsyncCall && isAsyncContext)
+            return didEmitDiagnostic; // definitely an OK reference.
+
+          // otherwise, there's something wrong.
+          
+          // if it's an implicitly-async call in a non-async context,
+          // then we know later type-checking will raise an error,
+          // so we just emit a note pointing out that callee of the call is
+          // implicitly async.
+          emitError(/*justNote=*/implicitlyAsyncCall);
+
+          // otherwise, if it's any kind of global-actor reference within
+          // this synchronous function, we'll additionally suggest becoming
+          // part of the global actor associated with the reference,
+          // since this function is not associated with an actor.
+          if (isa<FuncDecl>(fn) && !isAsyncContext) {
+            didEmitDiagnostic = true;
+            fn->diagnose(diag::note_add_globalactor_to_function, 
+                globalActor->getWithoutParens().getString(),
+                fn->getDescriptiveKind(),
+                fn->getName(),
+                globalActor)
+              .fixItInsert(fn->getAttributeInsertionLoc(false), 
+                diag::insert_globalactor_attr, globalActor);
+          }
+
+        } else {
+          // just the generic error with note.
+          emitError();
+        }
+
+        return didEmitDiagnostic;
+      } // end Unspecified case
+      } // end switch
       llvm_unreachable("unhandled actor isolation kind!");
     }
 
@@ -1138,7 +1283,9 @@ namespace {
         llvm_unreachable("Locals cannot be referenced with member syntax");
 
       case ActorIsolationRestriction::Unsafe:
-        return diagnoseReferenceToUnsafe(member, memberLoc);
+        // This case is hit when passing actor state inout to functions in some
+        // cases. The error is emitted by diagnoseInOutArg.
+        return false;
       }
       llvm_unreachable("unhandled actor isolation kind!");
     }
